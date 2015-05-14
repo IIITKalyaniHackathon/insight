@@ -11,7 +11,7 @@ niclabs.insight.data.Selector = (function($){
      * @extends niclabs.insight.data.DataSource
      * @param {String} id - identifier for the data source
      * @param {Object[]|String|Function} src - source of data
-     * @param {Object} options - extra options for the data source
+     * @param {Object=} options - extra options for the data source
      */
     var constructor = function(id, src, options) {
         if (Array.isArray(src)) {
