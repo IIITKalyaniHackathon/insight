@@ -21,7 +21,7 @@ niclabs.insight.data.Array = (function(){
          * @memberof niclabs.insight.data.Array
          * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
          */
-        self.each = function(fn) {
+        self.forEach = function(fn) {
             for (var i = 0; i < data.length; i++) {
                 fn.call(data[i], data[i], i);
             }

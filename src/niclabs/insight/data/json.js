@@ -45,7 +45,7 @@ niclabs.insight.data.JSON = (function($){
          * @memberof niclabs.insight.data.JSON
          * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
          */
-        self.each = function(fn) {
+        self.forEach = function(fn) {
             // Delegate the iteration
             function iterate(data, f) {
                 for (var i = 0; i < data.length; i++) {

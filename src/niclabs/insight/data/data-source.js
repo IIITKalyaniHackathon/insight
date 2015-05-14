@@ -30,7 +30,7 @@ niclabs.insight.data.DataSource = (function() {
          * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
          * @abstract
          */
-        self.each = function(fn) {
+        self.forEach = function(fn) {
             throw Error("Not implemented");
         };
 
