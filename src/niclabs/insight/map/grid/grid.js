@@ -56,11 +56,10 @@ niclabs.insight.map.grid.Grid = (function() {
 			}
 
 			var sortable = [];
-			for (var vehicle in hist)
-			      sortable.push([vehicle, hist[vehicle]]);
+			for (var value in hist)
+			      sortable.push([value, hist[value]]);
 			sortable.sort(function(a, b) {return b[1] - a[1];});
 
-			// Calculate average
 			if (size > 0) {
 				return colorMap[sortable[0][0]];
 			}
