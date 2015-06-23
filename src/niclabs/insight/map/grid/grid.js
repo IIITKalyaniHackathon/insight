@@ -32,6 +32,44 @@ niclabs.insight.map.grid.Grid = (function() {
 	}
 
 	/**
+	 * Returns a function to calculate the fill by category described in colorMap
+	 *
+	 * @param {Object} colorMap - color map describing the each category color
+	 * @return {niclabs.insight.map.grid.Grid~fill} category function
+	 */
+	function categoryFill(colorMap) {
+
+		return function(points) {
+			var size = 0;
+
+			hist = {};
+
+			for (i = 0; i < points.length; i++) {
+				if ('weight' in points[i] && 'category' in points[i]) {
+					if (points[i].category in hist) {
+						hist[points[i].category] += points[i].weight;
+					} else {
+						hist[points[i].category] = points[i].weight;
+					}
+					size++;
+				}
+			}
+
+			var sortable = [];
+			for (var vehicle in hist)
+			      sortable.push([vehicle, hist[vehicle]]);
+			sortable.sort(function(a, b) {return b[1] - a[1];});
+
+			// Calculate average
+			if (size > 0) {
+				return colorMap[sortable[0][0]];
+			}
+
+			return '#ffffff';
+		};
+	}
+
+	/**
 	 * Returns a function to calculate the fill as the interpolation on the median between the point weights
 	 *
 	 * @param {string} start_rgb - starting color for the interpolation
@@ -158,6 +196,9 @@ niclabs.insight.map.grid.Grid = (function() {
 			}
 			else if (options.fill === 'median') {
 				fill = medianFill(options.fillStart || '#ff0000', options.fillEnd || '#00ff00');
+			}
+			else if (options.fill === 'category') {
+				fill = categoryFill(options.colorMap);
 			}
 			else {
 				fill = fillColor;
