@@ -144,11 +144,26 @@ niclabs.insight.Dashboard = (function($) {
 
                     // The info element must be the first of the element to avoid
                     // clashes with google maps (TODO: this is probably a CSS bug)
-                    $(dashboardId).prepend(infoView.element);
                     $(dashboardId).append($('<div>').addClass('mdl-cell mdl-cell--9-col-desktop'));
+                    if (options.layout == 'left') {
+                        $(dashboardId).prepend(infoView.element);
+                    }
+                    if (options.layout == 'right') {
+                        $(dashboardId).append(infoView.element);
+                    }
 
                 }
                 return infoView;
+            },
+
+            /**
+             * Assign/get the layout for the dashboard
+             *
+             * @memberof niclabs.insight.Dashboard
+             * @returns {String} the layout of the dashboard
+             */
+            layout: function() {
+                return options.layout;
             },
 
             /**
