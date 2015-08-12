@@ -23,7 +23,7 @@ niclabs.insight.InfoView = (function($) {
         var element = niclabs.insight.View({id: infoViewId});
 
         // Create the info view
-        element.$.addClass('info');
+        element.$.addClass('mdl-cell mdl-cell--3-col-desktop');
 
         var resizeOrientation;
 
@@ -35,12 +35,12 @@ niclabs.insight.InfoView = (function($) {
             else if (dashboard.config('layout') === 'right') {
                 resizeOrientation = 'w';
             }
-            element.$.resizable(resizeOrientation);
+            //element.$.resizable(resizeOrientation);
         }
 
         var blocks = niclabs.insight.ElementList(dashboard);
 
-        element.$.hidable();
+        //element.$.hidable();
 
         /**
          * Add/get a block from the info view

@@ -28,11 +28,11 @@ niclabs.insight.info.SummaryBlock = (function($) {
         // Create the default template
         /*jshint multistr: true */
         var template = options.template || '\
-        <h6 class="latLngView" data-if="lat"> \
+        <h6 class="mdl-card__title-text" data-if="lat"> \
             lat: <span data-bind="lat"> -- </span> \
             lng: <span data-bind="lng"> -- </span> \
         </h6>\
-        <dl class="deflist">\
+        <dl class="deflist mdl-card__supporting-text">\
             <dt class="deflist-key" data-if="description">description</dt> \
             <dd class="deflist-value" data-bind="description">none</dd> \
             <dt class="deflist-key" data-if="landmark">landmark</dt> \

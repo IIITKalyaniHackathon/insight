@@ -29,12 +29,22 @@ niclabs.insight.Dashboard = (function($) {
         if (layoutOptions.indexOf(options.layout) < 0) throw new Error('Layout must be one of \'' + layoutOptions.join('\',\'') + '\'');
 
         // Create the main container
+        var main = $('<main>')
+            .addClass('mdl-layout__content');
+        //.addClass(options.layout );
+
         var container = $('<div>')
-            .setID(dashboardId).addClass('insight')
-            .addClass(options.layout );
+            .setID(dashboardId)
+            .addClass('mdl-grid');
+
+        $(main).append(container);
 
         // Append the dashboard to the container
-        $(anchor).append(container);
+        $(anchor).append(main);
+
+        $(anchor)
+            .addClass('mdl-layout')
+            .addClass('mdl-js-layout');
 
         var layers = {};
         var numberedLayers = 0;
@@ -63,7 +73,7 @@ niclabs.insight.Dashboard = (function($) {
                  * @property {string} id - id for the layer to which the data belongs to
                  * @property {Object[]} data - new data array
                  */
-                 niclabs.insight.event.trigger('active_layer_data', obj);
+                niclabs.insight.event.trigger('active_layer_data', obj);
             }
         });
 
@@ -71,10 +81,12 @@ niclabs.insight.Dashboard = (function($) {
         var filters = niclabs.insight.Filters(self);
 
         // Append the default filter bar
-        container.append(filters.element);
+        //container.append(filters.element);
 
 
-        var currentFilter = function() {return true;};
+        var currentFilter = function() {
+            return true;
+        };
 
         // Create an event to be notified of a filter change
         niclabs.insight.event.on('filter_changed', function(f) {
@@ -89,7 +101,7 @@ niclabs.insight.Dashboard = (function($) {
              * @memberof niclabs.insight.Dashboard
              * @member {Element}
              */
-            get element () {
+            get element() {
                 return $(dashboardId)[0];
             },
 
@@ -99,7 +111,7 @@ niclabs.insight.Dashboard = (function($) {
              * @memberof niclabs.insight.Dashboard
              * @member {jQuery}
              */
-            get $ () {
+            get $() {
                 return $(dashboardId);
             },
 
@@ -126,14 +138,14 @@ niclabs.insight.Dashboard = (function($) {
                 if (typeof obj !== 'undefined') {
                     if ('handler' in obj) {
                         infoView = niclabs.insight.handler(obj.handler)(self, obj);
-                    }
-                    else {
+                    } else {
                         infoView = obj;
                     }
 
                     // The info element must be the first of the element to avoid
                     // clashes with google maps (TODO: this is probably a CSS bug)
                     $(dashboardId).prepend(infoView.element);
+                    $(dashboardId).append($('<div>').addClass('mdl-cell mdl-cell--9-col-desktop'));
 
                 }
                 return infoView;
@@ -151,16 +163,22 @@ niclabs.insight.Dashboard = (function($) {
                 if (typeof obj !== 'undefined') {
                     if ('handler' in obj) {
                         mapView = niclabs.insight.handler(obj.handler)(self, obj);
-                    }
-                    else {
+                    } else {
                         mapView = obj;
                     }
-                    $(dashboardId).append(mapView.element);
+                    $(dashboardId).prepend(mapView.element);
+                    //TODO: add this to the css
+                    $(mapView.element)
+                        .width($(dashboardId).width())
+                        .height($('body').height());
+
 
                     if (options.geocoding !== false) {
                         // Append the GeoCoder
                         if ('googlemap' in mapView) {
-                            filters.filter(niclabs.insight.filter.GoogleGeocodingFilter(self, {id: 'geocoder'}));
+                            filters.filter(niclabs.insight.filter.GoogleGeocodingFilter(self, {
+                                id: 'geocoder'
+                            }));
                         }
                     }
                 }
@@ -192,8 +210,7 @@ niclabs.insight.Dashboard = (function($) {
                 if ('handler' in obj) {
                     id = obj.id = obj.id || layerId();
                     lyr = niclabs.insight.handler(obj.handler)(self, obj);
-                }
-                else {
+                } else {
                     lyr = obj;
                     id = lyr.id;
                 }
@@ -233,7 +250,7 @@ niclabs.insight.Dashboard = (function($) {
              * @returns {string} id for the active layer
              */
             active: function(id) {
-                if (typeof id === 'undefined') return typeof activeLayer !== 'undefined' ? activeLayer.id: undefined;
+                if (typeof id === 'undefined') return typeof activeLayer !== 'undefined' ? activeLayer.id : undefined;
 
                 if (typeof activeLayer !== 'undefined') {
                     activeLayer.clear();
@@ -242,7 +259,7 @@ niclabs.insight.Dashboard = (function($) {
                 if (typeof id == 'number') id = layerId(id);
 
                 if (!(id in layers)) {
-                    throw new Error("Layer with id "+id+" does not exist");
+                    throw new Error("Layer with id " + id + " does not exist");
                 }
 
                 // Update the active layer
@@ -291,7 +308,9 @@ niclabs.insight.Dashboard = (function($) {
             }
         };
 
-        var layerSelector = niclabs.insight.filter.LayerSelector(self, {id: 'layer-selector'});
+        var layerSelector = niclabs.insight.filter.LayerSelector(self, {
+            id: 'layer-selector'
+        });
         filters.filter(layerSelector);
 
         return self;

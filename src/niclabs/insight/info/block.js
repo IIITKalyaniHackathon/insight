@@ -39,12 +39,25 @@ niclabs.insight.info.Block = (function($) {
         // placing
         var header = $('<div>').addClass('header').append($('<span>').attr('data-bind', 'title').addClass('title').append(title));
 
-        var container = $('<div>').setID(htmlId).addClass('block')
+        var container = $('<div>').setID(htmlId)
+            .addClass('mdl-card')
+            .addClass('mdl-shadow--2dp')
             .append(header);
 
         // Save the content element
         var content = $('<div>').addClass('content');
 
+
+        /*container.html(
+        '<div class="mdl-card__title mdl-card--expand">
+            <h2 class="mdl-card__title-text">Update</h2>
+         </div><div class="mdl-card__supporting-text">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Aenan convallis.
+         </div>
+         <div class="mdl-card__actions mdl-card--border">
+            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">View Updates</a>
+         </div>');*/
         // Append the content
         container.append(content);
 

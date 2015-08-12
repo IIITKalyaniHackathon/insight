@@ -1,11 +1,9 @@
 @import 'base';
-
 .insight,
 .insight.left {
     @include container($height: 100%);
     font-family: $font-family;
     @include font-size($font-size);
-
     .info {
         height: 100%;
         overflow-y: scroll;
@@ -19,9 +17,7 @@
         display: block;
         float: left;
         z-index: 2;
-
     }
-
     .hidden {
         height: 100%;
         padding: $sidebar-padding;
@@ -31,12 +27,10 @@
         border-right: $border-style;
         display: block;
         float: left;
-
-        min-width: 0px;
+        min-width: 0;
         overflow-y: auto;
         width: 27px;
     }
-
     .map {
         height: 100%;
         max-width: 200%;
@@ -53,11 +47,9 @@
         margin: 5px;
         padding: 5px;
     }
-
     .filters * {
         margin: 2px;
     }
-
     &.right {
         .info {
             border-left: $border-style;
@@ -65,12 +57,10 @@
             float: right;
             min-width: $sidebar-width;
         }
-
         .filters {
             right: inherit;
             left: 0;
         }
-
         .hidden {
             height: 100%;
             padding: $sidebar-padding;
@@ -81,59 +71,48 @@
             border-right: none;
             display: block;
             float: right;
-
-            min-width: 0px;
+            min-width: 0;
             overflow-y: auto;
             width: 27px;
         }
     }
-
     &.none {
         .info {
             display: none;
         }
     }
 }
-
-.info .block {
+.info {
     padding: 5px;
     border: $border-style;
     background: #fff;
     margin-bottom: 5px;
-
     @include border-radius(3px);
-
     .header {
         padding: 5px 2px;
         @include font-size($title-font-size);
         border-bottom: $border-style;
     }
-
     .content {
         padding: 5px;
     }
-
     h6 {
         margin: 5px 0;
         text-align: right;
     }
 }
-
 .filters .filter {
     float: right;
 }
-
 .button {
     cursor: pointer;
     cursor: hand;
     @include no-select;
     float: right;
 }
-
 .button:hover {
     color: #555;
 }
-
 .search {
     padding: 2px;
 }
@@ -150,44 +129,62 @@
 // .menu:hover {
 //     background-color: #ccc;
 // }
-
-
 /* Utils */
 /* Rezisable */
 .resizable {
     position: relative;
     margin: 0;
 }
-
 .resizer {
     position: absolute;
     width: 10px;
     height: 10px;
     background-color: transparent;
 }
-
 .e-resize {
     height: inherit;
     right: 0;
     top: 0;
     cursor: e-resize;
 }
-
 .n-resize {
     width: inherit;
     top: 0;
     cursor: n-resize;
 }
-
 .s-resize {
     width: inherit;
     bottom: 0;
     cursor: s-resize;
 }
-
 .w-resize {
     height: inherit;
     left: 0;
     top: 0;
     cursor: w-resize;
+}
+
+/* Material Design Lite components */
+.mdl-card {
+    margin-bottom: 8px;
+    h6 {
+        margin: 5px;
+        float: right;
+        font-size: 12px;
+    }
+    .title {
+        margin-top: 8px;
+        margin-left: 8px;
+    }
+    .header {
+        border-bottom: solid gray;
+        border-top: solid rgba(255, 255, 255, 0);
+        border-width: 2px 0 1px 0;
+        margin: 2px;
+    }
+}
+.map {
+    position: absolute;
+    left: 0;
+    top: 0;
 }
