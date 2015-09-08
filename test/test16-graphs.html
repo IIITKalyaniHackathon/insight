@@ -28,10 +28,12 @@
 
     <link rel="stylesheet" type="text/css" href="css/insight.css">
     <link rel="stylesheet" type="text/css" href="css/chartist.min.css">
+    <link rel="stylesheet" type="text/css" href="css/material.css">
 
     <script src="js/chartist.min.js"></script>
     <script src="js/jquery-1.11.1.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
+    <script type="text/javascript" src="js/material.js"></script>
 
     <script src="js/insight.js"></script>
 
@@ -53,8 +55,13 @@
             'id': '#summary',
             'title': 'My Marker Summary',
             'closable': false,
-            'template': '\
-            <dl class="deflist">\
+            'template':
+            '\
+            <h6 class="mdl-card__title-text" data-if="lat"> \
+                lat: <span data-bind="lat"> -- </span> \
+                lng: <span data-bind="lng"> -- </span> \
+            </h6>\
+            <dl class="deflist mdl-card__supporting-text">\
                 <dt class="deflist-key" data-if="description">description</dt> \
                 <dd class="deflist-value" data-bind="description">none</dd> \
                 <dt class="deflist-key" data-if="landmark">landmark</dt> \
