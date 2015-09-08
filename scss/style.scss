@@ -1,87 +1,4 @@
 @import 'base';
-.insight,
-.insight.left {
-    @include container($height: 100%);
-    font-family: $font-family;
-    @include font-size($font-size);
-    .info {
-        height: 100%;
-        overflow-y: scroll;
-        min-width: $sidebar-width;
-        width: $sidebar-width;
-        padding: $sidebar-padding;
-        background: #fff;
-
-        /* Draw the border to the right */
-        border-right: $border-style;
-        display: block;
-        float: left;
-        z-index: 2;
-    }
-    .hidden {
-        height: 100%;
-        padding: $sidebar-padding;
-        background: #fff;
-
-        /* Draw the border to the right */
-        border-right: $border-style;
-        display: block;
-        float: left;
-        min-width: 0;
-        overflow-y: auto;
-        width: 27px;
-    }
-    .map {
-        height: 100%;
-        max-width: 200%;
-        display: block;
-        z-index: 0;
-    }
-
-    /* search bar */
-    .filters {
-        z-index: 10;
-        position: absolute;
-        right: 0;
-        top: 0;
-        margin: 5px;
-        padding: 5px;
-    }
-    .filters * {
-        margin: 2px;
-    }
-    &.right {
-        .info {
-            border-left: $border-style;
-            border-right: none;
-            float: right;
-            min-width: $sidebar-width;
-        }
-        .filters {
-            right: inherit;
-            left: 0;
-        }
-        .hidden {
-            height: 100%;
-            padding: $sidebar-padding;
-            background: #fff;
-
-            /* Draw the border to the right */
-            border-left: $border-style;
-            border-right: none;
-            display: block;
-            float: right;
-            min-width: 0;
-            overflow-y: auto;
-            width: 27px;
-        }
-    }
-    &.none {
-        .info {
-            display: none;
-        }
-    }
-}
 .info {
     padding: 5px;
     border: $border-style;
@@ -130,39 +47,6 @@
 //     background-color: #ccc;
 // }
 /* Utils */
-/* Rezisable */
-.resizable {
-    position: relative;
-    margin: 0;
-}
-.resizer {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background-color: transparent;
-}
-.e-resize {
-    height: inherit;
-    right: 0;
-    top: 0;
-    cursor: e-resize;
-}
-.n-resize {
-    width: inherit;
-    top: 0;
-    cursor: n-resize;
-}
-.s-resize {
-    width: inherit;
-    bottom: 0;
-    cursor: s-resize;
-}
-.w-resize {
-    height: inherit;
-    left: 0;
-    top: 0;
-    cursor: w-resize;
-}
 
 /* Material Design Lite components */
 .mdl-card {
@@ -191,4 +75,8 @@
 
 .right {
     right: 25px;
+}
+
+#dashboard {
+    overflow-y: auto;
 }

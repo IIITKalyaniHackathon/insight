@@ -42,79 +42,6 @@
   box-sizing: border-box; }
 
 /* Default font */
-.insight, .insight.left {
-  height: 100%;
-  max-width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  font-family: 'Raleway', sans-serif;
-  font-size: 16px;
-  font-size: 1rem;
-  /* search bar */ }
-  .insight:after, .insight.left:after {
-    content: " ";
-    display: block;
-    clear: both; }
-  .insight .info, .insight.left .info {
-    height: 100%;
-    overflow-y: scroll;
-    min-width: 320px;
-    width: 320px;
-    padding: 5px;
-    background: #fff;
-    /* Draw the border to the right */
-    border-right: 2px solid #ccc;
-    display: block;
-    float: left;
-    z-index: 2; }
-  .insight .hidden, .insight.left .hidden {
-    height: 100%;
-    padding: 5px;
-    background: #fff;
-    /* Draw the border to the right */
-    border-right: 2px solid #ccc;
-    display: block;
-    float: left;
-    min-width: 0;
-    overflow-y: auto;
-    width: 27px; }
-  .insight .map, .insight.left .map {
-    height: 100%;
-    max-width: 200%;
-    display: block;
-    z-index: 0; }
-  .insight .filters, .insight.left .filters {
-    z-index: 10;
-    position: absolute;
-    right: 0;
-    top: 0;
-    margin: 5px;
-    padding: 5px; }
-  .insight .filters *, .insight.left .filters * {
-    margin: 2px; }
-  .insight.right .info, .insight.left.right .info {
-    border-left: 2px solid #ccc;
-    border-right: none;
-    float: right;
-    min-width: 320px; }
-  .insight.right .filters, .insight.left.right .filters {
-    right: inherit;
-    left: 0; }
-  .insight.right .hidden, .insight.left.right .hidden {
-    height: 100%;
-    padding: 5px;
-    background: #fff;
-    /* Draw the border to the right */
-    border-left: 2px solid #ccc;
-    border-right: none;
-    display: block;
-    float: right;
-    min-width: 0;
-    overflow-y: auto;
-    width: 27px; }
-  .insight.none .info, .insight.left.none .info {
-    display: none; }
-
 .info {
   padding: 5px;
   border: 2px solid #ccc;
@@ -156,39 +83,6 @@
   padding: 2px; }
 
 /* Utils */
-/* Rezisable */
-.resizable {
-  position: relative;
-  margin: 0; }
-
-.resizer {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background-color: transparent; }
-
-.e-resize {
-  height: inherit;
-  right: 0;
-  top: 0;
-  cursor: e-resize; }
-
-.n-resize {
-  width: inherit;
-  top: 0;
-  cursor: n-resize; }
-
-.s-resize {
-  width: inherit;
-  bottom: 0;
-  cursor: s-resize; }
-
-.w-resize {
-  height: inherit;
-  left: 0;
-  top: 0;
-  cursor: w-resize; }
-
 /* Material Design Lite components */
 .mdl-card {
   margin-bottom: 8px; }
@@ -212,3 +106,6 @@
 
 .right {
   right: 25px; }
+
+#dashboard {
+  overflow-y: auto; }
