@@ -29,8 +29,8 @@ niclabs.insight.Dashboard = (function($) {
         if (layoutOptions.indexOf(options.layout) < 0) throw new Error('Layout must be one of \'' + layoutOptions.join('\',\'') + '\'');
 
         // Create the main container
-        var main = $('<main>')
-            .addClass('mdl-layout__content');
+        var main = $('<div>');
+            //.addClass('mdl-layout__content');
         //.addClass(options.layout );
 
         var container = $('<div>')
@@ -42,9 +42,9 @@ niclabs.insight.Dashboard = (function($) {
         // Append the dashboard to the container
         $(anchor).append(main);
 
-        $(anchor)
-            .addClass('mdl-layout')
-            .addClass('mdl-js-layout');
+        //$(anchor)
+            //.addClass('mdl-layout');
+            //.addClass('mdl-js-layout');
 
         var layers = {};
         var numberedLayers = 0;
@@ -144,7 +144,7 @@ niclabs.insight.Dashboard = (function($) {
 
                     // The info element must be the first of the element to avoid
                     // clashes with google maps (TODO: this is probably a CSS bug)
-                    $(dashboardId).append($('<div>').addClass('mdl-cell mdl-cell--9-col-desktop'));
+                    $(dashboardId).append($('<div>').addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--9-col-desktop'));
                     if (options.layout == 'left') {
                         $(dashboardId).prepend(infoView.element);
                     }

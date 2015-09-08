@@ -184,8 +184,7 @@ niclabs.insight = (function ($) {
                 resizable.css('top', (e.clientY) + 'px')
                 .css('height', (startHeight + startY - e.clientY) + 'px');
             if (west)
-                resizable.css('left', (e.clientX) + 'px')
-                .css('width', (startWidth - e.clientX) + 'px');
+                resizable.css('width', (startWidth  - e.clientX + startX) + 'px');
         }
 
         function stopDrag(e) {
@@ -268,6 +267,88 @@ niclabs.insight = (function ($) {
             _this.remove();
             handler();
         });
+
+        return this;
+    };
+
+    /**
+     * JQuery plugin to make an element hide-able
+     * TODO: Missing documentation
+     */
+    $.fn.hidable = function () {
+        var handler = false;
+        if (!handler) {
+            handler = function () {
+                map = dashboard.map().googlemap();
+                google.maps.event.trigger(map, 'resize');
+                return;
+            };
+        }
+
+        var panel = this.children('.header').css('height','25px');
+        if (!panel.length) {
+            panel = $('<div>').css('height','25px');
+            this.prepend(panel);
+        }
+
+        var close = $('<div>').addClass('button').attr('data-icon', 'hide');
+        var open = $('<div>').addClass('button').attr('data-icon', 'show');
+        var resizer = $('.resizer');
+
+        panel.prepend(close);
+
+        var _this = this;
+
+        var blocks;
+
+        var width;
+
+        var opener = function () {
+
+            for (var i = 0; i<blocks.length; i++) {
+              $('#insight-info-view').append(blocks[i]);
+            }
+
+            $('#insight-info-view').removeClass('hidden').addClass('info resizable');
+            $('#insight-info-view').append(resizer);
+            $('#insight-info-view').css('width',width);
+
+            panel.prepend(close);
+            open.remove();
+
+            handler();
+            //This is needed
+            close.on('click', closer);
+            width = undefined;
+
+        };
+
+        var closer = function () {
+            if(!blocks) {
+                blocks = _this.find('.block');
+            }
+
+            if(!width) {
+                width = $('#insight-info-view').css('width');
+            }
+
+            for (var i = 0; i<blocks.length; i++) {
+                blocks[i].remove();
+            }
+
+            $('#insight-info-view').removeClass('info resizable').removeAttr('style').addClass('hidden');
+
+            panel.prepend(open);
+            close.remove();
+
+            handler();
+            //This is needed
+            open.on('click', opener);
+
+        };
+
+        open.on('click', opener);
+        close.on('click', closer);
 
         return this;
     };
@@ -631,12 +712,22 @@ niclabs.insight.Dashboard = (function($) {
         if (layoutOptions.indexOf(options.layout) < 0) throw new Error('Layout must be one of \'' + layoutOptions.join('\',\'') + '\'');
 
         // Create the main container
+        var main = $('<div>');
+            //.addClass('mdl-layout__content');
+        //.addClass(options.layout );
+
         var container = $('<div>')
-            .setID(dashboardId).addClass('insight')
-            .addClass(options.layout );
+            .setID(dashboardId)
+            .addClass('mdl-grid');
+
+        $(main).append(container);
 
         // Append the dashboard to the container
-        $(anchor).append(container);
+        $(anchor).append(main);
+
+        //$(anchor)
+            //.addClass('mdl-layout');
+            //.addClass('mdl-js-layout');
 
         var layers = {};
         var numberedLayers = 0;
@@ -665,7 +756,7 @@ niclabs.insight.Dashboard = (function($) {
                  * @property {string} id - id for the layer to which the data belongs to
                  * @property {Object[]} data - new data array
                  */
-                 niclabs.insight.event.trigger('active_layer_data', obj);
+                niclabs.insight.event.trigger('active_layer_data', obj);
             }
         });
 
@@ -673,10 +764,12 @@ niclabs.insight.Dashboard = (function($) {
         var filters = niclabs.insight.Filters(self);
 
         // Append the default filter bar
-        container.append(filters.element);
+        //container.append(filters.element);
 
 
-        var currentFilter = function() {return true;};
+        var currentFilter = function() {
+            return true;
+        };
 
         // Create an event to be notified of a filter change
         niclabs.insight.event.on('filter_changed', function(f) {
@@ -691,7 +784,7 @@ niclabs.insight.Dashboard = (function($) {
              * @memberof niclabs.insight.Dashboard
              * @member {Element}
              */
-            get element () {
+            get element() {
                 return $(dashboardId)[0];
             },
 
@@ -701,7 +794,7 @@ niclabs.insight.Dashboard = (function($) {
              * @memberof niclabs.insight.Dashboard
              * @member {jQuery}
              */
-            get $ () {
+            get $() {
                 return $(dashboardId);
             },
 
@@ -728,17 +821,32 @@ niclabs.insight.Dashboard = (function($) {
                 if (typeof obj !== 'undefined') {
                     if ('handler' in obj) {
                         infoView = niclabs.insight.handler(obj.handler)(self, obj);
-                    }
-                    else {
+                    } else {
                         infoView = obj;
                     }
 
                     // The info element must be the first of the element to avoid
                     // clashes with google maps (TODO: this is probably a CSS bug)
-                    $(dashboardId).prepend(infoView.element);
+                    $(dashboardId).append($('<div>').addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--9-col-desktop'));
+                    if (options.layout == 'left') {
+                        $(dashboardId).prepend(infoView.element);
+                    }
+                    if (options.layout == 'right') {
+                        $(dashboardId).append(infoView.element);
+                    }
 
                 }
                 return infoView;
+            },
+
+            /**
+             * Assign/get the layout for the dashboard
+             *
+             * @memberof niclabs.insight.Dashboard
+             * @returns {String} the layout of the dashboard
+             */
+            layout: function() {
+                return options.layout;
             },
 
             /**
@@ -753,16 +861,22 @@ niclabs.insight.Dashboard = (function($) {
                 if (typeof obj !== 'undefined') {
                     if ('handler' in obj) {
                         mapView = niclabs.insight.handler(obj.handler)(self, obj);
-                    }
-                    else {
+                    } else {
                         mapView = obj;
                     }
-                    $(dashboardId).append(mapView.element);
+                    $(dashboardId).prepend(mapView.element);
+                    //TODO: add this to the css
+                    $(mapView.element)
+                        .width($(dashboardId).width())
+                        .height($('body').height());
+
 
                     if (options.geocoding !== false) {
                         // Append the GeoCoder
                         if ('googlemap' in mapView) {
-                            filters.filter(niclabs.insight.filter.GoogleGeocodingFilter(self, {id: 'geocoder'}));
+                            filters.filter(niclabs.insight.filter.GoogleGeocodingFilter(self, {
+                                id: 'geocoder'
+                            }));
                         }
                     }
                 }
@@ -794,8 +908,7 @@ niclabs.insight.Dashboard = (function($) {
                 if ('handler' in obj) {
                     id = obj.id = obj.id || layerId();
                     lyr = niclabs.insight.handler(obj.handler)(self, obj);
-                }
-                else {
+                } else {
                     lyr = obj;
                     id = lyr.id;
                 }
@@ -835,7 +948,7 @@ niclabs.insight.Dashboard = (function($) {
              * @returns {string} id for the active layer
              */
             active: function(id) {
-                if (typeof id === 'undefined') return typeof activeLayer !== 'undefined' ? activeLayer.id: undefined;
+                if (typeof id === 'undefined') return typeof activeLayer !== 'undefined' ? activeLayer.id : undefined;
 
                 if (typeof activeLayer !== 'undefined') {
                     activeLayer.clear();
@@ -844,7 +957,7 @@ niclabs.insight.Dashboard = (function($) {
                 if (typeof id == 'number') id = layerId(id);
 
                 if (!(id in layers)) {
-                    throw new Error("Layer with id "+id+" does not exist");
+                    throw new Error("Layer with id " + id + " does not exist");
                 }
 
                 // Update the active layer
@@ -893,7 +1006,9 @@ niclabs.insight.Dashboard = (function($) {
             }
         };
 
-        var layerSelector = niclabs.insight.filter.LayerSelector(self, {id: 'layer-selector'});
+        var layerSelector = niclabs.insight.filter.LayerSelector(self, {
+            id: 'layer-selector'
+        });
         filters.filter(layerSelector);
 
         return self;
@@ -1165,10 +1280,11 @@ niclabs.insight.InfoView = (function($) {
         var element = niclabs.insight.View({id: infoViewId});
 
         // Create the info view
-        element.$.addClass('info');
+        element.$.addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-desktop');
+
+        var resizeOrientation;
 
         if (dashboard.config('layout') !== 'none') {
-            var resizeOrientation;
             if (dashboard.config('layout') === 'left') {
                 // TODO: move filter bar
                 resizeOrientation = 'e';
@@ -1176,10 +1292,12 @@ niclabs.insight.InfoView = (function($) {
             else if (dashboard.config('layout') === 'right') {
                 resizeOrientation = 'w';
             }
-            element.$.resizable(resizeOrientation);
+            //element.$.resizable(resizeOrientation);
         }
 
         var blocks = niclabs.insight.ElementList(dashboard);
+
+        //element.$.hidable();
 
         /**
          * Add/get a block from the info view
@@ -1513,6 +1631,112 @@ niclabs.insight.View = (function($) {
 })(jQuery);
 
 /**
+ * Very basic event manager for the dashboard
+ *
+ * @example
+ * ```javascript
+ * // Subscribe to the event
+ * var eventId = niclabs.insight.event.on('hello', function(who) {
+ *      alert("HELLO "+who+"!!!");
+ * });
+ *
+ * // Trigger the event
+ * niclabs.insight.event.trigger('hello', "John"); // Shows alert 'HELLO John!!!'
+ *
+ * // Unsubscribe
+ * niclabs.insight.event.off('hello', eventId);
+ * ```
+ *
+ * @namespace
+ */
+niclabs.insight.event = (function() {
+    "use strict";
+
+    var events = {};
+
+    /**
+     * Find the event in the event list, return -1 if not found
+     */
+    function indexOf(event, listener) {
+        if (event in events) {
+            for (var i = 0; i < events[event].length; i++) {
+                if (events[event][i] === listener) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Insight event listener
+     *
+     * @callback niclabs.insight.event~listener
+     * @param {Object} data - data for the callback function, dependant on the event
+     */
+
+    return {
+        /**
+         * Listen for an event. A listener callback can only be assigned once for an event
+         *
+         * @memberof niclabs.insight.event
+         * @param {string} event - event type
+         * @param {niclabs.insight.event~listener} listener - callback to process the event
+         * @returns {number} id of the listener
+         */
+        on: function(event, listener) {
+            var index = indexOf(event, listener);
+
+            if (index < 0) {
+                if (!(event in events)) {
+                    events[event] = [];
+                }
+
+                // Add the new listener
+                return events[event].push(listener) - 1;
+            }
+            return index;
+        },
+
+        /**
+         * Stop listening for an event.
+         *
+         * @memberof niclabs.insight.event
+         * @param {string} event - event type
+         * @param {niclabs.insight.event~listener|number} listener - callback to remove or id of the listener provided by {@link niclabs.insight.event.on()}
+         * @returns {boolean} true if the listener was found and was succesfully removed
+         */
+        off: function(event, listener) {
+            var index = typeof listener === 'number' ? listener : indexOf(event, listener);
+
+            if (index >= 0) {
+                // Remove the event
+                events[event].splice(index, 1);
+
+                return true;
+            }
+            return false;
+        },
+
+        /**
+         * Trigger an event
+         *
+         * @memberof niclabs.insight.event
+         * @param {string} event - event type
+         * @param {Object=} data - data to pass to the callback
+         */
+        trigger: function(event, data) {
+            if (event in events) {
+                for (var i = 0; i < events[event].length; i++) {
+                    // Notify the listeners
+                    events[event][i](data);
+                }
+            }
+        }
+    };
+})();
+
+/**
  * Define all possible filters for the dashboard
  *
  * @namespace
@@ -1662,7 +1886,8 @@ niclabs.insight.filter.LayerSelector = (function($) {
             select.append($('<option>').attr('value', id).text(name));
 
             // Show the selector if there is more than one layer
-            if (layers.length > 1)
+            // Note: layers.length returns undefined
+            if (Object.keys(layers).length > 1)
                 select.show();
         };
 
@@ -1838,12 +2063,29 @@ niclabs.insight.info.Block = (function($) {
         // placing
         var header = $('<div>').addClass('header').append($('<span>').attr('data-bind', 'title').addClass('title').append(title));
 
-        var container = $('<div>').setID(htmlId).addClass('block')
+        var container = $('<div>').setID(htmlId)
+            .addClass('mdl-card')
+            .addClass('mdl-shadow--2dp')
             .append(header);
+
+        if(dashboard.layout() == 'right') {
+            container.addClass('right');
+        }
 
         // Save the content element
         var content = $('<div>').addClass('content');
 
+
+        /*container.html(
+        '<div class="mdl-card__title mdl-card--expand">
+            <h2 class="mdl-card__title-text">Update</h2>
+         </div><div class="mdl-card__supporting-text">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Aenan convallis.
+         </div>
+         <div class="mdl-card__actions mdl-card--border">
+            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">View Updates</a>
+         </div>');*/
         // Append the content
         container.append(content);
 
@@ -2278,11 +2520,11 @@ niclabs.insight.info.SummaryBlock = (function($) {
         // Create the default template
         /*jshint multistr: true */
         var template = options.template || '\
-        <h6 class="latLngView" data-if="lat"> \
+        <h6 class="mdl-card__title-text" data-if="lat"> \
             lat: <span data-bind="lat"> -- </span> \
             lng: <span data-bind="lng"> -- </span> \
         </h6>\
-        <dl class="deflist">\
+        <dl class="deflist mdl-card__supporting-text">\
             <dt class="deflist-key" data-if="description">description</dt> \
             <dd class="deflist-value" data-bind="description">none</dd> \
             <dt class="deflist-key" data-if="landmark">landmark</dt> \
@@ -3145,6 +3387,8 @@ niclabs.insight.map = (function () {
     return map;
 })();
 
+var style = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#e9e9e9"}]},{"featureType":"landscape","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"hue":"#0bff00"},{"lightness":"74"}]},{"featureType":"poi.park","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#77c3c6"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.arterial","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"road.local","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#004787"},{"visibility":"on"},{"lightness":"84"}]},{"featureType":"water","elementType":"labels","stylers":[{"visibility":"off"}]}];
+
 /**
  * Defines a mercator projection on the map
  *
@@ -3562,112 +3806,6 @@ niclabs.insight.quadtree.PointQuadTree = (function () {
     };
 
     return PointQuadTree;
-})();
-
-/**
- * Very basic event manager for the dashboard
- *
- * @example
- * ```javascript
- * // Subscribe to the event
- * var eventId = niclabs.insight.event.on('hello', function(who) {
- *      alert("HELLO "+who+"!!!");
- * });
- *
- * // Trigger the event
- * niclabs.insight.event.trigger('hello', "John"); // Shows alert 'HELLO John!!!'
- *
- * // Unsubscribe
- * niclabs.insight.event.off('hello', eventId);
- * ```
- *
- * @namespace
- */
-niclabs.insight.event = (function() {
-    "use strict";
-
-    var events = {};
-
-    /**
-     * Find the event in the event list, return -1 if not found
-     */
-    function indexOf(event, listener) {
-        if (event in events) {
-            for (var i = 0; i < events[event].length; i++) {
-                if (events[event][i] === listener) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Insight event listener
-     *
-     * @callback niclabs.insight.event~listener
-     * @param {Object} data - data for the callback function, dependant on the event
-     */
-
-    return {
-        /**
-         * Listen for an event. A listener callback can only be assigned once for an event
-         *
-         * @memberof niclabs.insight.event
-         * @param {string} event - event type
-         * @param {niclabs.insight.event~listener} listener - callback to process the event
-         * @returns {number} id of the listener
-         */
-        on: function(event, listener) {
-            var index = indexOf(event, listener);
-
-            if (index < 0) {
-                if (!(event in events)) {
-                    events[event] = [];
-                }
-
-                // Add the new listener
-                return events[event].push(listener) - 1;
-            }
-            return index;
-        },
-
-        /**
-         * Stop listening for an event.
-         *
-         * @memberof niclabs.insight.event
-         * @param {string} event - event type
-         * @param {niclabs.insight.event~listener|number} listener - callback to remove or id of the listener provided by {@link niclabs.insight.event.on()}
-         * @returns {boolean} true if the listener was found and was succesfully removed
-         */
-        off: function(event, listener) {
-            var index = typeof listener === 'number' ? listener : indexOf(event, listener);
-
-            if (index >= 0) {
-                // Remove the event
-                events[event].splice(index, 1);
-
-                return true;
-            }
-            return false;
-        },
-
-        /**
-         * Trigger an event
-         *
-         * @memberof niclabs.insight.event
-         * @param {string} event - event type
-         * @param {Object=} data - data to pass to the callback
-         */
-        trigger: function(event, data) {
-            if (event in events) {
-                for (var i = 0; i < events[event].length; i++) {
-                    // Notify the listeners
-                    events[event][i](data);
-                }
-            }
-        }
-    };
 })();
 
 /**
@@ -4404,6 +4542,43 @@ niclabs.insight.map.grid.Grid = (function() {
 	}
 
 	/**
+	 * Returns a function to calculate the fill by category described in colorMap
+	 *
+	 * @param {Object} colorMap - color map describing the each category color
+	 * @return {niclabs.insight.map.grid.Grid~fill} category function
+	 */
+	function categoryFill(colorMap) {
+
+		return function(points) {
+			var size = 0;
+
+			hist = {};
+
+			for (i = 0; i < points.length; i++) {
+				if ('weight' in points[i] && 'category' in points[i]) {
+					if (points[i].category in hist) {
+						hist[points[i].category] += points[i].weight;
+					} else {
+						hist[points[i].category] = points[i].weight;
+					}
+					size++;
+				}
+			}
+
+			var sortable = [];
+			for (var value in hist)
+			      sortable.push([value, hist[value]]);
+			sortable.sort(function(a, b) {return b[1] - a[1];});
+
+			if (size > 0) {
+				return colorMap[sortable[0][0]];
+			}
+
+			return '#ffffff';
+		};
+	}
+
+	/**
 	 * Returns a function to calculate the fill as the interpolation on the median between the point weights
 	 *
 	 * @param {string} start_rgb - starting color for the interpolation
@@ -4530,6 +4705,9 @@ niclabs.insight.map.grid.Grid = (function() {
 			}
 			else if (options.fill === 'median') {
 				fill = medianFill(options.fillStart || '#ff0000', options.fillEnd || '#00ff00');
+			}
+			else if (options.fill === 'category') {
+				fill = categoryFill(options.colorMap);
 			}
 			else {
 				fill = fillColor;

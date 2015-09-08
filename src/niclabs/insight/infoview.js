@@ -23,7 +23,7 @@ niclabs.insight.InfoView = (function($) {
         var element = niclabs.insight.View({id: infoViewId});
 
         // Create the info view
-        element.$.addClass('mdl-cell mdl-cell--3-col-desktop');
+        element.$.addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-desktop');
 
         var resizeOrientation;
 
