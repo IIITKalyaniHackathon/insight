@@ -134,6 +134,12 @@ niclabs.insight.MapView = (function($) {
 			},
 		};
 
+		//Resize the map when the window's size changes
+		$( window ).resize(function() {
+				$('#insight-map-view').width($(window).width());
+				$('#insight-map-view').height($(window).height());
+		});
+
 		return self;
 	};
 })(jQuery);

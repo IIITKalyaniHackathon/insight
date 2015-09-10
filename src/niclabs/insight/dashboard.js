@@ -37,10 +37,13 @@ niclabs.insight.Dashboard = (function($) {
             .setID(dashboardId)
             .addClass('mdl-grid');
 
-        $(main).append(container);
+        //$(main).append(container);
 
         // Append the dashboard to the container
-        $(anchor).append(main);
+        $(anchor).append(container);
+
+        //var emptyHolder = $('<div>').addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--9-col-desktop');
+        //$(container).append(emptyHolder);
 
         //$(anchor)
             //.addClass('mdl-layout');
@@ -81,7 +84,7 @@ niclabs.insight.Dashboard = (function($) {
         var filters = niclabs.insight.Filters(self);
 
         // Append the default filter bar
-        //container.append(filters.element);
+        container.append(filters.element);
 
 
         var currentFilter = function() {
@@ -144,7 +147,6 @@ niclabs.insight.Dashboard = (function($) {
 
                     // The info element must be the first of the element to avoid
                     // clashes with google maps (TODO: this is probably a CSS bug)
-                    $(dashboardId).append($('<div>').addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--9-col-desktop'));
                     if (options.layout == 'left') {
                         $(dashboardId).prepend(infoView.element);
                     }

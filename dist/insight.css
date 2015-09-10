@@ -62,8 +62,13 @@
     margin: 5px 0;
     text-align: right; }
 
-.filters .filter {
-  float: right; }
+.filters {
+  padding-right: 14px; }
+  .filters .filter {
+    position: relative;
+    z-index: 1;
+    float: right;
+    margin: 2px; }
 
 .button {
   cursor: pointer;
