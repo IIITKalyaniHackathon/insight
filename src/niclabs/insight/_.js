@@ -300,9 +300,7 @@ niclabs.insight = (function($) {
 
         var opener = function() {
 
-            for (var i = 0; i < blocks.length; i++) {
-                $('#insight-info-view').append(blocks[i]);
-            }
+            $('.block').css('visibility','visible');
 
             buttonHolder.prepend(closeButton);
             openButton.remove();
@@ -313,17 +311,9 @@ niclabs.insight = (function($) {
 
         };
 
-        var blocks;
-        var _this = this;
-
         var closer = function() {
-            if (!blocks) {
-                blocks = _this.find('.block');
-            }
 
-            for (var i = 0; i < blocks.length; i++) {
-                blocks[i].remove();
-            }
+            $('.block').css('visibility','hidden');
 
             buttonHolder.prepend(openButton);
             closeButton.remove();
