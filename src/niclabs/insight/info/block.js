@@ -42,6 +42,7 @@ niclabs.insight.info.Block = (function($) {
         var container = $('<div>').setID(htmlId)
             .addClass('mdl-card')
             .addClass('mdl-shadow--2dp')
+            .addClass('block')
             .append(header);
 
         if(dashboard.layout() == 'right') {

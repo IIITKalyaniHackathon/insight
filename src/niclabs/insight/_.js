@@ -7,7 +7,7 @@
  * @namespace
  * @requires jQuery 1.11.1+
  */
-niclabs.insight = (function ($) {
+niclabs.insight = (function($) {
     "use strict";
 
 
@@ -15,7 +15,7 @@ niclabs.insight = (function ($) {
     // Reference: http://es5.github.io/#x15.4.4.18
     if (!Array.prototype.forEach) {
 
-        Array.prototype.forEach = function (callback, thisArg) {
+        Array.prototype.forEach = function(callback, thisArg) {
 
             var T, k;
 
@@ -70,31 +70,31 @@ niclabs.insight = (function ($) {
         };
     }
 
-     /**
-      * Bind a jquery element to a template
-      *
-      * It binds the callback 'render' to a function that will render
-      * an associative array into the element by using the data-bind
-      * attributes
-      *
-      * You can use the attributes `data-bind` and `data-if`
-      * indicate binding or dependency from a data element
-      *
-      * @example
-      * ```html
-      * <script id='template' type='text/html'>
-      * Hello <span data-bind="name">friend</span><span data-if="name">!!!</span>,
-      * this is a template <span data-if="app">for </span><i data-bind="app">your app</i>
-      * </script>
-      * <script type='text/html'>
-      * $('#element').template('#template'); // Will show "Hello, this is a template"
-      * $('#content').trigger('render', {name: 'John', app: 'John\'s App'}); // Updates content to "Hello John!!!, this is a template for John's app"
-      * </script>
-      * ```
-      *
-      * @param {string|jQuery} template - id for the template element, string with the template or jQuery selector to use as template
-      * @returns {jQuery} this element
-      */
+    /**
+     * Bind a jquery element to a template
+     *
+     * It binds the callback 'render' to a function that will render
+     * an associative array into the element by using the data-bind
+     * attributes
+     *
+     * You can use the attributes `data-bind` and `data-if`
+     * indicate binding or dependency from a data element
+     *
+     * @example
+     * ```html
+     * <script id='template' type='text/html'>
+     * Hello <span data-bind="name">friend</span><span data-if="name">!!!</span>,
+     * this is a template <span data-if="app">for </span><i data-bind="app">your app</i>
+     * </script>
+     * <script type='text/html'>
+     * $('#element').template('#template'); // Will show "Hello, this is a template"
+     * $('#content').trigger('render', {name: 'John', app: 'John\'s App'}); // Updates content to "Hello John!!!, this is a template for John's app"
+     * </script>
+     * ```
+     *
+     * @param {string|jQuery} template - id for the template element, string with the template or jQuery selector to use as template
+     * @returns {jQuery} this element
+     */
     $.fn.template = function(template) {
         if (typeof template === 'undefined') template = this.html();
         else if (typeof template === 'string' && template.charAt(0) === '#') {
@@ -118,8 +118,7 @@ niclabs.insight = (function ($) {
                         else if (tag === 'input') $(this).val(data[key]);
                         else $(this).text(data[key]);
                     }
-                }
-                else {
+                } else {
                     $(this).detach();
                 }
             });
@@ -136,7 +135,7 @@ niclabs.insight = (function ($) {
      * JQuery plugin to make an element resizable
      * TODO: missing documentation/source
      */
-    $.fn.resizable = function (orientation) {
+    $.fn.resizable = function(orientation) {
         var resizer = $('<div>').addClass('resizer').addClass(orientation + '-resize');
         this.append(resizer).addClass('resizable');
 
@@ -171,7 +170,7 @@ niclabs.insight = (function ($) {
                 resizable.css('top', (e.clientY) + 'px')
                 .css('height', (startHeight + startY - e.clientY) + 'px');
             if (west)
-                resizable.css('width', (startWidth  - e.clientX + startX) + 'px');
+                resizable.css('width', (startWidth - e.clientX + startX) + 'px');
         }
 
         function stopDrag(e) {
@@ -180,7 +179,7 @@ niclabs.insight = (function ($) {
             resizable.trigger('resize');
         }
 
-        this.scroll(function (e) {
+        this.scroll(function(e) {
             resizer.css('top', resizable.scrollTop());
         });
 
@@ -190,7 +189,7 @@ niclabs.insight = (function ($) {
     /**
      * Set the id for the jQuery selector
      */
-    $.fn.setID = function (selector) {
+    $.fn.setID = function(selector) {
         if (selector.charAt(0) === '#')
             selector = selector.slice(1);
         this.attr('id', selector);
@@ -201,7 +200,7 @@ niclabs.insight = (function ($) {
      * JQuery plugin to make an element movable
      * TODO: missing documentation/source
      */
-    $.fn.movable = function () {
+    $.fn.movable = function() {
 
         var panel = this.children('.header');
         if (panel.length === 0) {
@@ -216,11 +215,11 @@ niclabs.insight = (function ($) {
 
         var _this = this;
 
-        up.on('click', function () {
+        up.on('click', function() {
             _this.insertBefore(_this.prev());
         });
 
-        down.on('click', function () {
+        down.on('click', function() {
             _this.insertAfter(_this.next());
         });
 
@@ -231,9 +230,9 @@ niclabs.insight = (function ($) {
      * JQuery plugin to make an element closeable
      * TODO: Missing documentation
      */
-    $.fn.closable = function (handler) {
+    $.fn.closable = function(handler) {
         if (!handler) {
-            handler = function () {
+            handler = function() {
                 return;
             };
         }
@@ -250,7 +249,7 @@ niclabs.insight = (function ($) {
 
         var _this = this;
 
-        close.on('click', function () {
+        close.on('click', function() {
             _this.remove();
             handler();
         });
@@ -262,80 +261,81 @@ niclabs.insight = (function ($) {
      * JQuery plugin to make an element hide-able
      * TODO: Missing documentation
      */
-    $.fn.hidable = function () {
+    $.fn.hidable = function() {
         var handler = false;
         if (!handler) {
-            handler = function () {
-                map = dashboard.map().googlemap();
-                google.maps.event.trigger(map, 'resize');
+            handler = function() {
                 return;
             };
         }
 
-        var panel = this.children('.header').css('height','25px');
-        if (!panel.length) {
-            panel = $('<div>').css('height','25px');
-            this.prepend(panel);
-        }
+        var panel = this;
 
-        var close = $('<div>').addClass('button').attr('data-icon', 'hide');
-        var open = $('<div>').addClass('button').attr('data-icon', 'show');
-        var resizer = $('.resizer');
+        var closeButton = $('<button>')
+            .addClass('mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect')
+            .css('z-index', 2)
+            .css('background', 'white');
 
-        panel.prepend(close);
+        var closeIcon = $('<i>')
+            .addClass('material-icons')
+            .html('expand_less');
 
-        var _this = this;
+        var openButton = $('<button>')
+            .addClass('mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect')
+            .css('z-index', 2)
+            .css('background', 'white');
 
-        var blocks;
+        var openIcon = $('<i>')
+            .addClass('material-icons')
+            .html('expand_more');
 
-        var width;
+        $(closeButton).append(closeIcon);
+        $(openButton).append(openIcon);
 
-        var opener = function () {
+        var buttonHolder = $('<div>')
+            .append(closeButton)
+            .setID('insight-show-hide-button');
 
-            for (var i = 0; i<blocks.length; i++) {
-              $('#insight-info-view').append(blocks[i]);
+        panel.prepend(buttonHolder);
+
+        var opener = function() {
+
+            for (var i = 0; i < blocks.length; i++) {
+                $('#insight-info-view').append(blocks[i]);
             }
 
-            $('#insight-info-view').removeClass('hidden').addClass('info resizable');
-            $('#insight-info-view').append(resizer);
-            $('#insight-info-view').css('width',width);
-
-            panel.prepend(close);
-            open.remove();
+            buttonHolder.prepend(closeButton);
+            openButton.remove();
 
             handler();
             //This is needed
-            close.on('click', closer);
-            width = undefined;
+            closeButton.on('click', closer);
 
         };
 
-        var closer = function () {
-            if(!blocks) {
+        var blocks;
+        var _this = this;
+
+        var closer = function() {
+            if (!blocks) {
                 blocks = _this.find('.block');
             }
 
-            if(!width) {
-                width = $('#insight-info-view').css('width');
-            }
-
-            for (var i = 0; i<blocks.length; i++) {
+            for (var i = 0; i < blocks.length; i++) {
                 blocks[i].remove();
             }
 
-            $('#insight-info-view').removeClass('info resizable').removeAttr('style').addClass('hidden');
-
-            panel.prepend(open);
-            close.remove();
+            buttonHolder.prepend(openButton);
+            closeButton.remove();
 
             handler();
             //This is needed
-            open.on('click', opener);
+            openButton.on('click', opener);
 
         };
 
-        open.on('click', opener);
-        close.on('click', closer);
+        openButton.on('click', opener);
+        closeButton.on('click', closer);
 
         return this;
     };
@@ -343,14 +343,14 @@ niclabs.insight = (function ($) {
     /**
      * Check if indexOf exists in Array.prototype or use jQuery.inArray();
      */
-    Array.prototype.indexOf = 'indexOf' in Array.prototype ? Array.prototype.indexOf : function (item, start) {
+    Array.prototype.indexOf = 'indexOf' in Array.prototype ? Array.prototype.indexOf : function(item, start) {
         return $.inArray(item, this, start);
     };
 
     /**
      * Calculate the size of the associative array
      */
-    Object.size = function (obj) {
+    Object.size = function(obj) {
         var size = 0,
             key;
         for (key in obj) {
@@ -381,13 +381,13 @@ niclabs.insight = (function ($) {
             enumerable: false,
             configurable: true,
             writable: false,
-            value: function (prop, handler) {
+            value: function(prop, handler) {
                 var
                     oldval = this[prop],
-                    getter = function () {
+                    getter = function() {
                         return oldval;
                     },
-                    setter = function (newval) {
+                    setter = function(newval) {
                         if (oldval !== newval) {
                             handler.call(this, prop, oldval, newval);
                             oldval = newval;
@@ -413,7 +413,7 @@ niclabs.insight = (function ($) {
             enumerable: false,
             configurable: true,
             writable: false,
-            value: function (prop) {
+            value: function(prop) {
                 var val = this[prop];
                 delete this[prop]; // remove accessors
                 this[prop] = val;
@@ -430,7 +430,7 @@ niclabs.insight = (function ($) {
             enumerable: false,
             configurable: true,
             writable: false,
-            value: function (handler) {
+            value: function(handler) {
                 for (var prop in this) {
                     // Watch all the object properties
                     if (this.hasOwnProperty(prop)) {
@@ -446,7 +446,7 @@ niclabs.insight = (function ($) {
             enumerable: false,
             configurable: true,
             writable: false,
-            value: function () {
+            value: function() {
                 for (var prop in this) {
                     // Watch all the object properties
                     if (this.hasOwnProperty(prop)) {
@@ -501,7 +501,7 @@ niclabs.insight = (function ($) {
          * @param {niclabs.insight~handler=} handler - callback to create the element
          * @returns {niclabs.insight~handler} handler for the registered name
          */
-        handler: function (name, kind, handler) {
+        handler: function(name, kind, handler) {
             if (name in handlers) {
                 kind = typeof kind === 'undefined' ? handlers[name].kind : kind;
                 handler = typeof handler === 'undefined' ? handlers[name].handler : handler;
@@ -538,7 +538,7 @@ niclabs.insight = (function ($) {
          * @param {Object=} options - list of configuration options for the dashboard see {@link niclabs.insight.Dashboard}
          * @returns {niclabs.insight.Dashboard} dashboard object
          */
-        dashboard: function (options) {
+        dashboard: function(options) {
             if (typeof options === 'undefined') return dashboard;
 
             dashboard = niclabs.insight.Dashboard(options);
