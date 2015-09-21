@@ -20,7 +20,7 @@
   },
   "author": "Felipe Lalanne <flalanne@niclabs.cl>",
   "license": "APACHE-2.0",
-  "main": "dist/CityDashboard.min.js",
+  "main": "dist/insight.min.js",
   "directories": {
     "doc": "docs",
     "example": "examples",
@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/niclabs/city-dashboard.git"
+    "url": "https://github.com/niclabs/insight.git"
   },
   "keywords": [
     "smartcities",
@@ -41,7 +41,7 @@
     "map"
   ],
   "bugs": {
-    "url": "https://github.com/niclabs/city-dashboard/issues"
+    "url": "https://github.com/niclabs/insight/issues"
   },
-  "homepage": "https://github.com/niclabs/city-dashboard"
+  "homepage": "https://github.com/niclabs/insight"
 }

@@ -212,12 +212,12 @@ Building City Dashboard
 * Make sure you have the node package manager installed
 * Clone this repo
 ```bash
-> git clone https://github.com/niclabs/city-dashboard.git
+> git clone https://github.com/niclabs/insight.git
 ```
 
 * Install developer dependencies
 ```bash
-> cd city-dashboard
+> cd insight
 > npm install
 ```
 
