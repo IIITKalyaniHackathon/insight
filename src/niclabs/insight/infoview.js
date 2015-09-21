@@ -20,10 +20,30 @@ niclabs.insight.InfoView = (function($) {
         var infoViewId = options.id || "insight-info-view";
 
 
-        var element = niclabs.insight.View({id: infoViewId});
+        var element = niclabs.insight.View({
+            id: infoViewId
+        });
 
         // Create the info view
         element.$.addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--3-col-desktop');
+
+        // Show-Hide button
+        var button = $('<button>')
+            .addClass('mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect')
+            .css('z-index',2)
+            .css('background','white');
+
+        var icon = $('<i>')
+            .addClass('material-icons')
+            .html('expand_less');
+
+        $(button).append(icon);
+
+        var div = $('<div>')
+            .append(button)
+            .setID('insight-show-hide-button');
+
+        element.$.append(div);
 
         var resizeOrientation;
 
@@ -31,8 +51,7 @@ niclabs.insight.InfoView = (function($) {
             if (dashboard.config('layout') === 'left') {
                 // TODO: move filter bar
                 resizeOrientation = 'e';
-            }
-            else if (dashboard.config('layout') === 'right') {
+            } else if (dashboard.config('layout') === 'right') {
                 resizeOrientation = 'w';
             }
             //element.$.resizable(resizeOrientation);
