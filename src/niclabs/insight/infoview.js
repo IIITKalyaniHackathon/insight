@@ -27,24 +27,8 @@ niclabs.insight.InfoView = (function($) {
         // Create the info view
         element.$.addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--3-col-desktop');
 
+        // Toggle to show and hide
         element.$.hidable();
-        // Show-Hide button
-        // var button = $('<button>')
-        //     .addClass('mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect')
-        //     .css('z-index',2)
-        //     .css('background','white');
-        //
-        // var icon = $('<i>')
-        //     .addClass('material-icons')
-        //     .html('expand_less');
-        //
-        // $(button).append(icon);
-        //
-        // var div = $('<div>')
-        //     .append(button)
-        //     .setID('insight-show-hide-button');
-        //
-        // element.$.append(div);
 
         var resizeOrientation;
 
