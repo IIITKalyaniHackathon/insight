@@ -20,7 +20,7 @@ var niclabs = {};
  * @namespace
  * @requires jQuery 1.11.1+
  */
-niclabs.insight = (function ($) {
+niclabs.insight = (function($) {
     "use strict";
 
 
@@ -28,7 +28,7 @@ niclabs.insight = (function ($) {
     // Reference: http://es5.github.io/#x15.4.4.18
     if (!Array.prototype.forEach) {
 
-        Array.prototype.forEach = function (callback, thisArg) {
+        Array.prototype.forEach = function(callback, thisArg) {
 
             var T, k;
 
@@ -83,31 +83,31 @@ niclabs.insight = (function ($) {
         };
     }
 
-     /**
-      * Bind a jquery element to a template
-      *
-      * It binds the callback 'render' to a function that will render
-      * an associative array into the element by using the data-bind
-      * attributes
-      *
-      * You can use the attributes `data-bind` and `data-if`
-      * indicate binding or dependency from a data element
-      *
-      * @example
-      * ```html
-      * <script id='template' type='text/html'>
-      * Hello <span data-bind="name">friend</span><span data-if="name">!!!</span>,
-      * this is a template <span data-if="app">for </span><i data-bind="app">your app</i>
-      * </script>
-      * <script type='text/html'>
-      * $('#element').template('#template'); // Will show "Hello, this is a template"
-      * $('#content').trigger('render', {name: 'John', app: 'John\'s App'}); // Updates content to "Hello John!!!, this is a template for John's app"
-      * </script>
-      * ```
-      *
-      * @param {string|jQuery} template - id for the template element, string with the template or jQuery selector to use as template
-      * @returns {jQuery} this element
-      */
+    /**
+     * Bind a jquery element to a template
+     *
+     * It binds the callback 'render' to a function that will render
+     * an associative array into the element by using the data-bind
+     * attributes
+     *
+     * You can use the attributes `data-bind` and `data-if`
+     * indicate binding or dependency from a data element
+     *
+     * @example
+     * ```html
+     * <script id='template' type='text/html'>
+     * Hello <span data-bind="name">friend</span><span data-if="name">!!!</span>,
+     * this is a template <span data-if="app">for </span><i data-bind="app">your app</i>
+     * </script>
+     * <script type='text/html'>
+     * $('#element').template('#template'); // Will show "Hello, this is a template"
+     * $('#content').trigger('render', {name: 'John', app: 'John\'s App'}); // Updates content to "Hello John!!!, this is a template for John's app"
+     * </script>
+     * ```
+     *
+     * @param {string|jQuery} template - id for the template element, string with the template or jQuery selector to use as template
+     * @returns {jQuery} this element
+     */
     $.fn.template = function(template) {
         if (typeof template === 'undefined') template = this.html();
         else if (typeof template === 'string' && template.charAt(0) === '#') {
@@ -131,8 +131,7 @@ niclabs.insight = (function ($) {
                         else if (tag === 'input') $(this).val(data[key]);
                         else $(this).text(data[key]);
                     }
-                }
-                else {
+                } else {
                     $(this).detach();
                 }
             });
@@ -149,7 +148,7 @@ niclabs.insight = (function ($) {
      * JQuery plugin to make an element resizable
      * TODO: missing documentation/source
      */
-    $.fn.resizable = function (orientation) {
+    $.fn.resizable = function(orientation) {
         var resizer = $('<div>').addClass('resizer').addClass(orientation + '-resize');
         this.append(resizer).addClass('resizable');
 
@@ -184,7 +183,7 @@ niclabs.insight = (function ($) {
                 resizable.css('top', (e.clientY) + 'px')
                 .css('height', (startHeight + startY - e.clientY) + 'px');
             if (west)
-                resizable.css('width', (startWidth  - e.clientX + startX) + 'px');
+                resizable.css('width', (startWidth - e.clientX + startX) + 'px');
         }
 
         function stopDrag(e) {
@@ -193,7 +192,7 @@ niclabs.insight = (function ($) {
             resizable.trigger('resize');
         }
 
-        this.scroll(function (e) {
+        this.scroll(function(e) {
             resizer.css('top', resizable.scrollTop());
         });
 
@@ -203,7 +202,7 @@ niclabs.insight = (function ($) {
     /**
      * Set the id for the jQuery selector
      */
-    $.fn.setID = function (selector) {
+    $.fn.setID = function(selector) {
         if (selector.charAt(0) === '#')
             selector = selector.slice(1);
         this.attr('id', selector);
@@ -214,7 +213,7 @@ niclabs.insight = (function ($) {
      * JQuery plugin to make an element movable
      * TODO: missing documentation/source
      */
-    $.fn.movable = function () {
+    $.fn.movable = function() {
 
         var panel = this.children('.header');
         if (panel.length === 0) {
@@ -229,11 +228,11 @@ niclabs.insight = (function ($) {
 
         var _this = this;
 
-        up.on('click', function () {
+        up.on('click', function() {
             _this.insertBefore(_this.prev());
         });
 
-        down.on('click', function () {
+        down.on('click', function() {
             _this.insertAfter(_this.next());
         });
 
@@ -244,9 +243,9 @@ niclabs.insight = (function ($) {
      * JQuery plugin to make an element closeable
      * TODO: Missing documentation
      */
-    $.fn.closable = function (handler) {
+    $.fn.closable = function(handler) {
         if (!handler) {
-            handler = function () {
+            handler = function() {
                 return;
             };
         }
@@ -263,8 +262,9 @@ niclabs.insight = (function ($) {
 
         var _this = this;
 
-        close.on('click', function () {
+        close.on('click', function() {
             _this.remove();
+            $('#insight-map-view').width($('#insight-dashboard').innerWidth());
             handler();
         });
 
@@ -275,80 +275,91 @@ niclabs.insight = (function ($) {
      * JQuery plugin to make an element hide-able
      * TODO: Missing documentation
      */
-    $.fn.hidable = function () {
+    $.fn.hidable = function() {
         var handler = false;
         if (!handler) {
-            handler = function () {
-                map = dashboard.map().googlemap();
-                google.maps.event.trigger(map, 'resize');
+            handler = function() {
                 return;
             };
         }
 
-        var panel = this.children('.header').css('height','25px');
-        if (!panel.length) {
-            panel = $('<div>').css('height','25px');
-            this.prepend(panel);
-        }
+        var panel = this;
 
-        var close = $('<div>').addClass('button').attr('data-icon', 'hide');
-        var open = $('<div>').addClass('button').attr('data-icon', 'show');
-        var resizer = $('.resizer');
+        var closeCard = $('<div>')
+            .addClass('mdl-card mdl-shadow--2dp')
+            .css('min-height', 0);
 
-        panel.prepend(close);
+        var closeButton = $('<button>')
+            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
+            .css('z-index', 2)
+            .css('background', 'white');
 
-        var _this = this;
+        var closeIcon = $('<i>')
+            .addClass('material-icons')
+            .addClass('hide-show-icon')
+            .html('expand_less');
 
-        var blocks;
+        var openCard = $('<div>')
+            .addClass('mdl-card mdl-shadow--2dp')
+            .css('min-height', 0);
 
-        var width;
+        var openButton = $('<button>')
+            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
+            .css('z-index', 2)
+            .css('background', 'white');
 
-        var opener = function () {
+        var openIcon = $('<i>')
+            .addClass('material-icons')
+            .addClass('hide-show-icon')
+            .html('expand_more');
 
-            for (var i = 0; i<blocks.length; i++) {
-              $('#insight-info-view').append(blocks[i]);
-            }
+        $(closeButton).append(closeIcon);
+        $(closeCard).append(closeButton);
+        $(openButton).append(openIcon);
+        $(openCard).append(openButton);
 
-            $('#insight-info-view').removeClass('hidden').addClass('info resizable');
-            $('#insight-info-view').append(resizer);
-            $('#insight-info-view').css('width',width);
+        var buttonHolder = $('<div>')
+            .append(closeCard)
+            .setID('insight-show-hide-button');
 
-            panel.prepend(close);
-            open.remove();
+        panel.prepend(buttonHolder);
 
-            handler();
-            //This is needed
-            close.on('click', closer);
-            width = undefined;
+        var opener = function() {
 
-        };
+            $('.block').css('visibility', 'visible');
+            $('#insight-dashboard').parent().css('overflow-y', 'auto');
 
-        var closer = function () {
-            if(!blocks) {
-                blocks = _this.find('.block');
-            }
+            $('#insight-map-view').width($('#insight-dashboard').innerWidth());
+            $('#insight-map-view').height($('#insight-dashboard').parent().height());
 
-            if(!width) {
-                width = $('#insight-info-view').css('width');
-            }
-
-            for (var i = 0; i<blocks.length; i++) {
-                blocks[i].remove();
-            }
-
-            $('#insight-info-view').removeClass('info resizable').removeAttr('style').addClass('hidden');
-
-            panel.prepend(open);
-            close.remove();
+            buttonHolder.prepend(closeCard);
+            openCard.remove();
 
             handler();
             //This is needed
-            open.on('click', opener);
+            closeButton.on('click', closer);
 
         };
 
-        open.on('click', opener);
-        close.on('click', closer);
+        var closer = function() {
+
+            $('.block').css('visibility', 'hidden');
+            $('#insight-dashboard').parent().css('overflow-y', 'hidden');
+
+            $('#insight-map-view').width($('#insight-dashboard').parent().innerWidth());
+            $('#insight-map-view').height($('#insight-dashboard').parent().height());
+
+            buttonHolder.prepend(openCard);
+            closeCard.remove();
+
+            handler();
+            //This is needed
+            openButton.on('click', opener);
+
+        };
+
+        openButton.on('click', opener);
+        closeButton.on('click', closer);
 
         return this;
     };
@@ -356,14 +367,14 @@ niclabs.insight = (function ($) {
     /**
      * Check if indexOf exists in Array.prototype or use jQuery.inArray();
      */
-    Array.prototype.indexOf = 'indexOf' in Array.prototype ? Array.prototype.indexOf : function (item, start) {
+    Array.prototype.indexOf = 'indexOf' in Array.prototype ? Array.prototype.indexOf : function(item, start) {
         return $.inArray(item, this, start);
     };
 
     /**
      * Calculate the size of the associative array
      */
-    Object.size = function (obj) {
+    Object.size = function(obj) {
         var size = 0,
             key;
         for (key in obj) {
@@ -394,13 +405,13 @@ niclabs.insight = (function ($) {
             enumerable: false,
             configurable: true,
             writable: false,
-            value: function (prop, handler) {
+            value: function(prop, handler) {
                 var
                     oldval = this[prop],
-                    getter = function () {
+                    getter = function() {
                         return oldval;
                     },
-                    setter = function (newval) {
+                    setter = function(newval) {
                         if (oldval !== newval) {
                             handler.call(this, prop, oldval, newval);
                             oldval = newval;
@@ -426,7 +437,7 @@ niclabs.insight = (function ($) {
             enumerable: false,
             configurable: true,
             writable: false,
-            value: function (prop) {
+            value: function(prop) {
                 var val = this[prop];
                 delete this[prop]; // remove accessors
                 this[prop] = val;
@@ -443,7 +454,7 @@ niclabs.insight = (function ($) {
             enumerable: false,
             configurable: true,
             writable: false,
-            value: function (handler) {
+            value: function(handler) {
                 for (var prop in this) {
                     // Watch all the object properties
                     if (this.hasOwnProperty(prop)) {
@@ -459,7 +470,7 @@ niclabs.insight = (function ($) {
             enumerable: false,
             configurable: true,
             writable: false,
-            value: function () {
+            value: function() {
                 for (var prop in this) {
                     // Watch all the object properties
                     if (this.hasOwnProperty(prop)) {
@@ -514,7 +525,7 @@ niclabs.insight = (function ($) {
          * @param {niclabs.insight~handler=} handler - callback to create the element
          * @returns {niclabs.insight~handler} handler for the registered name
          */
-        handler: function (name, kind, handler) {
+        handler: function(name, kind, handler) {
             if (name in handlers) {
                 kind = typeof kind === 'undefined' ? handlers[name].kind : kind;
                 handler = typeof handler === 'undefined' ? handlers[name].handler : handler;
@@ -551,7 +562,7 @@ niclabs.insight = (function ($) {
          * @param {Object=} options - list of configuration options for the dashboard see {@link niclabs.insight.Dashboard}
          * @returns {niclabs.insight.Dashboard} dashboard object
          */
-        dashboard: function (options) {
+        dashboard: function(options) {
             if (typeof options === 'undefined') return dashboard;
 
             dashboard = niclabs.insight.Dashboard(options);
@@ -707,6 +718,8 @@ niclabs.insight.Dashboard = (function($) {
 
         if (!('anchor' in options)) throw new Error('Anchor id is required for creating a dashboard');
         var anchor = options.anchor;
+
+        $(anchor).css('overflow-y', 'auto');
 
         options.layout = options.layout || 'none';
         if (layoutOptions.indexOf(options.layout) < 0) throw new Error('Layout must be one of \'' + layoutOptions.join('\',\'') + '\'');
@@ -1279,23 +1292,62 @@ niclabs.insight.InfoView = (function($) {
         var infoViewId = options.id || "insight-info-view";
 
 
-        var element = niclabs.insight.View({id: infoViewId});
+        var element = niclabs.insight.View({
+            id: infoViewId
+        });
 
         // Create the info view
         element.$.addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--3-col-desktop');
 
-        var resizeOrientation;
+        // /*jshint multistr: true */
+        // var defaultView = '\
+        // <div id="insight-default-view" class="mdl-card mdl-shadow--2dp block"> \
+        //     <div class="mdl-card__title mdl-card--expand mdl-color--cyan-600"> \
+        //         <h2 class="mdl-card__title-text insight-info-view__title">Insight</h2> \
+        //     </div> \
+        //     <div class="mdl-card__supporting-text mdl-color--cyan-600 insight-info-view__subtitle"> \
+        //         <p>Information about myself. More information here and here.</p> \
+        //         <i class="material-icons">search</i> \
+        //         <div id="searchDiv" class="mdl-textfield mdl-js-textfield insight-geocode-textfield"> \
+        //             <input class="mdl-textfield__input insight-geocode-textfield__input" type="text" id="search" /> \
+        //             <label class="mdl-textfield__label insight-geocode-textfield__label" for="search">Enter your location</label> \
+        //         </div> \
+        //     </div> \
+        //     <div id="info" class="mdl-grid mdl-grid--no-spacing"> \
+        //         <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"> \
+        //             <div class="mdl-tabs__tab-bar"> \
+        //                 <a href="#information-panel" class="mdl-tabs__tab is-active">Information</a> \
+        //                 <a href="#filter-panel" class="mdl-tabs__tab">Layers</a> \
+        //             </div> \
+        //             <div class="mdl-tabs__panel is-active" id="insight-information-panel"> \
+        //                 <div class="mdl-card__supporting-text mdl-color-text--grey-600"> \
+        //                     <h3>Description</h3> \
+        //                     <p>Descriptive description</p> \
+        //                 </div> \
+        //             </div> \
+        //             <div class="mdl-tabs__panel" id="insight-filter-panel"> \
+        //                 <h3>Select layer</h3> \
+        //             </div> \
+        //         </div> \
+        //     </div> \
+        // </div>';
+        //
+        // element.$.html(defaultView);
 
-        if (dashboard.config('layout') !== 'none') {
-            if (dashboard.config('layout') === 'left') {
-                // TODO: move filter bar
-                resizeOrientation = 'e';
-            }
-            else if (dashboard.config('layout') === 'right') {
-                resizeOrientation = 'w';
-            }
-            //element.$.resizable(resizeOrientation);
-        }
+        // Toggle to show and hide
+        element.$.hidable();
+
+        // var resizeOrientation;
+        //
+        // if (dashboard.config('layout') !== 'none') {
+        //     if (dashboard.config('layout') === 'left') {
+        //         // TODO: move filter bar
+        //         resizeOrientation = 'e';
+        //     } else if (dashboard.config('layout') === 'right') {
+        //         resizeOrientation = 'w';
+        //     }
+        //     //element.$.resizable(resizeOrientation);
+        // }
 
         var blocks = niclabs.insight.ElementList(dashboard);
 
@@ -1424,51 +1476,51 @@ niclabs.insight.Interpolation = (function() {
 })();
 
 niclabs.insight.MapView = (function($) {
-	"use strict";
+    "use strict";
 
-	/**
-	 * Constructs a new map
-	 *
-	 * @class niclabs.insight.MapView
-	 * @param {Object} options - configuration options for the map
-	 * @param {integer} [options.zoom=12] - starting zoom level of the map
-	 * @param {float} [options.lat=0] - latitude for the map center
-	 * @param {float} [options.lng=0] - lng for the map center
-	 */
-	return function(options) {
-		var mapId = '#insight-map-view';
+    /**
+     * Constructs a new map
+     *
+     * @class niclabs.insight.MapView
+     * @param {Object} options - configuration options for the map
+     * @param {integer} [options.zoom=12] - starting zoom level of the map
+     * @param {float} [options.lat=0] - latitude for the map center
+     * @param {float} [options.lng=0] - lng for the map center
+     */
+    return function(options) {
+        var mapId = '#insight-map-view';
 
-		var center = {
-			lat: options.lat || 0,
-			lng: options.lng || 0
-		};
+        var center = {
+            lat: options.lat || 0,
+            lng: options.lng || 0
+        };
 
-		var zoom = options.zoom || 12;
+        var zoom = options.zoom || 12;
 
-		// jQuery container for the map
+        // jQuery container for the map
         var container = $('<div>')
-			.setID(mapId)
-			.addClass('map');
+            .setID(mapId)
+            .addClass('map');
 
 
-		/**
-		* Event triggered to notify the dashboard that an element of the map has been pressed
-		*
-		* @event niclabs.insight.MapView#map_element_selected
-		* @type {object}
-		* @property {string} layer - id for the layer to which the data belongs to
-		* @property {float} lat - latitude for the marker
-		* @property {float} lng - latitude for the marker
-		*/
+        /**
+         * Event triggered to notify the dashboard that an element of the map has been pressed
+         *
+         * @event niclabs.insight.MapView#map_element_selected
+         * @type {object}
+         * @property {string} layer - id for the layer to which the data belongs to
+         * @property {float} lat - latitude for the marker
+         * @property {float} lng - latitude for the marker
+         */
 
-		var self = {
-			/**
+        var self = {
+            /**
              * HTML DOM element for the map view
              *
              * @memberof niclabs.insight.MapView
              * @member {Element}
              */
-            get element () {
+            get element() {
                 var c = $(mapId);
                 container = c.length === 0 ? container : c;
                 return container[0];
@@ -1480,93 +1532,95 @@ niclabs.insight.MapView = (function($) {
              * @memberof niclabs.insight.MapView
              * @member {jQuery}
              */
-            get $ () {
+            get $() {
                 var c = $(mapId);
                 container = c.length === 0 ? container : c;
                 return container;
             },
 
-			/**
-			 * Set/get the map center.
-			 * Overriding implementations should modify this method so the
-			 * map reflects the new center.
-			 *
-			 * @memberof niclabs.insight.MapView
-			 * @param {float=} lat - latitude for the map center
-			 * @param {float=} lng - longitude for the map center
-			 * @return {niclabs.insight.map.LatLng} coordinates for the map center
-			 */
-			center: function(lat, lng) {
-				center.lat = lat = typeof lat === 'undefined' ? center.lat : lat;
-				center.lng = lng = typeof lng === 'undefined' ? center.lng : lng;
+            /**
+             * Set/get the map center.
+             * Overriding implementations should modify this method so the
+             * map reflects the new center.
+             *
+             * @memberof niclabs.insight.MapView
+             * @param {float=} lat - latitude for the map center
+             * @param {float=} lng - longitude for the map center
+             * @return {niclabs.insight.map.LatLng} coordinates for the map center
+             */
+            center: function(lat, lng) {
+                center.lat = lat = typeof lat === 'undefined' ? center.lat : lat;
+                center.lng = lng = typeof lng === 'undefined' ? center.lng : lng;
 
-				return center;
-			},
+                return center;
+            },
 
-			/**
-			 * Latitude for the map center
-			 *
-			 * @memberof niclabs.insight.MapView
-			 * @member {float}
-			 */
-			get lat () {
-				return center.lat;
-			},
+            /**
+             * Latitude for the map center
+             *
+             * @memberof niclabs.insight.MapView
+             * @member {float}
+             */
+            get lat() {
+                return center.lat;
+            },
 
-			/**
-			 * Longitude for the map center
-			 *
-			 * @memberof niclabs.insight.MapView
-			 * @member {float}
-			 */
-			get lng () {
-				return center.lng;
-			},
+            /**
+             * Longitude for the map center
+             *
+             * @memberof niclabs.insight.MapView
+             * @member {float}
+             */
+            get lng() {
+                return center.lng;
+            },
 
-			/**
-			 * Width for the map container
-			 *
-			 * @memberof niclabs.insight.MapView
-			 * @member {float}
-			 */
-			get width () {
-				return self.$.width();
-			},
+            /**
+             * Width for the map container
+             *
+             * @memberof niclabs.insight.MapView
+             * @member {float}
+             */
+            get width() {
+                return self.$.width();
+            },
 
-			/**
-			 * Height for the map container
-			 *
-			 * @memberof niclabs.insight.MapView
-			 * @member {float}
-			 */
-			get height () {
-				return self.$.height();
-			},
+            /**
+             * Height for the map container
+             *
+             * @memberof niclabs.insight.MapView
+             * @member {float}
+             */
+            get height() {
+                return self.$.height();
+            },
 
-			/**
-			 * Set/get the map zoom level.
-			 * Overriding implementations should modify this method so the
-			 * map reflects the new zoom.
-			 *
-			 * @memberof niclabs.insight.MapView
-			 * @param {int=} zoom - zoom
-			 * @returns {int} zoom level of the map
-			 */
-			zoom: function(level) {
-				zoom = level = typeof level === 'undefined' ? zoom : level;
+            /**
+             * Set/get the map zoom level.
+             * Overriding implementations should modify this method so the
+             * map reflects the new zoom.
+             *
+             * @memberof niclabs.insight.MapView
+             * @param {int=} zoom - zoom
+             * @returns {int} zoom level of the map
+             */
+            zoom: function(level) {
+                zoom = level = typeof level === 'undefined' ? zoom : level;
 
-				return zoom;
-			},
-		};
+                return zoom;
+            },
+        };
 
-		//Resize the map when the window's size changes
-		$( window ).resize(function() {
-				$('#insight-map-view').width($(window).width());
-				$('#insight-map-view').height($(window).height());
-		});
+        //Resize the map when the window's size changes
+        $(window).resize(function() {
+            $('#insight-map-view').width($('#insight-dashboard').innerWidth());
+            $('#insight-map-view').height($(window).height());
+        });
 
-		return self;
-	};
+        //$(self).hasScrollbar()
+
+        return self;
+    };
 })(jQuery);
 
 niclabs.insight.View = (function($) {
@@ -2074,6 +2128,7 @@ niclabs.insight.info.Block = (function($) {
         var container = $('<div>').setID(htmlId)
             .addClass('mdl-card')
             .addClass('mdl-shadow--2dp')
+            .addClass('block')
             .append(header);
 
         if(dashboard.layout() == 'right') {
@@ -2571,262 +2626,6 @@ niclabs.insight.info.SummaryBlock = (function($) {
     niclabs.insight.handler('summary-block', 'info-block', SummaryBlock);
 
     return SummaryBlock;
-})(jQuery);
-
-/**
- * Map compatibility for the insight dashboard
- *
- * @namespace
- */
-niclabs.insight.map = (function () {
-    /** Converts numeric degrees to radians */
-    if (typeof Number.prototype.toRad === "undefined") {
-        Number.prototype.toRad = function() {
-            return this * Math.PI / 180;
-        };
-    }
-
-    /** Converts numeric radians to degrees */
-    if (typeof Number.prototype.toDeg === "undefined") {
-        Number.prototype.toDeg = function() {
-            return this * 180 / Math.PI;
-        };
-    }
-
-    /**
-     * Object to represent geographic coordinates
-     *
-     * @typedef {Object} niclabs.insight.map.LatLng
-     * @property {float} lat - latitude
-     * @property {float} lng - longitude
-     */
-
-     /**
-      * Cartesian coordinates
-      *
-      * @typedef {Object} niclabs.insight.map.Point
-      * @property {float} x - horizontal coordinate
-      * @property {float} y - vertical coordinate
-      */
-
-
-    /**
-     * Helper method to assign/get the map view to/from the dashboard
-     *
-     * @example
-     * ```javascript
-     * // Create the map
-     * var map = niclabs.insight.map({
-     *      'handler': 'google-map', // Map constructor
-     *      'lat': 48.8583,
-     *      'lng': 2.2944,
-     *      'zoom': 15
-     * });
-     * ```
-     *
-     * @memberof niclabs.insight
-     * @variation 2
-     * @param {Object|niclabs.insight.MapView} [obj] - configuration for the map view or map view object
-     * @param {String} obj.handler - name of the handler to construct the map view
-     * @returns {niclabs.insight.MapView} the dashboard map view
-     */
-    var map = function (obj) {
-        var dashboard = niclabs.insight.dashboard();
-        if (typeof dashboard === 'undefined') throw new Error("Dashboard has not been initialized");
-        return dashboard.map(obj);
-    };
-
-    return map;
-})();
-
-var style = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#e9e9e9"}]},{"featureType":"landscape","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"hue":"#0bff00"},{"lightness":"74"}]},{"featureType":"poi.park","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#77c3c6"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.arterial","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"road.local","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#004787"},{"visibility":"on"},{"lightness":"84"}]},{"featureType":"water","elementType":"labels","stylers":[{"visibility":"off"}]}];
-
-/**
- * Defines a mercator projection on the map
- *
- * Source: {@link https://developers.google.com/maps/documentation/javascript/examples/map-coordinates}
- *
- * @mixin
- */
-niclabs.insight.map.GoogleMercator = (function() {
-    // Source
-    var TILE_SIZE = 256;
-
-    var origin = {x: TILE_SIZE / 2, y: TILE_SIZE / 2};
-    var pixelsPerLonDegree = TILE_SIZE / 360;
-    var pixelsPerLonRadian = TILE_SIZE / (2 * Math.PI);
-
-    function bound(value, opt_min, opt_max) {
-        if (opt_min !== null) value = Math.max(value, opt_min);
-        if (opt_max !== null) value = Math.min(value, opt_max);
-        return value;
-    }
-
-    return {
-        /**
-         * Convert cartesian coordinates to geographic coordinates using a
-         * spherical mercator projection
-         *
-         * @memberof niclabs.insight.map.Mercator
-         * @param {niclabs.insight.map.Point} - cartesian coordinates of the point
-         * @returns {niclabs.insight.map.LatLng} - geographic coordinates of the point
-         */
-        geographic: function(point) {
-            var lng = (point.x - origin.x) / pixelsPerLonDegree;
-            var latRadians = (point.y - origin.y) / -pixelsPerLonRadian;
-            var lat = (2 * Math.atan(Math.exp(latRadians)) - Math.PI / 2).toDeg();
-
-            return {'lat': lat, 'lng': lng};
-        },
-
-        /**
-         * Convert geographic coordinates to cartesian coordinates using a
-         * spherical mercator projection (Google Maps style)
-         *
-         * For more information see {@link https://alastaira.wordpress.com/2011/01/23/the-google-maps-bing-maps-spherical-mercator-projection/}
-         *
-         * @memberof niclabs.insight.map.Mercator
-         * @param {niclabs.insight.map.latLng} coord - geographic coordinates of the point
-         * @returns {niclabs.insight.map.Point} - cartesian coordinates of the point
-         */
-        cartesian: function(coord) {
-            // If it is a Google Maps LatLng
-            if (typeof coord.lat === 'function' && typeof coord.lng === 'function')
-                coord = {'lat': coord.lat(), 'lng': coord.lng()};
-
-            var x = origin.x + coord.lng * pixelsPerLonDegree;
-
-            // Truncating to 0.9999 effectively limits latitude to 89.189. This is
-            // about a third of a tile past the edge of the world tile.
-            var siny = bound(Math.sin(coord.lat.toRad()), -0.9999, 0.9999);
-            var y = origin.y + 0.5 * Math.log((1 + siny) / (1 - siny)) * -pixelsPerLonRadian;
-
-            return {'x': x, 'y': y};
-        },
-
-        /**
-         * Return equivalent distance in the coordinate space
-         * given the pixel distance and the zoom level of the map
-         *
-         * @memberof niclabs.insight.map.Mercator
-         * @param {float} pixels - distance in pixels
-         * @param {int} zoom - zoom level of the map
-         * @returns {float} distance in world coordinate space
-         */
-        distance: function(pixels, zoom) {
-            zoom = typeof zoom !== 'undefined' ? zoom : 12;
-            return pixels / (1 << zoom);
-        }
-    };
-})();
-
-niclabs.insight.map.GoogleMap = (function($) {
-    "use strict";
-
-    /**
-     * Constructor of GoogleMap
-     *
-     * @class niclabs.insight.map.GoogleMap
-     * @extends {niclabs.insight.MapView}
-     * @param {Object} options - configuration options for the map
-     * @param {integer} [options.zoom=12] - starting zoom level of the map
-     * @param {float} [options.lat=0] - latitude for the map center
-     * @param {float} [options.lng=0] - lng for the map center
-     */
-    var GoogleMap = function(dashboard, options) {
-
-        // Initialize parent
-        var map = niclabs.insight.MapView(options);
-
-        var googlemap = new google.maps.Map(map.element, {
-            zoom: map.zoom(),
-            center: new google.maps.LatLng(map.lat, map.lng),
-            disableDefaultUI: true
-        });
-
-        // Store the parent function
-        var zoom = map.zoom;
-
-        // Listen for zoom changes
-        google.maps.event.addListener(googlemap, 'zoom_changed',
-            function() {
-                // Update the map zoom
-                zoom(googlemap.getZoom());
-            });
-
-        /**
-         * Set/get the zoom level for the map
-         *
-         * Overrides the functionality of niclabs.insight.MapView.zoom() by modifying
-         * the underlying google map zoom level as well
-         *
-         * @override
-         * @memberof niclabs.insight.map.GoogleMap
-         * @param {int=} zoom - zoom
-         * @returns {int} zoom level of the map
-         */
-        map.zoom = function(level) {
-            // Call parent zoom
-            level = zoom(level);
-
-            // Update the google map
-            googlemap.setZoom(level);
-
-            return level;
-        };
-
-        // Store the parent function
-        var center = map.center;
-
-        // Listen for center changes
-        google.maps.event.addListener(googlemap, 'center_changed',
-            function() {
-                var c = googlemap.getCenter();
-
-                // Update the center for the local object
-                center(c.lat(), c.lng());
-            });
-
-        /**
-         * Set/get the map center.
-         *
-         * Overrides the functionality of {@link niclabs.insight.MapView.center} by modifying
-         * the underlying google map center as well
-         *
-         * @override
-         * @memberof niclabs.insight.map.GoogleMap
-         * @param {float=} lat - latitude for the map center
-         * @param {float=} lng - longitude for the map center
-         * @return {niclabs.insight.map.LatLng} coordinates for the map center
-         */
-        map.center = function(lat, lng) {
-            var c = center(lat, lng);
-
-            // Update the map
-            googlemap.setCenter({
-                'lat': c.lat,
-                'lng': c.lng
-            });
-
-            return c;
-        };
-
-        /**
-         * Get the underlying google map object for further modification
-         *
-         * @returns (google.maps.Map) underlying map object
-         */
-        map.googlemap = function() {
-            return googlemap;
-        };
-
-        return map;
-    };
-
-    // Register the handler
-    niclabs.insight.handler('google-map', 'map-view', GoogleMap);
-
-    return GoogleMap;
 })(jQuery);
 
 /**
@@ -3583,6 +3382,262 @@ niclabs.insight.layer.MarkerLayer = (function($) {
     niclabs.insight.handler('marker-layer', 'layer', MarkerLayer);
 
     return MarkerLayer;
+})(jQuery);
+
+/**
+ * Map compatibility for the insight dashboard
+ *
+ * @namespace
+ */
+niclabs.insight.map = (function () {
+    /** Converts numeric degrees to radians */
+    if (typeof Number.prototype.toRad === "undefined") {
+        Number.prototype.toRad = function() {
+            return this * Math.PI / 180;
+        };
+    }
+
+    /** Converts numeric radians to degrees */
+    if (typeof Number.prototype.toDeg === "undefined") {
+        Number.prototype.toDeg = function() {
+            return this * 180 / Math.PI;
+        };
+    }
+
+    /**
+     * Object to represent geographic coordinates
+     *
+     * @typedef {Object} niclabs.insight.map.LatLng
+     * @property {float} lat - latitude
+     * @property {float} lng - longitude
+     */
+
+     /**
+      * Cartesian coordinates
+      *
+      * @typedef {Object} niclabs.insight.map.Point
+      * @property {float} x - horizontal coordinate
+      * @property {float} y - vertical coordinate
+      */
+
+
+    /**
+     * Helper method to assign/get the map view to/from the dashboard
+     *
+     * @example
+     * ```javascript
+     * // Create the map
+     * var map = niclabs.insight.map({
+     *      'handler': 'google-map', // Map constructor
+     *      'lat': 48.8583,
+     *      'lng': 2.2944,
+     *      'zoom': 15
+     * });
+     * ```
+     *
+     * @memberof niclabs.insight
+     * @variation 2
+     * @param {Object|niclabs.insight.MapView} [obj] - configuration for the map view or map view object
+     * @param {String} obj.handler - name of the handler to construct the map view
+     * @returns {niclabs.insight.MapView} the dashboard map view
+     */
+    var map = function (obj) {
+        var dashboard = niclabs.insight.dashboard();
+        if (typeof dashboard === 'undefined') throw new Error("Dashboard has not been initialized");
+        return dashboard.map(obj);
+    };
+
+    return map;
+})();
+
+var style = [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#e9e9e9"}]},{"featureType":"landscape","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"hue":"#0bff00"},{"lightness":"74"}]},{"featureType":"poi.park","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#77c3c6"}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"visibility":"on"}]},{"featureType":"road.arterial","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.arterial","elementType":"geometry.stroke","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"road.local","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.local","elementType":"geometry.fill","stylers":[{"color":"#ffffff"}]},{"featureType":"road.local","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#004787"},{"visibility":"on"},{"lightness":"84"}]},{"featureType":"water","elementType":"labels","stylers":[{"visibility":"off"}]}];
+
+/**
+ * Defines a mercator projection on the map
+ *
+ * Source: {@link https://developers.google.com/maps/documentation/javascript/examples/map-coordinates}
+ *
+ * @mixin
+ */
+niclabs.insight.map.GoogleMercator = (function() {
+    // Source
+    var TILE_SIZE = 256;
+
+    var origin = {x: TILE_SIZE / 2, y: TILE_SIZE / 2};
+    var pixelsPerLonDegree = TILE_SIZE / 360;
+    var pixelsPerLonRadian = TILE_SIZE / (2 * Math.PI);
+
+    function bound(value, opt_min, opt_max) {
+        if (opt_min !== null) value = Math.max(value, opt_min);
+        if (opt_max !== null) value = Math.min(value, opt_max);
+        return value;
+    }
+
+    return {
+        /**
+         * Convert cartesian coordinates to geographic coordinates using a
+         * spherical mercator projection
+         *
+         * @memberof niclabs.insight.map.Mercator
+         * @param {niclabs.insight.map.Point} - cartesian coordinates of the point
+         * @returns {niclabs.insight.map.LatLng} - geographic coordinates of the point
+         */
+        geographic: function(point) {
+            var lng = (point.x - origin.x) / pixelsPerLonDegree;
+            var latRadians = (point.y - origin.y) / -pixelsPerLonRadian;
+            var lat = (2 * Math.atan(Math.exp(latRadians)) - Math.PI / 2).toDeg();
+
+            return {'lat': lat, 'lng': lng};
+        },
+
+        /**
+         * Convert geographic coordinates to cartesian coordinates using a
+         * spherical mercator projection (Google Maps style)
+         *
+         * For more information see {@link https://alastaira.wordpress.com/2011/01/23/the-google-maps-bing-maps-spherical-mercator-projection/}
+         *
+         * @memberof niclabs.insight.map.Mercator
+         * @param {niclabs.insight.map.latLng} coord - geographic coordinates of the point
+         * @returns {niclabs.insight.map.Point} - cartesian coordinates of the point
+         */
+        cartesian: function(coord) {
+            // If it is a Google Maps LatLng
+            if (typeof coord.lat === 'function' && typeof coord.lng === 'function')
+                coord = {'lat': coord.lat(), 'lng': coord.lng()};
+
+            var x = origin.x + coord.lng * pixelsPerLonDegree;
+
+            // Truncating to 0.9999 effectively limits latitude to 89.189. This is
+            // about a third of a tile past the edge of the world tile.
+            var siny = bound(Math.sin(coord.lat.toRad()), -0.9999, 0.9999);
+            var y = origin.y + 0.5 * Math.log((1 + siny) / (1 - siny)) * -pixelsPerLonRadian;
+
+            return {'x': x, 'y': y};
+        },
+
+        /**
+         * Return equivalent distance in the coordinate space
+         * given the pixel distance and the zoom level of the map
+         *
+         * @memberof niclabs.insight.map.Mercator
+         * @param {float} pixels - distance in pixels
+         * @param {int} zoom - zoom level of the map
+         * @returns {float} distance in world coordinate space
+         */
+        distance: function(pixels, zoom) {
+            zoom = typeof zoom !== 'undefined' ? zoom : 12;
+            return pixels / (1 << zoom);
+        }
+    };
+})();
+
+niclabs.insight.map.GoogleMap = (function($) {
+    "use strict";
+
+    /**
+     * Constructor of GoogleMap
+     *
+     * @class niclabs.insight.map.GoogleMap
+     * @extends {niclabs.insight.MapView}
+     * @param {Object} options - configuration options for the map
+     * @param {integer} [options.zoom=12] - starting zoom level of the map
+     * @param {float} [options.lat=0] - latitude for the map center
+     * @param {float} [options.lng=0] - lng for the map center
+     */
+    var GoogleMap = function(dashboard, options) {
+
+        // Initialize parent
+        var map = niclabs.insight.MapView(options);
+
+        var googlemap = new google.maps.Map(map.element, {
+            zoom: map.zoom(),
+            center: new google.maps.LatLng(map.lat, map.lng),
+            disableDefaultUI: true
+        });
+
+        // Store the parent function
+        var zoom = map.zoom;
+
+        // Listen for zoom changes
+        google.maps.event.addListener(googlemap, 'zoom_changed',
+            function() {
+                // Update the map zoom
+                zoom(googlemap.getZoom());
+            });
+
+        /**
+         * Set/get the zoom level for the map
+         *
+         * Overrides the functionality of niclabs.insight.MapView.zoom() by modifying
+         * the underlying google map zoom level as well
+         *
+         * @override
+         * @memberof niclabs.insight.map.GoogleMap
+         * @param {int=} zoom - zoom
+         * @returns {int} zoom level of the map
+         */
+        map.zoom = function(level) {
+            // Call parent zoom
+            level = zoom(level);
+
+            // Update the google map
+            googlemap.setZoom(level);
+
+            return level;
+        };
+
+        // Store the parent function
+        var center = map.center;
+
+        // Listen for center changes
+        google.maps.event.addListener(googlemap, 'center_changed',
+            function() {
+                var c = googlemap.getCenter();
+
+                // Update the center for the local object
+                center(c.lat(), c.lng());
+            });
+
+        /**
+         * Set/get the map center.
+         *
+         * Overrides the functionality of {@link niclabs.insight.MapView.center} by modifying
+         * the underlying google map center as well
+         *
+         * @override
+         * @memberof niclabs.insight.map.GoogleMap
+         * @param {float=} lat - latitude for the map center
+         * @param {float=} lng - longitude for the map center
+         * @return {niclabs.insight.map.LatLng} coordinates for the map center
+         */
+        map.center = function(lat, lng) {
+            var c = center(lat, lng);
+
+            // Update the map
+            googlemap.setCenter({
+                'lat': c.lat,
+                'lng': c.lng
+            });
+
+            return c;
+        };
+
+        /**
+         * Get the underlying google map object for further modification
+         *
+         * @returns (google.maps.Map) underlying map object
+         */
+        map.googlemap = function() {
+            return googlemap;
+        };
+
+        return map;
+    };
+
+    // Register the handler
+    niclabs.insight.handler('google-map', 'map-view', GoogleMap);
+
+    return GoogleMap;
 })(jQuery);
 
 /**

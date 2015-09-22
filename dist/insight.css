@@ -89,6 +89,7 @@
 
 /* Utils */
 /* Material Design Lite components */
+/* TODO: change name to block */
 .mdl-card {
   margin-bottom: 8px; }
   .mdl-card h6 {
@@ -104,6 +105,39 @@
     border-width: 2px 0 1px 0;
     margin: 2px; }
 
+.hide-show-icon {
+  margin-top: 6px; }
+
+.insight-info-view__title {
+  color: white; }
+
+.insight-info-view__subtitle {
+  color: white;
+  width: 100%;
+  padding-top: 0px;
+  padding-bottom: 0px; }
+
+.insight-info-view__subtitle p {
+  font-weight: 400;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  opacity: 0.54;
+  margin-bottom: 0; }
+
+.insight-geocode-textfield {
+  max-width: 90%;
+  bottom: 7px; }
+
+.insight-geocode-textfield__input {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.72); }
+
+.insight-geocode-textfield__label {
+  color: rgba(255, 255, 255, 0.72); }
+
+.insight-geocode-textfield__label:after {
+  background-color: rgba(255, 255, 255, 0.26); }
+
 .map {
   position: absolute;
   left: 0;
@@ -111,6 +145,3 @@
 
 .right {
   right: 25px; }
-
-#dashboard {
-  overflow-y: auto; }
