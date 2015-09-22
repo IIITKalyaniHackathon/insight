@@ -27,20 +27,55 @@ niclabs.insight.InfoView = (function($) {
         // Create the info view
         element.$.addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--3-col-desktop');
 
+        // /*jshint multistr: true */
+        // var defaultView = '\
+        // <div id="insight-default-view" class="mdl-card mdl-shadow--2dp block"> \
+        //     <div class="mdl-card__title mdl-card--expand mdl-color--cyan-600"> \
+        //         <h2 class="mdl-card__title-text insight-info-view__title">Insight</h2> \
+        //     </div> \
+        //     <div class="mdl-card__supporting-text mdl-color--cyan-600 insight-info-view__subtitle"> \
+        //         <p>Information about myself. More information here and here.</p> \
+        //         <i class="material-icons">search</i> \
+        //         <div id="searchDiv" class="mdl-textfield mdl-js-textfield insight-geocode-textfield"> \
+        //             <input class="mdl-textfield__input insight-geocode-textfield__input" type="text" id="search" /> \
+        //             <label class="mdl-textfield__label insight-geocode-textfield__label" for="search">Enter your location</label> \
+        //         </div> \
+        //     </div> \
+        //     <div id="info" class="mdl-grid mdl-grid--no-spacing"> \
+        //         <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"> \
+        //             <div class="mdl-tabs__tab-bar"> \
+        //                 <a href="#information-panel" class="mdl-tabs__tab is-active">Information</a> \
+        //                 <a href="#filter-panel" class="mdl-tabs__tab">Layers</a> \
+        //             </div> \
+        //             <div class="mdl-tabs__panel is-active" id="insight-information-panel"> \
+        //                 <div class="mdl-card__supporting-text mdl-color-text--grey-600"> \
+        //                     <h3>Description</h3> \
+        //                     <p>Descriptive description</p> \
+        //                 </div> \
+        //             </div> \
+        //             <div class="mdl-tabs__panel" id="insight-filter-panel"> \
+        //                 <h3>Select layer</h3> \
+        //             </div> \
+        //         </div> \
+        //     </div> \
+        // </div>';
+        //
+        // element.$.html(defaultView);
+
         // Toggle to show and hide
         element.$.hidable();
 
-        var resizeOrientation;
-
-        if (dashboard.config('layout') !== 'none') {
-            if (dashboard.config('layout') === 'left') {
-                // TODO: move filter bar
-                resizeOrientation = 'e';
-            } else if (dashboard.config('layout') === 'right') {
-                resizeOrientation = 'w';
-            }
-            //element.$.resizable(resizeOrientation);
-        }
+        // var resizeOrientation;
+        //
+        // if (dashboard.config('layout') !== 'none') {
+        //     if (dashboard.config('layout') === 'left') {
+        //         // TODO: move filter bar
+        //         resizeOrientation = 'e';
+        //     } else if (dashboard.config('layout') === 'right') {
+        //         resizeOrientation = 'w';
+        //     }
+        //     //element.$.resizable(resizeOrientation);
+        // }
 
         var blocks = niclabs.insight.ElementList(dashboard);
 
