@@ -251,6 +251,7 @@ niclabs.insight = (function($) {
 
         close.on('click', function() {
             _this.remove();
+            $('#insight-map-view').width($('#insight-dashboard').innerWidth());
             handler();
         });
 
@@ -271,8 +272,12 @@ niclabs.insight = (function($) {
 
         var panel = this;
 
+        var closeCard = $('<div>')
+            .addClass('mdl-card mdl-shadow--2dp')
+            .css('min-height', 0);
+
         var closeButton = $('<button>')
-            .addClass('mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect')
+            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
             .css('z-index', 2)
             .css('background', 'white');
 
@@ -280,8 +285,12 @@ niclabs.insight = (function($) {
             .addClass('material-icons')
             .html('expand_less');
 
+        var openCard = $('<div>')
+            .addClass('mdl-card mdl-shadow--2dp')
+            .css('min-height', 0);
+
         var openButton = $('<button>')
-            .addClass('mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-js-ripple-effect')
+            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
             .css('z-index', 2)
             .css('background', 'white');
 
@@ -290,20 +299,26 @@ niclabs.insight = (function($) {
             .html('expand_more');
 
         $(closeButton).append(closeIcon);
+        $(closeCard).append(closeButton);
         $(openButton).append(openIcon);
+        $(openCard).append(openButton);
 
         var buttonHolder = $('<div>')
-            .append(closeButton)
+            .append(closeCard)
             .setID('insight-show-hide-button');
 
         panel.prepend(buttonHolder);
 
         var opener = function() {
 
-            $('.block').css('visibility','visible');
+            $('.block').css('visibility', 'visible');
+            $('#insight-dashboard').parent().css('overflow-y', 'auto');
 
-            buttonHolder.prepend(closeButton);
-            openButton.remove();
+            $('#insight-map-view').width($('#insight-dashboard').innerWidth());
+            $('#insight-map-view').height($('#insight-dashboard').parent().height());
+
+            buttonHolder.prepend(closeCard);
+            openCard.remove();
 
             handler();
             //This is needed
@@ -313,10 +328,14 @@ niclabs.insight = (function($) {
 
         var closer = function() {
 
-            $('.block').css('visibility','hidden');
+            $('.block').css('visibility', 'hidden');
+            $('#insight-dashboard').parent().css('overflow-y', 'hidden');
 
-            buttonHolder.prepend(openButton);
-            closeButton.remove();
+            $('#insight-map-view').width($('#insight-dashboard').parent().innerWidth());
+            $('#insight-map-view').height($('#insight-dashboard').parent().height());
+
+            buttonHolder.prepend(openCard);
+            closeCard.remove();
 
             handler();
             //This is needed
