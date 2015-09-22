@@ -25,6 +25,8 @@ niclabs.insight.Dashboard = (function($) {
         if (!('anchor' in options)) throw new Error('Anchor id is required for creating a dashboard');
         var anchor = options.anchor;
 
+        $(anchor).css('overflow-y', 'auto');
+
         options.layout = options.layout || 'none';
         if (layoutOptions.indexOf(options.layout) < 0) throw new Error('Layout must be one of \'' + layoutOptions.join('\',\'') + '\'');
 
