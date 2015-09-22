@@ -203,6 +203,7 @@ We have tried to keep the dependencies to a minimum, and coded the dashboard wit
 The tool currently depends on
 * [jQuery](https://jquery.com/) - for DOM manipulation
 * [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript/)
+* [Material Design Lite](http://www.getmdl.io/) - for web construction and layout
 * [chartist.js](https://gionkunz.github.io/chartist-js/) - Optional for displaying charts
 
 
