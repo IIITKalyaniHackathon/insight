@@ -61,11 +61,18 @@ Quick Start
     <!-- CityDashboard Styles -->
     <link rel="stylesheet" type="text/css" href="css/insight.min.css">
 
+    <!-- MDL Styles -->
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
     <!-- jQuery -->
     <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
 
     <!-- Google Maps -->
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=API_KEY"></script>
+
+    <!-- MDL Framework -->
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.min.js"></script>
 
     <!-- Insight -->
     <script src="js/insight.min.js"></script>
