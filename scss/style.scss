@@ -40,10 +40,6 @@
     padding: 2px;
 }
 
-.material-icons {
-    margin-top: 6px;
-}
-
 // .menu {
 //     background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjQiIGhlaWdodD0iMTI0IiB2aWV3Qm94PSIwIDAgMTI0IDEyNCI+PHBhdGggZD0iTTExMiA2SDEyQzUuNCA2IDAgMTEuNCAwIDE4czUuNCAxMiAxMiAxMmgxMDBjNi42IDAgMTItNS40IDEyLTEycy01LjQtMTItMTItMTJ6TTExMiA1MEgxMkM1LjQgNTAgMCA1NS40IDAgNjJzNS40IDEyIDEyIDEyaDEwMGM2LjYgMCAxMi01LjQgMTItMTJzLTUuNC0xMi0xMi0xMnpNMTEyIDk0SDEyYy02LjYgMC0xMiA1LjQtMTIgMTJzNS40IDEyIDEyIDEyaDEwMGM2LjYgMCAxMi01LjQgMTItMTJzLTUuNC0xMi0xMi0xMnoiLz48L3N2Zz4=) no-repeat;
 //     background-size: cover;
@@ -57,8 +53,8 @@
 //     background-color: #ccc;
 // }
 /* Utils */
-
 /* Material Design Lite components */
+/* TODO: change name to block */
 .mdl-card {
     margin-bottom: 8px;
     h6 {
@@ -77,12 +73,51 @@
         margin: 2px;
     }
 }
+
+.hide-show-icon {
+    margin-top: 6px;
+}
+
+.insight-info-view__title {
+    color: white;
+}
+.insight-info-view__subtitle {
+    color: white;
+    width: 100%;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.insight-info-view__subtitle p {
+    font-weight: 400;
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    opacity: 0.54;
+    margin-bottom: 0;
+}
+
+.insight-geocode-textfield {
+    max-width: 90%;
+    bottom: 7px;
+}
+
+.insight-geocode-textfield__input {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.72);
+}
+
+.insight-geocode-textfield__label {
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.insight-geocode-textfield__label:after {
+    background-color: rgba(255, 255, 255, 0.26);
+}
+
 .map {
     position: absolute;
     left: 0;
     top: 0;
 }
-
 .right {
     right: 25px;
 }

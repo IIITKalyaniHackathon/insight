@@ -283,6 +283,7 @@ niclabs.insight = (function($) {
 
         var closeIcon = $('<i>')
             .addClass('material-icons')
+            .addClass('hide-show-icon')
             .html('expand_less');
 
         var openCard = $('<div>')
@@ -296,6 +297,7 @@ niclabs.insight = (function($) {
 
         var openIcon = $('<i>')
             .addClass('material-icons')
+            .addClass('hide-show-icon')
             .html('expand_more');
 
         $(closeButton).append(closeIcon);
