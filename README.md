@@ -62,7 +62,7 @@ Quick Start
     <link rel="stylesheet" type="text/css" href="css/insight.min.css">
 
     <!-- MDL Styles -->
-    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
     <!-- jQuery -->
