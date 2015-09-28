@@ -32,7 +32,7 @@ niclabs.insight.Dashboard = (function($) {
 
         // Create the main container
         var main = $('<div>');
-            //.addClass('mdl-layout__content');
+        //.addClass('mdl-layout__content');
         //.addClass(options.layout );
 
         var container = $('<div>')
@@ -48,8 +48,8 @@ niclabs.insight.Dashboard = (function($) {
         //$(container).append(emptyHolder);
 
         //$(anchor)
-            //.addClass('mdl-layout');
-            //.addClass('mdl-js-layout');
+        //.addClass('mdl-layout');
+        //.addClass('mdl-js-layout');
 
         var layers = {};
         var numberedLayers = 0;
@@ -66,6 +66,58 @@ niclabs.insight.Dashboard = (function($) {
         var infoView = {};
         var mapView = {};
 
+        var infoPanel = $('<div>')
+            .setID('insight-info-view')
+            .addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--3-col-desktop');
+
+        var descriptionPanel = $('<div>')
+            .setID('insight-description-view')
+            .addClass('mdl-card mdl-shadow--2dp block');
+
+        var descriptionTitle = $('<div>')
+            .addClass('mdl-card__title mdl-card--expand mdl-color--blue-600')
+            .append($('<h2>')
+                .addClass('mdl-card__title-text insight-info-view__title')
+                .html('Insight'));
+
+        var descriptionSubTitle = $('<div>')
+            .addClass('mdl-card__supporting-text mdl-color--blue-600 insight-info-view__subtitle')
+            .append($('<p>')
+                .html('Information about myself. More information here and here.'));
+
+        var tabHolder = $('<div>')
+            .addClass('mdl-grid mdl-grid--no-spacing');
+
+        var tabs = $('<div>')
+            .setID('insight-tabs')
+            .addClass('mdl-tabs mdl-js-tabs mdl-js-ripple-effect')
+            .append($('<a>')
+                .attr('href', '#information-panel')
+                .addClass('mdl-tabs__tab is-active')
+                .html('Information'))
+            .append($('<a>')
+                .attr('href', '#filter-panel')
+                .addClass('mdl-tabs__tab')
+                .html('Layers'));
+
+        $(dashboardId).append(infoPanel);
+        $(infoPanel).prepend(descriptionPanel);
+        $(descriptionPanel).append(descriptionTitle);
+        $(descriptionPanel).append(descriptionSubTitle);
+
+        $(tabHolder).append(tabs);
+        $(descriptionPanel).append(tabHolder);
+
+        var emptyPanel = $('<div>')
+            .setID('insight-empty-view')
+            .addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--5-col-tablet mdl-cell--9-col-desktop');
+
+        if (options.layout == 'left') {
+            $(dashboardId).append(emptyPanel);
+        }
+        if (options.layout == 'right') {
+            $(dashboardId).prepend(emptyPanel);
+        }
 
         // Listen for changes in the layer data
         niclabs.insight.event.on('layer_data', function(obj) {
@@ -86,8 +138,10 @@ niclabs.insight.Dashboard = (function($) {
         var filters = niclabs.insight.Filters(self);
 
         // Append the default filter bar
-        container.append(filters.element);
+        //descriptionPanel.prepend(filters.element);
 
+        // Make the panel hidable
+        $(infoPanel).hidable();
 
         var currentFilter = function() {
             return true;
@@ -147,14 +201,7 @@ niclabs.insight.Dashboard = (function($) {
                         infoView = obj;
                     }
 
-                    // The info element must be the first of the element to avoid
-                    // clashes with google maps (TODO: this is probably a CSS bug)
-                    if (options.layout == 'left') {
-                        $(dashboardId).prepend(infoView.element);
-                    }
-                    if (options.layout == 'right') {
-                        $(dashboardId).append(infoView.element);
-                    }
+                    $(infoPanel).append(infoView.element);
 
                 }
                 return infoView;
@@ -195,9 +242,10 @@ niclabs.insight.Dashboard = (function($) {
                     if (options.geocoding !== false) {
                         // Append the GeoCoder
                         if ('googlemap' in mapView) {
-                            filters.filter(niclabs.insight.filter.GoogleGeocodingFilter(self, {
+                            var geocoder = niclabs.insight.filter.GoogleGeocodingFilter(self, {
                                 id: 'geocoder'
-                            }));
+                            });
+                            $(descriptionSubTitle).append(geocoder.$);
                         }
                     }
                 }

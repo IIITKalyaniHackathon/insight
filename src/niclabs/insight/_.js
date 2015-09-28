@@ -313,7 +313,8 @@ niclabs.insight = (function($) {
 
         var opener = function() {
 
-            $('.block').css('visibility', 'visible');
+            $('.block').css('z-index', 2);
+            $('.filters').css('z-index', 2);
             $('#insight-dashboard').parent().css('overflow-y', 'auto');
 
             $('#insight-map-view').width($('#insight-dashboard').innerWidth());
@@ -330,7 +331,8 @@ niclabs.insight = (function($) {
 
         var closer = function() {
 
-            $('.block').css('visibility', 'hidden');
+            $('.block').css('z-index', -1);
+            $('.filters').css('z-index', -1);
             $('#insight-dashboard').parent().css('overflow-y', 'hidden');
 
             $('#insight-map-view').width($('#insight-dashboard').parent().innerWidth());
