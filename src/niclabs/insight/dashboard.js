@@ -68,7 +68,11 @@ niclabs.insight.Dashboard = (function($) {
 
         var infoPanel = $('<div>')
             .setID('insight-info-view')
-            .addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--3-col-desktop');
+            .addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--4-col-desktop');
+
+        if (options.layout == 'right') {
+            $(infoPanel).css('text-align', '-webkit-right');
+        }
 
         var descriptionPanel = $('<div>')
             .setID('insight-description-view')
@@ -92,25 +96,35 @@ niclabs.insight.Dashboard = (function($) {
             .setID('insight-tabs')
             .addClass('mdl-tabs mdl-js-tabs mdl-js-ripple-effect')
             .append($('<a>')
-                .attr('href', '#information-panel')
+                .attr('href', '#insight-info-tab')
                 .addClass('mdl-tabs__tab is-active')
                 .html('Information'))
             .append($('<a>')
-                .attr('href', '#filter-panel')
+                .attr('href', '#insight-filter-tab')
                 .addClass('mdl-tabs__tab')
-                .html('Layers'));
+                .html('Filters'));
+
+        var informationTab = $('<div>')
+            .setID('insight-info-tab')
+            .addClass('mdl-tabs__panel is-active');
+
+        var filterTab = $('<div>')
+            .setID('insight-filter-tab')
+            .addClass('mdl-tabs__panel')
+            .html('<h4>Select layer</h4>');
 
         $(dashboardId).append(infoPanel);
         $(infoPanel).prepend(descriptionPanel);
         $(descriptionPanel).append(descriptionTitle);
         $(descriptionPanel).append(descriptionSubTitle);
 
+        $(tabs).append(informationTab, filterTab);
         $(tabHolder).append(tabs);
         $(descriptionPanel).append(tabHolder);
 
         var emptyPanel = $('<div>')
             .setID('insight-empty-view')
-            .addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--5-col-tablet mdl-cell--9-col-desktop');
+            .addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--5-col-tablet mdl-cell--8-col-desktop');
 
         if (options.layout == 'left') {
             $(dashboardId).append(emptyPanel);
@@ -138,7 +152,7 @@ niclabs.insight.Dashboard = (function($) {
         var filters = niclabs.insight.Filters(self);
 
         // Append the default filter bar
-        //descriptionPanel.prepend(filters.element);
+        filterTab.append(filters.element);
 
         // Make the panel hidable
         $(infoPanel).hidable();
@@ -201,7 +215,7 @@ niclabs.insight.Dashboard = (function($) {
                         infoView = obj;
                     }
 
-                    $(infoPanel).append(infoView.element);
+                    $(informationTab).append(infoView.element);
 
                 }
                 return infoView;
@@ -374,6 +388,10 @@ niclabs.insight.Dashboard = (function($) {
                 if (activeLayer) activeLayer.clear();
             }
         };
+
+        if (options.layout == 'right') {
+            $(infoPanel).children().css('text-align', '-webkit-left');
+        }
 
         var layerSelector = niclabs.insight.filter.LayerSelector(self, {
             id: 'layer-selector'

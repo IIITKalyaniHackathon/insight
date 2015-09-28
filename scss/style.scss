@@ -36,6 +36,12 @@
 .button:hover {
     color: #555;
 }
+.hide-button {
+    cursor: pointer;
+    cursor: hand;
+    @include no-select;
+    color: white;
+}
 .search {
     padding: 2px;
 }
@@ -74,11 +80,8 @@
     }
 }
 
-.hide-show-icon {
-    margin-top: 6px;
-}
-
 .insight-info-view__title {
+    padding-top: 0px;
     color: white;
 }
 .insight-info-view__subtitle {
@@ -120,4 +123,8 @@
 }
 .right {
     right: 25px;
+}
+
+#insight-blocks {
+    margin-top: 55px;
 }

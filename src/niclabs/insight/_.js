@@ -270,28 +270,22 @@ niclabs.insight = (function($) {
             };
         }
 
+        var closeButton = $('<span>').addClass('hide-button').attr('data-icon', 'close');
+
         var panel = this;
 
-        var closeCard = $('<div>')
-            .addClass('mdl-card mdl-shadow--2dp')
-            .css('min-height', 0);
+        // var closeButton = $('<button>')
+        //     .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
+        //     .css('z-index', 2)
+        //     .css('background', 'white');
 
-        var closeButton = $('<button>')
-            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
-            .css('z-index', 2)
-            .css('background', 'white');
-
-        var closeIcon = $('<i>')
-            .addClass('material-icons')
-            .addClass('hide-show-icon')
-            .html('expand_less');
-
-        var openCard = $('<div>')
-            .addClass('mdl-card mdl-shadow--2dp')
-            .css('min-height', 0);
+        // var closeIcon = $('<i>')
+        //     .addClass('material-icons')
+        //     .addClass('hide-show-icon')
+        //     .html('expand_less');
 
         var openButton = $('<button>')
-            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
+            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--fab mdl-button--mini-fab')
             .css('z-index', 2)
             .css('background', 'white');
 
@@ -300,14 +294,17 @@ niclabs.insight = (function($) {
             .addClass('hide-show-icon')
             .html('expand_more');
 
-        $(closeButton).append(closeIcon);
-        $(closeCard).append(closeButton);
+        //$(closeButton).append(closeIcon);
         $(openButton).append(openIcon);
-        $(openCard).append(openButton);
 
         var buttonHolder = $('<div>')
-            .append(closeCard)
-            .setID('insight-show-hide-button');
+            //.append(closeButton)
+            .setID('insight-show-button');
+
+        $('.mdl-card__title')
+            .append($('<div>')
+                .addClass('mdl-layout-spacer'));
+        $('.mdl-card__title').append(closeButton);
 
         panel.prepend(buttonHolder);
 
@@ -320,8 +317,11 @@ niclabs.insight = (function($) {
             $('#insight-map-view').width($('#insight-dashboard').innerWidth());
             $('#insight-map-view').height($('#insight-dashboard').parent().height());
 
-            buttonHolder.prepend(closeCard);
-            openCard.remove();
+            $('.mdl-card__title')
+                .append($('<div>')
+                    .addClass('mdl-layout-spacer'));
+            $('.mdl-card__title').append(closeButton);
+            openButton.remove();
 
             handler();
             //This is needed
@@ -338,8 +338,8 @@ niclabs.insight = (function($) {
             $('#insight-map-view').width($('#insight-dashboard').parent().innerWidth());
             $('#insight-map-view').height($('#insight-dashboard').parent().height());
 
-            buttonHolder.prepend(openCard);
-            closeCard.remove();
+            buttonHolder.prepend(openButton);
+            closeButton.remove();
 
             handler();
             //This is needed
