@@ -55,10 +55,10 @@
             fill: aqua;
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="css/insight.css">
     <link rel="stylesheet" type="text/css" href="css/chartist.min.css">
     <link rel="stylesheet" type="text/css" href="css/material.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/insight.css">
 
     <script type="text/javascript" src="js/chartist.min.js"></script>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
@@ -88,7 +88,7 @@
         // Binding the map and the information window.
         var dashboard = niclabs.insight.dashboard({
             'anchor': '#dashboard',
-            'layout': 'left'
+            'layout': 'right'
         });
 
         dashboard.filter({
@@ -117,16 +117,6 @@
         var infoview = niclabs.insight.info({
             handler: 'basic-info-view',
             blocks: [{
-                'handler': 'summary-block',
-                'id': '#description',
-                'title': 'Insight',
-                'closable': false,
-                //'template': '#template',
-                'data': {
-                    'description': 'This block is not affected by map events'
-                }
-            },
-            {
                 'handler': 'summary-block',
                 'id': '#summary',
                 'title': 'My Marker Summary',
