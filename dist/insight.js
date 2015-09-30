@@ -812,8 +812,7 @@ niclabs.insight.Dashboard = (function($) {
 
         var filterTab = $('<div>')
             .setID('insight-filter-tab')
-            .addClass('mdl-tabs__panel')
-            .html('<h4>Select layer</h4>');
+            .addClass('mdl-tabs__panel');
 
         $(dashboardId).append(infoPanel);
         $(infoPanel).prepend(descriptionPanel);
