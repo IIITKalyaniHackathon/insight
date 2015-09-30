@@ -17,34 +17,13 @@ niclabs.insight.InfoView = (function($) {
         // Default visualization property list
         options = options || {};
 
-        var infoViewId = options.id || "insight-info-view";
-
+        var infoViewId = options.id || "insight-blocks";
 
         var element = niclabs.insight.View({
             id: infoViewId
         });
 
-        // Create the info view
-        element.$.addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--3-col-desktop');
-
-        // Toggle to show and hide
-        element.$.hidable();
-
-        var resizeOrientation;
-
-        if (dashboard.config('layout') !== 'none') {
-            if (dashboard.config('layout') === 'left') {
-                // TODO: move filter bar
-                resizeOrientation = 'e';
-            } else if (dashboard.config('layout') === 'right') {
-                resizeOrientation = 'w';
-            }
-            //element.$.resizable(resizeOrientation);
-        }
-
         var blocks = niclabs.insight.ElementList(dashboard);
-
-        //element.$.hidable();
 
         /**
          * Add/get a block from the info view

@@ -262,7 +262,7 @@ niclabs.insight = (function($) {
      * JQuery plugin to make an element hide-able
      * TODO: Missing documentation
      */
-    $.fn.hidable = function() {
+    $.fn.hidable = function(orientation) {
         var handler = false;
         if (!handler) {
             handler = function() {
@@ -270,55 +270,64 @@ niclabs.insight = (function($) {
             };
         }
 
+        var closeButton = $('<span>').addClass('hide-button').attr('data-icon', 'close');
+
         var panel = this;
 
-        var closeCard = $('<div>')
-            .addClass('mdl-card mdl-shadow--2dp')
-            .css('min-height', 0);
+        // var closeButton = $('<button>')
+        //     .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
+        //     .css('z-index', 2)
+        //     .css('background', 'white');
 
-        var closeButton = $('<button>')
-            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
-            .css('z-index', 2)
-            .css('background', 'white');
-
-        var closeIcon = $('<i>')
-            .addClass('material-icons')
-            .html('expand_less');
-
-        var openCard = $('<div>')
-            .addClass('mdl-card mdl-shadow--2dp')
-            .css('min-height', 0);
+        // var closeIcon = $('<i>')
+        //     .addClass('material-icons')
+        //     .addClass('hide-show-icon')
+        //     .html('expand_less');
 
         var openButton = $('<button>')
-            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
+            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--fab mdl-button--mini-fab')
             .css('z-index', 2)
             .css('background', 'white');
 
+
+
         var openIcon = $('<i>')
-            .addClass('material-icons')
+            .addClass('material-icons hide-show-icon')
             .html('expand_more');
 
-        $(closeButton).append(closeIcon);
-        $(closeCard).append(closeButton);
+        //$(closeButton).append(closeIcon);
         $(openButton).append(openIcon);
-        $(openCard).append(openButton);
 
         var buttonHolder = $('<div>')
-            .append(closeCard)
+            //.append(closeButton)
             .setID('insight-show-hide-button');
+
+        if (orientation == 'right')  {
+            $(buttonHolder)
+                .addClass('show-button-right');
+        }
+
+        $('.mdl-card__title')
+            .append($('<div>')
+                .addClass('mdl-layout-spacer'));
+        $('.mdl-card__title').append(closeButton);
 
         panel.prepend(buttonHolder);
 
         var opener = function() {
 
-            $('.block').css('visibility', 'visible');
+            $('.block').css('z-index', 2);
+            $('.filters').css('z-index', 2);
             $('#insight-dashboard').parent().css('overflow-y', 'auto');
 
             $('#insight-map-view').width($('#insight-dashboard').innerWidth());
             $('#insight-map-view').height($('#insight-dashboard').parent().height());
 
-            buttonHolder.prepend(closeCard);
-            openCard.remove();
+            $('.mdl-card__title')
+                .append($('<div>')
+                    .addClass('mdl-layout-spacer'));
+            $('.mdl-card__title').append(closeButton);
+            openButton.remove();
 
             handler();
             //This is needed
@@ -328,14 +337,15 @@ niclabs.insight = (function($) {
 
         var closer = function() {
 
-            $('.block').css('visibility', 'hidden');
+            $('.block').css('z-index', -1);
+            $('.filters').css('z-index', -1);
             $('#insight-dashboard').parent().css('overflow-y', 'hidden');
 
             $('#insight-map-view').width($('#insight-dashboard').parent().innerWidth());
             $('#insight-map-view').height($('#insight-dashboard').parent().height());
 
-            buttonHolder.prepend(openCard);
-            closeCard.remove();
+            buttonHolder.prepend(openButton);
+            closeButton.remove();
 
             handler();
             //This is needed

@@ -19,14 +19,26 @@ niclabs.insight.filter.GoogleGeocodingFilter = (function(google) {
         /* Google maps geocoder and search bar*/
         var geocoder = new google.maps.Geocoder();
 
+        var icon = $('<i>')
+            .addClass('material-icons')
+            .html('search');
+
+        var searchDiv = $('<div>')
+            .addClass('mdl-textfield mdl-js-textfield insight-geocode-textfield');
+
         // Create the search box
         var search = $('<input>')
-            .addClass('search')
-            .attr('type', 'search')
-            .attr('placeholder', 'Enter location');
+            .setID('search')
+            .addClass('mdl-textfield__input insight-geocode-textfield__input')
+            .attr('type', 'text');
 
-        // Append search box to the filter
-        filter.$.append(search);
+        var label = $('<label>')
+            .addClass('mdl-textfield__label insight-geocode-textfield__label')
+            .attr('for', 'search')
+            .html('Enter your location');
+
+        searchDiv.append(search, label);
+        filter.$.append(icon, searchDiv);
 
         var geocode = function() {
             var map = dashboard.map().googlemap();

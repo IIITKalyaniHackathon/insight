@@ -17,7 +17,7 @@ niclabs.insight.Filters = (function($) {
         var view = niclabs.insight.View({id: barId});
 
         // Bar container
-        view.$.addClass('filters mdl-cell mdl-cell--4-col-phone mdl-cell--5-col-tablet mdl-cell--9-col-desktop');
+        view.$.addClass('filters');
 
         // List of filters
         var filters = niclabs.insight.ElementList(dashboard);
