@@ -29,12 +29,23 @@ niclabs.insight.filter.SelectionFilter = (function($) {
         var selectOptions = options.options || [];
 
         // Configure the view
-        var select = $('<select>');
-        select.append($('<option>').text(options.description || ''));
+        var selectDiv = $('<div>').addClass('mdl-select mdl-js-select mdl-select--floating-label');
+
+        var select = $('<select>')
+            .setID(options.id)
+            .addClass('mdl-select__input')
+            .append($('<option>').text(options.description || ''));
+
+        var label = $('<label>')
+            .addClass('mdl-select__label')
+            .attr('for', options.id)
+            .attr('name', options.id)
+            .text('Filter');
 
         selectOptions.forEach(function(option) {
             select.append($('<option>').text(option.name));
         });
+
 
         function noFilter(element) {
             return true;
@@ -54,7 +65,9 @@ niclabs.insight.filter.SelectionFilter = (function($) {
         });
 
         // Add the selector to the view
-        view.$.append(select);
+        view.$.append(selectDiv);
+        $(selectDiv).append(select);
+        $(selectDiv).append(label);
 
 
         /**
