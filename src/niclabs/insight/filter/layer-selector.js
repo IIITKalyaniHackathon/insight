@@ -16,8 +16,18 @@ niclabs.insight.filter.LayerSelector = (function($) {
 
         var layers = {};
 
+        var selectDiv = $('<div>').addClass('mdl-select mdl-js-select mdl-select--floating-label');
+
         // Configure the view
-        var select = $('<select>');
+        var select = $('<select>')
+            .setID(options.id)
+            .addClass('mdl-select__input');
+
+        var label = $('<label>')
+            .addClass('mdl-select__label')
+            .attr('for', options.id)
+            .attr('name', options.id)
+            .text('Select Layer');
 
         // Hide the selector if there are no elements
         select.hide();
@@ -27,7 +37,9 @@ niclabs.insight.filter.LayerSelector = (function($) {
         });
 
         // Add the selector to the view
-        view.$.append(select);
+        view.$.append(selectDiv);
+        $(selectDiv).append(select);
+        $(selectDiv).append(label);
 
         /**
          * Add a layer to the selector

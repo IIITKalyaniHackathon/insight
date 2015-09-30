@@ -68,7 +68,7 @@ niclabs.insight.Dashboard = (function($) {
 
         var infoPanel = $('<div>')
             .setID('insight-info-view')
-            .addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--4-col-desktop');
+            .addClass('insight-info-view mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--4-col-desktop');
 
         if (options.layout == 'right') {
             $(infoPanel).css('text-align', '-webkit-right');
@@ -155,7 +155,7 @@ niclabs.insight.Dashboard = (function($) {
         filterTab.append(filters.element);
 
         // Make the panel hidable
-        $(infoPanel).hidable();
+        $(infoPanel).hidable(options.layout);
 
         var currentFilter = function() {
             return true;
@@ -388,10 +388,6 @@ niclabs.insight.Dashboard = (function($) {
                 if (activeLayer) activeLayer.clear();
             }
         };
-
-        if (options.layout == 'right') {
-            $(infoPanel).children().css('text-align', '-webkit-left');
-        }
 
         var layerSelector = niclabs.insight.filter.LayerSelector(self, {
             id: 'layer-selector'

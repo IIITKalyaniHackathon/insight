@@ -262,7 +262,7 @@ niclabs.insight = (function($) {
      * JQuery plugin to make an element hide-able
      * TODO: Missing documentation
      */
-    $.fn.hidable = function() {
+    $.fn.hidable = function(orientation) {
         var handler = false;
         if (!handler) {
             handler = function() {
@@ -289,9 +289,10 @@ niclabs.insight = (function($) {
             .css('z-index', 2)
             .css('background', 'white');
 
+
+
         var openIcon = $('<i>')
-            .addClass('material-icons')
-            .addClass('hide-show-icon')
+            .addClass('material-icons hide-show-icon')
             .html('expand_more');
 
         //$(closeButton).append(closeIcon);
@@ -299,7 +300,12 @@ niclabs.insight = (function($) {
 
         var buttonHolder = $('<div>')
             //.append(closeButton)
-            .setID('insight-show-button');
+            .setID('insight-show-hide-button');
+
+        if (orientation == 'right')  {
+            $(buttonHolder)
+                .addClass('show-button-right');
+        }
 
         $('.mdl-card__title')
             .append($('<div>')

@@ -275,7 +275,7 @@ niclabs.insight = (function($) {
      * JQuery plugin to make an element hide-able
      * TODO: Missing documentation
      */
-    $.fn.hidable = function() {
+    $.fn.hidable = function(orientation) {
         var handler = false;
         if (!handler) {
             handler = function() {
@@ -283,57 +283,64 @@ niclabs.insight = (function($) {
             };
         }
 
+        var closeButton = $('<span>').addClass('hide-button').attr('data-icon', 'close');
+
         var panel = this;
 
-        var closeCard = $('<div>')
-            .addClass('mdl-card mdl-shadow--2dp')
-            .css('min-height', 0);
+        // var closeButton = $('<button>')
+        //     .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
+        //     .css('z-index', 2)
+        //     .css('background', 'white');
 
-        var closeButton = $('<button>')
-            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
-            .css('z-index', 2)
-            .css('background', 'white');
-
-        var closeIcon = $('<i>')
-            .addClass('material-icons')
-            .addClass('hide-show-icon')
-            .html('expand_less');
-
-        var openCard = $('<div>')
-            .addClass('mdl-card mdl-shadow--2dp')
-            .css('min-height', 0);
+        // var closeIcon = $('<i>')
+        //     .addClass('material-icons')
+        //     .addClass('hide-show-icon')
+        //     .html('expand_less');
 
         var openButton = $('<button>')
-            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect')
+            .addClass('mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--fab mdl-button--mini-fab')
             .css('z-index', 2)
             .css('background', 'white');
 
+
+
         var openIcon = $('<i>')
-            .addClass('material-icons')
-            .addClass('hide-show-icon')
+            .addClass('material-icons hide-show-icon')
             .html('expand_more');
 
-        $(closeButton).append(closeIcon);
-        $(closeCard).append(closeButton);
+        //$(closeButton).append(closeIcon);
         $(openButton).append(openIcon);
-        $(openCard).append(openButton);
 
         var buttonHolder = $('<div>')
-            .append(closeCard)
+            //.append(closeButton)
             .setID('insight-show-hide-button');
+
+        if (orientation == 'right')  {
+            $(buttonHolder)
+                .addClass('show-button-right');
+        }
+
+        $('.mdl-card__title')
+            .append($('<div>')
+                .addClass('mdl-layout-spacer'));
+        $('.mdl-card__title').append(closeButton);
 
         panel.prepend(buttonHolder);
 
         var opener = function() {
 
-            $('.block').css('visibility', 'visible');
+            $('.block').css('z-index', 2);
+            $('.filters').css('z-index', 2);
             $('#insight-dashboard').parent().css('overflow-y', 'auto');
 
             $('#insight-map-view').width($('#insight-dashboard').innerWidth());
             $('#insight-map-view').height($('#insight-dashboard').parent().height());
 
-            buttonHolder.prepend(closeCard);
-            openCard.remove();
+            $('.mdl-card__title')
+                .append($('<div>')
+                    .addClass('mdl-layout-spacer'));
+            $('.mdl-card__title').append(closeButton);
+            openButton.remove();
 
             handler();
             //This is needed
@@ -343,14 +350,15 @@ niclabs.insight = (function($) {
 
         var closer = function() {
 
-            $('.block').css('visibility', 'hidden');
+            $('.block').css('z-index', -1);
+            $('.filters').css('z-index', -1);
             $('#insight-dashboard').parent().css('overflow-y', 'hidden');
 
             $('#insight-map-view').width($('#insight-dashboard').parent().innerWidth());
             $('#insight-map-view').height($('#insight-dashboard').parent().height());
 
-            buttonHolder.prepend(openCard);
-            closeCard.remove();
+            buttonHolder.prepend(openButton);
+            closeButton.remove();
 
             handler();
             //This is needed
@@ -726,7 +734,7 @@ niclabs.insight.Dashboard = (function($) {
 
         // Create the main container
         var main = $('<div>');
-            //.addClass('mdl-layout__content');
+        //.addClass('mdl-layout__content');
         //.addClass(options.layout );
 
         var container = $('<div>')
@@ -742,8 +750,8 @@ niclabs.insight.Dashboard = (function($) {
         //$(container).append(emptyHolder);
 
         //$(anchor)
-            //.addClass('mdl-layout');
-            //.addClass('mdl-js-layout');
+        //.addClass('mdl-layout');
+        //.addClass('mdl-js-layout');
 
         var layers = {};
         var numberedLayers = 0;
@@ -760,6 +768,72 @@ niclabs.insight.Dashboard = (function($) {
         var infoView = {};
         var mapView = {};
 
+        var infoPanel = $('<div>')
+            .setID('insight-info-view')
+            .addClass('insight-info-view mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--4-col-desktop');
+
+        if (options.layout == 'right') {
+            $(infoPanel).css('text-align', '-webkit-right');
+        }
+
+        var descriptionPanel = $('<div>')
+            .setID('insight-description-view')
+            .addClass('mdl-card mdl-shadow--2dp block');
+
+        var descriptionTitle = $('<div>')
+            .addClass('mdl-card__title mdl-card--expand mdl-color--blue-600')
+            .append($('<h2>')
+                .addClass('mdl-card__title-text insight-info-view__title')
+                .html('Insight'));
+
+        var descriptionSubTitle = $('<div>')
+            .addClass('mdl-card__supporting-text mdl-color--blue-600 insight-info-view__subtitle')
+            .append($('<p>')
+                .html('Information about myself. More information here and here.'));
+
+        var tabHolder = $('<div>')
+            .addClass('mdl-grid mdl-grid--no-spacing');
+
+        var tabs = $('<div>')
+            .setID('insight-tabs')
+            .addClass('mdl-tabs mdl-js-tabs mdl-js-ripple-effect')
+            .append($('<a>')
+                .attr('href', '#insight-info-tab')
+                .addClass('mdl-tabs__tab is-active')
+                .html('Information'))
+            .append($('<a>')
+                .attr('href', '#insight-filter-tab')
+                .addClass('mdl-tabs__tab')
+                .html('Filters'));
+
+        var informationTab = $('<div>')
+            .setID('insight-info-tab')
+            .addClass('mdl-tabs__panel is-active');
+
+        var filterTab = $('<div>')
+            .setID('insight-filter-tab')
+            .addClass('mdl-tabs__panel')
+            .html('<h4>Select layer</h4>');
+
+        $(dashboardId).append(infoPanel);
+        $(infoPanel).prepend(descriptionPanel);
+        $(descriptionPanel).append(descriptionTitle);
+        $(descriptionPanel).append(descriptionSubTitle);
+
+        $(tabs).append(informationTab, filterTab);
+        $(tabHolder).append(tabs);
+        $(descriptionPanel).append(tabHolder);
+
+        var emptyPanel = $('<div>')
+            .setID('insight-empty-view')
+            .addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--5-col-tablet mdl-cell--8-col-desktop');
+
+        if (options.layout == 'left') {
+            $(dashboardId).append(emptyPanel);
+        }
+        if (options.layout == 'right') {
+            $(dashboardId).prepend(emptyPanel);
+        }
 
         // Listen for changes in the layer data
         niclabs.insight.event.on('layer_data', function(obj) {
@@ -780,8 +854,10 @@ niclabs.insight.Dashboard = (function($) {
         var filters = niclabs.insight.Filters(self);
 
         // Append the default filter bar
-        container.append(filters.element);
+        filterTab.append(filters.element);
 
+        // Make the panel hidable
+        $(infoPanel).hidable(options.layout);
 
         var currentFilter = function() {
             return true;
@@ -841,14 +917,7 @@ niclabs.insight.Dashboard = (function($) {
                         infoView = obj;
                     }
 
-                    // The info element must be the first of the element to avoid
-                    // clashes with google maps (TODO: this is probably a CSS bug)
-                    if (options.layout == 'left') {
-                        $(dashboardId).prepend(infoView.element);
-                    }
-                    if (options.layout == 'right') {
-                        $(dashboardId).append(infoView.element);
-                    }
+                    $(informationTab).append(infoView.element);
 
                 }
                 return infoView;
@@ -889,9 +958,10 @@ niclabs.insight.Dashboard = (function($) {
                     if (options.geocoding !== false) {
                         // Append the GeoCoder
                         if ('googlemap' in mapView) {
-                            filters.filter(niclabs.insight.filter.GoogleGeocodingFilter(self, {
+                            var geocoder = niclabs.insight.filter.GoogleGeocodingFilter(self, {
                                 id: 'geocoder'
-                            }));
+                            });
+                            $(descriptionSubTitle).append(geocoder.$);
                         }
                     }
                 }
@@ -1192,7 +1262,7 @@ niclabs.insight.Filters = (function($) {
         var view = niclabs.insight.View({id: barId});
 
         // Bar container
-        view.$.addClass('filters mdl-cell mdl-cell--4-col-phone mdl-cell--5-col-tablet mdl-cell--9-col-desktop');
+        view.$.addClass('filters');
 
         // List of filters
         var filters = niclabs.insight.ElementList(dashboard);
@@ -1289,69 +1359,13 @@ niclabs.insight.InfoView = (function($) {
         // Default visualization property list
         options = options || {};
 
-        var infoViewId = options.id || "insight-info-view";
-
+        var infoViewId = options.id || "insight-blocks";
 
         var element = niclabs.insight.View({
             id: infoViewId
         });
 
-        // Create the info view
-        element.$.addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--3-col-tablet mdl-cell--3-col-desktop');
-
-        // /*jshint multistr: true */
-        // var defaultView = '\
-        // <div id="insight-default-view" class="mdl-card mdl-shadow--2dp block"> \
-        //     <div class="mdl-card__title mdl-card--expand mdl-color--cyan-600"> \
-        //         <h2 class="mdl-card__title-text insight-info-view__title">Insight</h2> \
-        //     </div> \
-        //     <div class="mdl-card__supporting-text mdl-color--cyan-600 insight-info-view__subtitle"> \
-        //         <p>Information about myself. More information here and here.</p> \
-        //         <i class="material-icons">search</i> \
-        //         <div id="searchDiv" class="mdl-textfield mdl-js-textfield insight-geocode-textfield"> \
-        //             <input class="mdl-textfield__input insight-geocode-textfield__input" type="text" id="search" /> \
-        //             <label class="mdl-textfield__label insight-geocode-textfield__label" for="search">Enter your location</label> \
-        //         </div> \
-        //     </div> \
-        //     <div id="info" class="mdl-grid mdl-grid--no-spacing"> \
-        //         <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect"> \
-        //             <div class="mdl-tabs__tab-bar"> \
-        //                 <a href="#information-panel" class="mdl-tabs__tab is-active">Information</a> \
-        //                 <a href="#filter-panel" class="mdl-tabs__tab">Layers</a> \
-        //             </div> \
-        //             <div class="mdl-tabs__panel is-active" id="insight-information-panel"> \
-        //                 <div class="mdl-card__supporting-text mdl-color-text--grey-600"> \
-        //                     <h3>Description</h3> \
-        //                     <p>Descriptive description</p> \
-        //                 </div> \
-        //             </div> \
-        //             <div class="mdl-tabs__panel" id="insight-filter-panel"> \
-        //                 <h3>Select layer</h3> \
-        //             </div> \
-        //         </div> \
-        //     </div> \
-        // </div>';
-        //
-        // element.$.html(defaultView);
-
-        // Toggle to show and hide
-        element.$.hidable();
-
-        // var resizeOrientation;
-        //
-        // if (dashboard.config('layout') !== 'none') {
-        //     if (dashboard.config('layout') === 'left') {
-        //         // TODO: move filter bar
-        //         resizeOrientation = 'e';
-        //     } else if (dashboard.config('layout') === 'right') {
-        //         resizeOrientation = 'w';
-        //     }
-        //     //element.$.resizable(resizeOrientation);
-        // }
-
         var blocks = niclabs.insight.ElementList(dashboard);
-
-        //element.$.hidable();
 
         /**
          * Add/get a block from the info view
@@ -1867,14 +1881,26 @@ niclabs.insight.filter.GoogleGeocodingFilter = (function(google) {
         /* Google maps geocoder and search bar*/
         var geocoder = new google.maps.Geocoder();
 
+        var icon = $('<i>')
+            .addClass('material-icons')
+            .html('search');
+
+        var searchDiv = $('<div>')
+            .addClass('mdl-textfield mdl-js-textfield insight-geocode-textfield');
+
         // Create the search box
         var search = $('<input>')
-            .addClass('search')
-            .attr('type', 'search')
-            .attr('placeholder', 'Enter location');
+            .setID('search')
+            .addClass('mdl-textfield__input insight-geocode-textfield__input')
+            .attr('type', 'text');
 
-        // Append search box to the filter
-        filter.$.append(search);
+        var label = $('<label>')
+            .addClass('mdl-textfield__label insight-geocode-textfield__label')
+            .attr('for', 'search')
+            .html('Enter your location');
+
+        searchDiv.append(search, label);
+        filter.$.append(icon, searchDiv);
 
         var geocode = function() {
             var map = dashboard.map().googlemap();
@@ -1923,8 +1949,18 @@ niclabs.insight.filter.LayerSelector = (function($) {
 
         var layers = {};
 
+        var selectDiv = $('<div>').addClass('mdl-select mdl-js-select mdl-select--floating-label');
+
         // Configure the view
-        var select = $('<select>');
+        var select = $('<select>')
+            .setID(options.id)
+            .addClass('mdl-select__input');
+
+        var label = $('<label>')
+            .addClass('mdl-select__label')
+            .attr('for', options.id)
+            .attr('name', options.id)
+            .text('Select Layer');
 
         // Hide the selector if there are no elements
         select.hide();
@@ -1934,7 +1970,9 @@ niclabs.insight.filter.LayerSelector = (function($) {
         });
 
         // Add the selector to the view
-        view.$.append(select);
+        view.$.append(selectDiv);
+        $(selectDiv).append(select);
+        $(selectDiv).append(label);
 
         /**
          * Add a layer to the selector
@@ -1993,12 +2031,23 @@ niclabs.insight.filter.SelectionFilter = (function($) {
         var selectOptions = options.options || [];
 
         // Configure the view
-        var select = $('<select>');
-        select.append($('<option>').text(options.description || ''));
+        var selectDiv = $('<div>').addClass('mdl-select mdl-js-select mdl-select--floating-label');
+
+        var select = $('<select>')
+            .setID(options.id)
+            .addClass('mdl-select__input')
+            .append($('<option>').text(options.description || ''));
+
+        var label = $('<label>')
+            .addClass('mdl-select__label')
+            .attr('for', options.id)
+            .attr('name', options.id)
+            .text('Filter');
 
         selectOptions.forEach(function(option) {
             select.append($('<option>').text(option.name));
         });
+
 
         function noFilter(element) {
             return true;
@@ -2018,7 +2067,9 @@ niclabs.insight.filter.SelectionFilter = (function($) {
         });
 
         // Add the selector to the view
-        view.$.append(select);
+        view.$.append(selectDiv);
+        $(selectDiv).append(select);
+        $(selectDiv).append(label);
 
 
         /**
@@ -2126,8 +2177,6 @@ niclabs.insight.info.Block = (function($) {
         var header = $('<div>').addClass('header').append($('<span>').attr('data-bind', 'title').addClass('title').append(title));
 
         var container = $('<div>').setID(htmlId)
-            .addClass('mdl-card')
-            .addClass('mdl-shadow--2dp')
             .addClass('block')
             .append(header);
 
@@ -2138,17 +2187,6 @@ niclabs.insight.info.Block = (function($) {
         // Save the content element
         var content = $('<div>').addClass('content');
 
-
-        /*container.html(
-        '<div class="mdl-card__title mdl-card--expand">
-            <h2 class="mdl-card__title-text">Update</h2>
-         </div><div class="mdl-card__supporting-text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Aenan convallis.
-         </div>
-         <div class="mdl-card__actions mdl-card--border">
-            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">View Updates</a>
-         </div>');*/
         // Append the content
         container.append(content);
 
@@ -7492,3 +7530,162 @@ function FindDelaunayTriangulation(Positions)
 
 	return FindDelaunayTriangulationIndexed(Positions, Indices);
 }
+
+function MaterialSelect(element) {
+'use strict';
+
+this.element_ = element;
+this.maxRows = this.Constant_.NO_MAX_ROWS;
+// Initialize instance.
+this.init();
+}
+
+MaterialSelect.prototype.Constant_ = {
+NO_MAX_ROWS: -1,
+MAX_ROWS_ATTRIBUTE: 'maxrows'
+};
+
+MaterialSelect.prototype.CssClasses_ = {
+LABEL: 'mdl-textfield__label',
+INPUT: 'mdl-select__input',
+IS_DIRTY: 'is-dirty',
+IS_FOCUSED: 'is-focused',
+IS_DISABLED: 'is-disabled',
+IS_INVALID: 'is-invalid',
+IS_UPGRADED: 'is-upgraded'
+};
+
+MaterialSelect.prototype.onKeyDown_ = function(event) {
+'use strict';
+
+var currentRowCount = event.target.value.split('\n').length;
+if (event.keyCode === 13) {
+  if (currentRowCount >= this.maxRows) {
+    event.preventDefault();
+  }
+}
+};
+
+MaterialSelect.prototype.onFocus_ = function(event) {
+'use strict';
+
+this.element_.classList.add(this.CssClasses_.IS_FOCUSED);
+};
+
+MaterialSelect.prototype.onBlur_ = function(event) {
+'use strict';
+
+this.element_.classList.remove(this.CssClasses_.IS_FOCUSED);
+};
+
+MaterialSelect.prototype.updateClasses_ = function() {
+'use strict';
+this.checkDisabled();
+this.checkValidity();
+this.checkDirty();
+};
+
+MaterialSelect.prototype.checkDisabled = function() {
+'use strict';
+if (this.input_.disabled) {
+  this.element_.classList.add(this.CssClasses_.IS_DISABLED);
+} else {
+  this.element_.classList.remove(this.CssClasses_.IS_DISABLED);
+}
+};
+
+MaterialSelect.prototype.checkValidity = function() {
+'use strict';
+if (this.input_.validity.valid) {
+  this.element_.classList.remove(this.CssClasses_.IS_INVALID);
+} else {
+  this.element_.classList.add(this.CssClasses_.IS_INVALID);
+}
+};
+
+MaterialSelect.prototype.checkDirty = function() {
+'use strict';
+if (this.input_.value && this.input_.value.length > 0) {
+  this.element_.classList.add(this.CssClasses_.IS_DIRTY);
+} else {
+  this.element_.classList.remove(this.CssClasses_.IS_DIRTY);
+}
+};
+
+MaterialSelect.prototype.disable = function() {
+'use strict';
+
+this.input_.disabled = true;
+this.updateClasses_();
+};
+
+MaterialSelect.prototype.enable = function() {
+'use strict';
+
+this.input_.disabled = false;
+this.updateClasses_();
+};
+
+MaterialSelect.prototype.change = function(value) {
+'use strict';
+
+if (value) {
+  this.input_.value = value;
+}
+this.updateClasses_();
+};
+
+MaterialSelect.prototype.init = function() {
+'use strict';
+
+if (this.element_) {
+  this.label_ = this.element_.querySelector('.' + this.CssClasses_.LABEL);
+  this.input_ = this.element_.querySelector('.' + this.CssClasses_.INPUT);
+
+  if (this.input_) {
+    if (this.input_.hasAttribute(this.Constant_.MAX_ROWS_ATTRIBUTE)) {
+      this.maxRows = parseInt(this.input_.getAttribute(
+          this.Constant_.MAX_ROWS_ATTRIBUTE), 10);
+      if (isNaN(this.maxRows)) {
+        this.maxRows = this.Constant_.NO_MAX_ROWS;
+      }
+    }
+
+    this.boundUpdateClassesHandler = this.updateClasses_.bind(this);
+    this.boundFocusHandler = this.onFocus_.bind(this);
+    this.boundBlurHandler = this.onBlur_.bind(this);
+    this.input_.addEventListener('input', this.boundUpdateClassesHandler);
+    this.input_.addEventListener('focus', this.boundFocusHandler);
+    this.input_.addEventListener('blur', this.boundBlurHandler);
+
+    if (this.maxRows !== this.Constant_.NO_MAX_ROWS) {
+      // TODO: This should handle pasting multi line text.
+      // Currently doesn't.
+      this.boundKeyDownHandler = this.onKeyDown_.bind(this);
+      this.input_.addEventListener('keydown', this.boundKeyDownHandler);
+    }
+
+    this.updateClasses_();
+    this.element_.classList.add(this.CssClasses_.IS_UPGRADED);
+  }
+}
+};
+
+MaterialSelect.prototype.mdlDowngrade_ = function() {
+'use strict';
+this.input_.removeEventListener('input', this.boundUpdateClassesHandler);
+this.input_.removeEventListener('focus', this.boundFocusHandler);
+this.input_.removeEventListener('blur', this.boundBlurHandler);
+if (this.boundKeyDownHandler) {
+  this.input_.removeEventListener('keydown', this.boundKeyDownHandler);
+}
+};
+
+// The component registers itself. It can assume componentHandler is available
+// in the global scope.
+componentHandler.register({
+constructor: MaterialSelect,
+classAsString: 'MaterialSelect',
+cssClass: 'mdl-js-select',
+widget: true
+});
