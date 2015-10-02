@@ -14,9 +14,22 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
   * [niclabs.insight](#niclabs.insight)
     * [insight.handler(name, [kind], [handler])](#niclabs.insight.handler)
     * [insight.dashboard([options])](#niclabs.insight.dashboard)
+    * [insight.data(id, src, [options])](#niclabs.insight.data(2))
     * [insight.info([obj])](#niclabs.insight.info(2))
     * [insight.layer(obj, [activate])](#niclabs.insight.layer(2))
     * [insight.map([obj])](#niclabs.insight.map(2))
+    * [insight.data](#niclabs.insight.data)
+      * [class: data.Array](#niclabs.insight.data.Array)
+        * [new data.Array(options)](#new_niclabs.insight.data.Array)
+        * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
+      * [class: data.DataSource](#niclabs.insight.data.DataSource)
+        * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
+        * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
+      * [class: data.JSON](#niclabs.insight.data.JSON)
+        * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
+        * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
+      * [class: data.Selector](#niclabs.insight.data.Selector)
+        * [new data.Selector(id, src, [options])](#new_niclabs.insight.data.Selector)
     * [insight.event](#niclabs.insight.event)
       * [event.on(event, listener)](#niclabs.insight.event.on)
       * [event.off(event, listener)](#niclabs.insight.event.off)
@@ -264,6 +277,9 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
       * [Interpolation.interpolate(value, maximum, start_point, end_point)](#niclabs.insight.Interpolation.interpolate)
       * [Interpolation.interpolate3d(value, maximum, s, e)](#niclabs.insight.Interpolation.interpolate3d)
       * [Interpolation.interpolateRgb(value, maximum, start_rgb, e)](#niclabs.insight.Interpolation.interpolateRgb)
+    * [insight.utils](#niclabs.insight.utils)
+      * [utils.getLocation(href)](#niclabs.insight.utils.getLocation)
+      * [utils.isValidURL(url)](#niclabs.insight.utils.isValidURL)
 
 <a name="niclabs.insight"></a>
 ##niclabs.insight
@@ -277,9 +293,22 @@ understand what is going on in the city
 * [niclabs.insight](#niclabs.insight)
   * [insight.handler(name, [kind], [handler])](#niclabs.insight.handler)
   * [insight.dashboard([options])](#niclabs.insight.dashboard)
+  * [insight.data(id, src, [options])](#niclabs.insight.data(2))
   * [insight.info([obj])](#niclabs.insight.info(2))
   * [insight.layer(obj, [activate])](#niclabs.insight.layer(2))
   * [insight.map([obj])](#niclabs.insight.map(2))
+  * [insight.data](#niclabs.insight.data)
+    * [class: data.Array](#niclabs.insight.data.Array)
+      * [new data.Array(options)](#new_niclabs.insight.data.Array)
+      * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
+    * [class: data.DataSource](#niclabs.insight.data.DataSource)
+      * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
+      * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
+    * [class: data.JSON](#niclabs.insight.data.JSON)
+      * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
+      * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
+    * [class: data.Selector](#niclabs.insight.data.Selector)
+      * [new data.Selector(id, src, [options])](#new_niclabs.insight.data.Selector)
   * [insight.event](#niclabs.insight.event)
     * [event.on(event, listener)](#niclabs.insight.event.on)
     * [event.off(event, listener)](#niclabs.insight.event.off)
@@ -527,6 +556,9 @@ understand what is going on in the city
     * [Interpolation.interpolate(value, maximum, start_point, end_point)](#niclabs.insight.Interpolation.interpolate)
     * [Interpolation.interpolate3d(value, maximum, s, e)](#niclabs.insight.Interpolation.interpolate3d)
     * [Interpolation.interpolateRgb(value, maximum, start_rgb, e)](#niclabs.insight.Interpolation.interpolateRgb)
+  * [insight.utils](#niclabs.insight.utils)
+    * [utils.getLocation(href)](#niclabs.insight.utils.getLocation)
+    * [utils.isValidURL(url)](#niclabs.insight.utils.isValidURL)
 
 <a name="niclabs.insight.handler"></a>
 ###insight.handler(name, [kind], [handler])
@@ -564,6 +596,17 @@ var dashboard = niclabs.insight.dashboard({
 });
 ```
 
+<a name="niclabs.insight.data(2)"></a>
+###insight.data(id, src, [options])
+Helper method to get/register a new data source for the dashboard
+
+**Params**
+
+- id `String` - identifier for the data source  
+- src `Array.<Object>` | `String` | `function` | `niclabs.insight.Data` - source of data, it can be an array, a URL, a function or a DataSource object  
+- \[options\] `Object` - extra options for the data source  
+
+**Returns**: [DataSource](#niclabs.insight.data.DataSource) - data source  
 <a name="niclabs.insight.info(2)"></a>
 ###insight.info([obj])
 Helper method to assign/get the information view to/from the dashboard
@@ -652,6 +695,151 @@ var map = niclabs.insight.map({
 });
 ```
 
+<a name="niclabs.insight.data"></a>
+###insight.data
+Contains all data operation classes
+
+**Members**
+
+* [insight.data](#niclabs.insight.data)
+  * [class: data.Array](#niclabs.insight.data.Array)
+    * [new data.Array(options)](#new_niclabs.insight.data.Array)
+    * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
+  * [class: data.DataSource](#niclabs.insight.data.DataSource)
+    * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
+    * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
+  * [class: data.JSON](#niclabs.insight.data.JSON)
+    * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
+    * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
+  * [class: data.Selector](#niclabs.insight.data.Selector)
+    * [new data.Selector(id, src, [options])](#new_niclabs.insight.data.Selector)
+
+<a name="niclabs.insight.data.Array"></a>
+####class: data.Array
+**Extends**: `niclabs.insight.data.DataSource`  
+**Members**
+
+* [class: data.Array](#niclabs.insight.data.Array)
+  * [new data.Array(options)](#new_niclabs.insight.data.Array)
+  * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
+
+<a name="new_niclabs.insight.data.Array"></a>
+#####new data.Array(options)
+Construct a new Array data source
+
+**Params**
+
+- options `Object` - configuration options for the data source  
+  - id `String` - identifier for referencing this data source  
+  - src `Array.<Object>` - source of data  
+
+**Extends**: `niclabs.insight.data.DataSource`  
+<a name="niclabs.insight.data.Array.self.forEach"></a>
+#####Array.self.forEach(fn)
+Iterate over the data source elements
+
+Iterates over the elements of the array/
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
+
+<a name="niclabs.insight.data.DataSource"></a>
+####class: data.DataSource
+**Extends**: `niclabs.insight.Element`  
+**Members**
+
+* [class: data.DataSource](#niclabs.insight.data.DataSource)
+  * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
+  * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
+
+<a name="new_niclabs.insight.data.DataSource"></a>
+#####new data.DataSource(options)
+Constructs a new data source
+
+A DataSource object encapsulates interaction with sources of data, whether they
+come from code defined arrays, a JSON/CSV remote source, API call, or other data sources
+
+**Params**
+
+- options `Object` - configuration options for the data source  
+  - id `String` - identifier for referencing this data source  
+
+**Extends**: `niclabs.insight.Element`  
+<a name="niclabs.insight.data.DataSource.self.forEach"></a>
+#####DataSource.self.forEach(fn)
+Iterate over the data source elements
+
+This method will iterate over the elements of the data source, passing their relative position in the
+data source and the value for the element in that position to the callback function.
+
+Although this method could sometimes be run synchronously (if the data source is an array), its better to assume
+that it runs asynchronously, specially when dealing with remote data sources
+
+The order of the iteration must be defined by each data source.
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
+
+<a name="niclabs.insight.data.JSON"></a>
+####class: data.JSON
+**Extends**: `niclabs.insight.data.DataSource`  
+**Members**
+
+* [class: data.JSON](#niclabs.insight.data.JSON)
+  * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
+  * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
+
+<a name="new_niclabs.insight.data.JSON"></a>
+#####new data.JSON(options)
+Construct a new JSON data source.
+
+**Params**
+
+- options `Object` - configuration options for the data source  
+  - id `String` - identifier for referencing this data source  
+  - src `String` - URL source for the data  
+  - \[data\] `Object` | `String` - request data to be sent to the server as an object or an url parameters string  
+  - \[callback\] `String` - callback to use for JSONP data sources, can also be passed as a data or query parameter  
+  - \[listkey\] `String` - key the data source list if the JSON response is an object  
+
+**Extends**: `niclabs.insight.data.DataSource`  
+<a name="niclabs.insight.data.JSON.self.forEach"></a>
+#####JSON.self.forEach(fn)
+Iterate over the data source elements
+
+Iterates over the elements of the JSON data source. This function may run asynchronously
+if the JSON data has not been loaded
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
+
+<a name="niclabs.insight.data.Selector"></a>
+####class: data.Selector
+**Extends**: `niclabs.insight.data.DataSource`  
+**Members**
+
+* [class: data.Selector](#niclabs.insight.data.Selector)
+  * [new data.Selector(id, src, [options])](#new_niclabs.insight.data.Selector)
+
+<a name="new_niclabs.insight.data.Selector"></a>
+#####new data.Selector(id, src, [options])
+Select a new data source depending on the type of input.
+
+If the parameter given by src is an array, an Array data source will be used,
+if it is a a URL, a JSON data source wil be used,
+if its a function returning an array in which case the result of the function will be used
+if it is none, then an empty Array source is created
+
+**Params**
+
+- id `String` - identifier for the data source  
+- src `Array.<Object>` | `String` | `function` - source of data  
+- \[options\] `Object` - extra options for the data source  
+
+**Extends**: `niclabs.insight.data.DataSource`  
 <a name="niclabs.insight.event"></a>
 ###insight.event
 Very basic event manager for the dashboard
@@ -1365,7 +1553,7 @@ A layer provides a link between a data source and a visualization on the map.
 - options `Object` - configuration options for the layer  
   - id `string` - identifier for the layer  
   - \[name=options.id\] `string` - name for the layer in the filter bar  
-  - data `string` | `Array.<Object>` - uri or data array for the layer  
+  - data `string` | `Array.<Object>` - id of the dataSource  
   - \[summary\] `Object` | `function` - summary data  
 
 <a name="niclabs.insight.layer.Layer.id"></a>

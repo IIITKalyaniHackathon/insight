@@ -28,7 +28,7 @@ niclabs.insight = (function($) {
     // Reference: http://es5.github.io/#x15.4.4.18
     if (!Array.prototype.forEach) {
 
-        Array.prototype.forEach = function(callback, thisArg) {
+        Array.prototype.forEach = function (callback, thisArg) {
 
             var T, k;
 
@@ -1218,12 +1218,12 @@ niclabs.insight.Element = (function($) {
      */
     var Element = function(options) {
         if (!('id' in options)) {
-            throw Error("All UI elements must define an identifier");
+            throw Error("All dashboard elements must define an identifier");
         }
 
         var id = options.id;
         if (!/^[^#. '"]+$/.test(id)) {
-            throw Error("The UI element id must be at least 1 character long and cannot contain the following characters ['#','.',' ', '\'', '\"'])");
+            throw Error("The dashboard element id must be at least 1 character long and cannot contain the following characters ['#','.',' ', '\'', '\"'])");
         }
 
         return {
@@ -1636,6 +1636,51 @@ niclabs.insight.MapView = (function($) {
     };
 })(jQuery);
 
+/**
+ * General helper functions for the dashboard
+ *
+ * @mixin
+ */
+niclabs.insight.utils = (function() {
+    /**
+     * Get a location element from a url.
+     *
+     * Usage:
+     * ```javascript
+     * var loc = niclabs.insight.utils.getLocation("http://www.example.com");
+     * console.log(loc.hostname); // prints "www.example.com";
+     * ```
+     *
+     * @memberof niclabs.insight.utils
+     * @param {String} href url to get the location element
+     * @return {Element} location (`<a>`) DOM element
+     */
+    function getLocation(href) {
+        var location = document.createElement("a");
+        location.href = href;
+        return location;
+    }
+
+    var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+    var regex = new RegExp(expression);
+
+    /**
+     * Check if the given string corresponds to a valid URL
+     *
+     * @memberof niclabs.insight.utils
+     * @param {String} url - URL to verify
+     * @return {boolean} true if the url is valid
+     */
+    function isValidURL(url) {
+        return url.match(regex);
+    }
+
+    return {
+        "isValidURL": isValidURL,
+        "getLocation": getLocation
+    };
+})();
+
 niclabs.insight.View = (function($) {
     /**
      * Construct a View
@@ -1703,6 +1748,241 @@ niclabs.insight.View = (function($) {
     };
 
     return View;
+})(jQuery);
+
+/**
+ * Contains all data operation classes
+ *
+ * @namespace
+ */
+niclabs.insight.data = (function () {
+    var sources = {};
+
+
+    /**
+     * Helper method to get/register a new data source for the dashboard
+     *
+     * @memberof niclabs.insight
+     * @variation 2
+     * @param {String} id - identifier for the data source
+     * @param {Object[]|String|Function|niclabs.insight.Data} src - source of data, it can be an array, a URL, a function or a DataSource object
+     * @param {Object=} options - extra options for the data source
+     * @returns {niclabs.insight.data.DataSource} data source
+     */
+    var data = function(id, src, options) {
+        if (typeof src === 'undefined') {
+            if (!(id in sources)) throw Error("No data source with id "+id);
+            return sources[id];
+        }
+
+        if (typeof src === 'object') {
+            sources[id] = src;
+            return src;
+        }
+
+        sources[id] = niclabs.insight.data.Selector(id, src, options);
+        return sources[id];
+    };
+
+    return data;
+})();
+
+niclabs.insight.data.Array = (function(){
+    /**
+     * Construct a new Array data source
+     *
+     * @class niclabs.insight.data.Array
+     * @extends niclabs.insight.data.DataSource
+     * @param {Object} options - configuration options for the data source
+     * @param {String} options.id - identifier for referencing this data source
+     * @param {Object[]} options.src - source of data
+     */
+    var constructor = function(options) {
+        var self = niclabs.insight.data.DataSource(options);
+
+        var data = options.data && options.data.length || [];
+
+        /**
+         * Iterate over the data source elements
+         *
+         * Iterates over the elements of the array/
+         *
+         * @memberof niclabs.insight.data.Array
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         */
+        self.forEach = function(fn) {
+            for (var i = 0; i < data.length; i++) {
+                fn.call(data[i], data[i], i);
+            }
+        };
+
+        return self;
+    };
+
+    return constructor;
+})();
+
+niclabs.insight.data.DataSource = (function() {
+    /**
+     * Constructs a new data source
+     *
+     * A DataSource object encapsulates interaction with sources of data, whether they
+     * come from code defined arrays, a JSON/CSV remote source, API call, or other data sources
+     *
+     * @class niclabs.insight.data.DataSource
+     * @extends {niclabs.insight.Element}
+     * @param {Object} options - configuration options for the data source
+     * @param {String} options.id - identifier for referencing this data source
+     */
+    var constructor = function(options) {
+        var self = niclabs.insight.Element(options);
+
+        // TODO: we should find a way to notify that new data has been received
+
+        /**
+         * Iterate over the data source elements
+         *
+         * This method will iterate over the elements of the data source, passing their relative position in the
+         * data source and the value for the element in that position to the callback function.
+         *
+         * Although this method could sometimes be run synchronously (if the data source is an array), its better to assume
+         * that it runs asynchronously, specially when dealing with remote data sources
+         *
+         * The order of the iteration must be defined by each data source.
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         * @abstract
+         */
+        self.forEach = function(fn) {
+            throw Error("Not implemented");
+        };
+
+        return self;
+    };
+
+    return constructor;
+})();
+
+niclabs.insight.data.JSON = (function($){
+    /**
+     * Construct a new JSON data source.
+     *
+     * @class niclabs.insight.data.JSON
+     * @extends niclabs.insight.data.DataSource
+     * @param {Object} options - configuration options for the data source
+     * @param {String} options.id - identifier for referencing this data source
+     * @param {String} options.src - URL source for the data
+     * @param {Object|String} [options.data] - request data to be sent to the server as an object or an url parameters string
+     * @param {String} [options.callback] - callback to use for JSONP data sources, can also be passed as a data or query parameter
+     * @param {String} [options.listkey] - key the data source list if the JSON response is an object
+     */
+    var constructor = function(options) {
+        var self = niclabs.insight.data.DataSource(options);
+
+        if (typeof options.src !== 'string' || !niclabs.insight.utils.isValidURL(options.src)) {
+            throw Error(options.src + " is not a valid URL");
+        }
+
+        var data = [];
+        var loaded = false;
+
+        // See if request data has been defined
+        var requestData = {};
+        if (options.data !== null && typeof options.data === 'object') {
+            requestData = options.data;
+        }
+        else if (options.data !== null && typeof options.data === 'string') {
+            // Convert the string to an object
+            options.data.split("&").forEach(function(part) {
+                var item = part.split("=");
+                requestData[item[0]] = decodeURIComponent(item[1]);
+            });
+        }
+
+        if (options.callback) requestData.callback = options.callback;
+
+        /**
+         * Iterate over the data source elements
+         *
+         * Iterates over the elements of the JSON data source. This function may run asynchronously
+         * if the JSON data has not been loaded
+         *
+         * @memberof niclabs.insight.data.JSON
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         */
+        self.forEach = function(fn) {
+            // Delegate the iteration
+            function iterate(data, f) {
+                for (var i = 0; i < data.length; i++) {
+                    f.call(data[i], data[i], i);
+                }
+            }
+
+            if (loaded) {
+                // We already have the data
+                iterate(data, fn);
+            }
+            else {
+                // Otherwise get it
+                $.getJSON(options.src, requestData, function(d) {
+                    if (options.listkey) {
+                        data = d[options.listkey];
+                    }
+                    else {
+                        data = d;
+                    }
+
+                    // Set the data as loaded
+                    loaded = true;
+
+                    // Finally over the data
+                    iterate(data, fn);
+                });
+            }
+        };
+
+        return self;
+    };
+
+    return constructor;
+})(jQuery);
+
+niclabs.insight.data.Selector = (function($){
+    /**
+     * Select a new data source depending on the type of input.
+     *
+     * If the parameter given by src is an array, an Array data source will be used,
+     * if it is a a URL, a JSON data source wil be used,
+     * if its a function returning an array in which case the result of the function will be used
+     * if it is none, then an empty Array source is created
+     *
+     * @class niclabs.insight.data.Selector
+     * @extends niclabs.insight.data.DataSource
+     * @param {String} id - identifier for the data source
+     * @param {Object[]|String|Function} src - source of data
+     * @param {Object=} options - extra options for the data source
+     */
+    var constructor = function(id, src, options) {
+        if (Array.isArray(src)) {
+            options = $.extend({'id' : id, 'src': src}, options);
+            return niclabs.insight.data.Array(options);
+        }
+        else if (typeof src === 'string') {
+            options = $.extend({'id' : id, 'src': src}, options);
+            return niclabs.insight.data.JSON(options);
+        }
+        else if (typeof src === 'function') {
+            options = $.extend({'id' : id, 'src': src.call()}, options);
+            return niclabs.insight.data.Array(options);
+        }
+        else {
+            options = $.extend({'id' : id, 'src': []}, options);
+            return niclabs.insight.data.Array(options);
+        }
+    };
+
+    return constructor;
 })(jQuery);
 
 /**
@@ -3124,7 +3404,7 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
     return HeatmapLayer;
 })(jQuery);
 
- niclabs.insight.layer.Layer = (function($) {
+niclabs.insight.layer.Layer = (function($) {
     "use strict";
 
     /**
@@ -3137,7 +3417,7 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
      * @param {Object} options - configuration options for the layer
      * @param {string} options.id - identifier for the layer
      * @param {string=} [options.name=options.id] - name for the layer in the filter bar
-     * @param {string|Object[]} options.data - uri or data array for the layer
+     * @param {string|Object[]} options.data - id of the dataSource
      * @param {Object|Function} [options.summary] - summary data
      */
     var Layer = function(dashboard, options) {
@@ -3154,13 +3434,14 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
         }
 
         var dataSource = false;
-        var data = [];
-        if (typeof options.data === 'string') {
-            dataSource = options.data;
-        }
-        else {
-            data = options.data && Array.isArray(options.data) ? options.data: [options.data];
-        }
+        // var data = [];
+        // if (typeof options.data === 'string') {
+        //     dataSource = options.data;
+        // } else {
+        //     data = options.data && Array.isArray(options.data) ? options.data : [options.data];
+        // }
+
+        var data = niclabs.insight.data(options.data);
 
         var summary = options.summary || false;
 
@@ -3173,7 +3454,7 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
              * @memberof niclabs.insight.layer.Layer
              * @member {string}
              */
-            get id () {
+            get id() {
                 return id;
             },
 
@@ -3199,15 +3480,14 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
              */
             data: function(obj) {
                 if (typeof obj === 'undefined') {
-                    return loaded || !dataSource? data : dataSource;
+                    return loaded || !dataSource ? data : dataSource;
                 }
 
                 if (typeof obj === 'string') {
                     dataSource = obj;
                     return dataSource;
-                }
-                else {
-                    data = obj.length ? obj: [obj];
+                } else {
+                    data = obj.length ? obj : [obj];
                 }
 
                 // If the layer has already been loaded, reload the data
@@ -3276,8 +3556,7 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
                 if (dataSource) {
                     $.getJSON(dataSource, redraw);
                     // TODO: on error?
-                }
-                else {
+                } else {
                     redraw(data);
                 }
             },
