@@ -40,6 +40,8 @@ niclabs.insight.InfoView = (function($) {
          * @returns {niclabs.insight.info.Block} - newly created block
          */
         element.block = function(obj) {
+            if (typeof obj == 'string') return blocks.element(obj);
+
             var blk = blocks.element(obj);
 
             // Append block to container
