@@ -11,7 +11,7 @@ niclabs.insight.data.Array = (function(){
     var constructor = function(options) {
         var self = niclabs.insight.data.DataSource(options);
 
-        var data = options.data && options.data.length || [];
+        var data = options.src || [];
 
         /**
          * Iterate over the data source elements
@@ -25,6 +25,17 @@ niclabs.insight.data.Array = (function(){
             for (var i = 0; i < data.length; i++) {
                 fn.call(data[i], data[i], i);
             }
+        };
+
+        /**
+         * Iterate over the data source elements
+         *
+         * Iterates over the elements of the array/
+         *
+         * @memberof niclabs.insight.data.Array
+         */
+        self.asArray = function() {
+            return data;
         };
 
         return self;

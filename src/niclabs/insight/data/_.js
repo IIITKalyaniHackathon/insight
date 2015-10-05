@@ -23,10 +23,10 @@ niclabs.insight.data = (function () {
             return sources[id];
         }
 
-        if (typeof src === 'object') {
-            sources[id] = src;
-            return src;
-        }
+        // if (typeof src === 'object') {
+        //     sources[id] = src;
+        //     return src;
+        // }
 
         sources[id] = niclabs.insight.data.Selector(id, src, options);
         return sources[id];
