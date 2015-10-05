@@ -36,17 +36,16 @@ niclabs.insight.map.heatmap.PointHeatmap = (function($) {
          */
         function googleMapsHeatmap(data) {
             var heatmapData = new google.maps.MVCArray();
-            for (var i = 0; i < data.length; i++) {
-                if ('weight' in data[i]) {
+            data.filteredForEach(function(data,i) {
+                if ('weight' in data) {
                     heatmapData.push({
-                        location: new google.maps.LatLng(data[i].lat, data[i].lng),
-                        weight: data[i].weight
+                        location: new google.maps.LatLng(data.lat, data.lng),
+                        weight: data.weight
                     });
+                } else {
+                    heatmapData.push(new google.maps.LatLng(data.lat, data.lng));
                 }
-                else {
-                    heatmapData.push(new google.maps.LatLng(data[i].lat, data[i].lng));
-                }
-            }
+            });
 
             return new google.maps.visualization.HeatmapLayer({
                 data: heatmapData,

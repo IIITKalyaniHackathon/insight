@@ -57,7 +57,7 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {string=} data[].description - description for the marker
          */
         layer.draw = function(data) {
-            data.forEach(
+            data.filteredForEach(
                 function(dataValue, i) {
                     markers.push(newMarker(dataValue, attr));
                 });
@@ -87,10 +87,11 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
         layer.filter = function(fn) {
+            //TODO: for some reason inheritance doesnt work
             var data = layer.data();
-            data.forEach(function(dataElement,i) {
-                markers[i].visible(fn(dataElement));
-            });
+            data.filter(fn);
+            layer.clear();
+            layer.draw(data);
         };
 
         return layer;

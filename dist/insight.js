@@ -1289,10 +1289,14 @@ niclabs.insight.Filters = (function($) {
             filters.each(function(key, filter) {
                 if (!filter.apply(element)) {
                     result = false;
+                    //Mark element as not visible
+                    element.visible = false;
+                    console.log(element);
                     return false;
                 }
             });
 
+            element.visible = true;
             return result;
         }
 
@@ -1787,7 +1791,7 @@ niclabs.insight.data = (function () {
     return data;
 })();
 
-niclabs.insight.data.Array = (function(){
+niclabs.insight.data.Array = (function() {
     /**
      * Construct a new Array data source
      *
@@ -1801,6 +1805,13 @@ niclabs.insight.data.Array = (function(){
         var self = niclabs.insight.data.DataSource(options);
 
         var data = options.src || [];
+
+        // filter purposes
+        for (var i = 0; i < data.length; i++) {
+            $.extend(data[i], {
+                visible: true
+            });
+        }
 
         /**
          * Iterate over the data source elements
@@ -1816,14 +1827,24 @@ niclabs.insight.data.Array = (function(){
             }
         };
 
-        /**
-         * Iterate over the data source elements
-         *
-         * Iterates over the elements of the array/
-         *
-         * @memberof niclabs.insight.data.Array
-         */
-        self.asArray = function() {
+        self.filteredForEach = function(fn) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].visible) {
+                    fn.call(data[i], data[i], i);
+                }
+            }
+        };
+
+        self.filter = function(fn) {
+            for (var i = 0; i < data.length; i++) {
+                if (!fn.call(data[i], data[i], i)) {
+                    data[i].visible = false;
+                }
+            }
+        };
+
+        // DEBUGGING
+        self.array = function(fn) {
             return data;
         };
 
@@ -3269,14 +3290,16 @@ niclabs.insight.layer.GridLayer = (function() {
         function createGrid(data, obj) {
             var grid;
             if ('type' in obj) {
-                var attr = {'layer': layer.id, 'data': data};
+                var attr = {
+                    'layer': layer.id,
+                    'data': data
+                };
 
                 // Extend the attributes with the data and the options for the marker
                 $.extend(attr, obj);
 
                 grid = niclabs.insight.handler(obj.type)(dashboard, attr);
-            }
-            else {
+            } else {
                 grid = obj;
 
                 // Should we add a way to pass data to the grid?
@@ -3319,7 +3342,10 @@ niclabs.insight.layer.GridLayer = (function() {
          * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
         layer.filter = function(fn) {
-            // TODO. not sure if possible
+            var data = layer.data();
+            data.filter(fn);
+            layer.clear();
+            layer.draw(data);
         };
 
         return layer;
@@ -3403,7 +3429,10 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
          * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
         layer.filter = function(fn) {
-            // TODO. not sure if possible
+            var data = layer.data();
+            data.filter(fn);
+            layer.clear();
+            layer.draw(data);
         };
 
         return layer;
@@ -3669,7 +3698,7 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {string=} data[].description - description for the marker
          */
         layer.draw = function(data) {
-            data.forEach(
+            data.filteredForEach(
                 function(dataValue, i) {
                     markers.push(newMarker(dataValue, attr));
                 });
@@ -3699,10 +3728,11 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
         layer.filter = function(fn) {
+            //TODO: for some reason inheritance doesnt work
             var data = layer.data();
-            data.forEach(function(dataElement,i) {
-                markers[i].visible(fn(dataElement));
-            });
+            data.filter(fn);
+            layer.clear();
+            layer.draw(data);
         };
 
         return layer;
@@ -5123,7 +5153,7 @@ niclabs.insight.map.grid.Grid = (function() {
         var quadtree = niclabs.insight.quadtree.PointQuadTree(worldBounds);
 
         // TODO: put all data points in a world wide quad tree
-        options.data.forEach(function(dataElement) {
+        options.data.filteredForEach(function(dataElement) {
             var coord = niclabs.insight.map.GoogleMercator.cartesian(dataElement);
 
             dataElement.x = coord.x;
@@ -5856,17 +5886,16 @@ niclabs.insight.map.heatmap.PointHeatmap = (function($) {
          */
         function googleMapsHeatmap(data) {
             var heatmapData = new google.maps.MVCArray();
-            for (var i = 0; i < data.length; i++) {
-                if ('weight' in data[i]) {
+            data.filteredForEach(function(data,i) {
+                if ('weight' in data) {
                     heatmapData.push({
-                        location: new google.maps.LatLng(data[i].lat, data[i].lng),
-                        weight: data[i].weight
+                        location: new google.maps.LatLng(data.lat, data.lng),
+                        weight: data.weight
                     });
+                } else {
+                    heatmapData.push(new google.maps.LatLng(data.lat, data.lng));
                 }
-                else {
-                    heatmapData.push(new google.maps.LatLng(data[i].lat, data[i].lng));
-                }
-            }
+            });
 
             return new google.maps.visualization.HeatmapLayer({
                 data: heatmapData,

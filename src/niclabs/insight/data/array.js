@@ -1,4 +1,4 @@
-niclabs.insight.data.Array = (function(){
+niclabs.insight.data.Array = (function() {
     /**
      * Construct a new Array data source
      *
@@ -12,6 +12,13 @@ niclabs.insight.data.Array = (function(){
         var self = niclabs.insight.data.DataSource(options);
 
         var data = options.src || [];
+
+        // filter purposes
+        for (var i = 0; i < data.length; i++) {
+            $.extend(data[i], {
+                visible: true
+            });
+        }
 
         /**
          * Iterate over the data source elements
@@ -27,14 +34,24 @@ niclabs.insight.data.Array = (function(){
             }
         };
 
-        /**
-         * Iterate over the data source elements
-         *
-         * Iterates over the elements of the array/
-         *
-         * @memberof niclabs.insight.data.Array
-         */
-        self.asArray = function() {
+        self.filteredForEach = function(fn) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].visible) {
+                    fn.call(data[i], data[i], i);
+                }
+            }
+        };
+
+        self.filter = function(fn) {
+            for (var i = 0; i < data.length; i++) {
+                if (!fn.call(data[i], data[i], i)) {
+                    data[i].visible = false;
+                }
+            }
+        };
+
+        // DEBUGGING
+        self.array = function(fn) {
             return data;
         };
 

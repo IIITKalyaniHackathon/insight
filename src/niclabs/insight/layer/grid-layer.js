@@ -20,14 +20,16 @@ niclabs.insight.layer.GridLayer = (function() {
         function createGrid(data, obj) {
             var grid;
             if ('type' in obj) {
-                var attr = {'layer': layer.id, 'data': data};
+                var attr = {
+                    'layer': layer.id,
+                    'data': data
+                };
 
                 // Extend the attributes with the data and the options for the marker
                 $.extend(attr, obj);
 
                 grid = niclabs.insight.handler(obj.type)(dashboard, attr);
-            }
-            else {
+            } else {
                 grid = obj;
 
                 // Should we add a way to pass data to the grid?
@@ -70,7 +72,10 @@ niclabs.insight.layer.GridLayer = (function() {
          * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
         layer.filter = function(fn) {
-            // TODO. not sure if possible
+            var data = layer.data();
+            data.filter(fn);
+            layer.clear();
+            layer.draw(data);
         };
 
         return layer;

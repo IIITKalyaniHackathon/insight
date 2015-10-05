@@ -220,7 +220,7 @@ niclabs.insight.map.grid.Grid = (function() {
         var quadtree = niclabs.insight.quadtree.PointQuadTree(worldBounds);
 
         // TODO: put all data points in a world wide quad tree
-        options.data.forEach(function(dataElement) {
+        options.data.filteredForEach(function(dataElement) {
             var coord = niclabs.insight.map.GoogleMercator.cartesian(dataElement);
 
             dataElement.x = coord.x;

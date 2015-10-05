@@ -22,7 +22,6 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
       * [class: data.Array](#niclabs.insight.data.Array)
         * [new data.Array(options)](#new_niclabs.insight.data.Array)
         * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
-        * [Array.self.asArray()](#niclabs.insight.data.Array.self.asArray)
       * [class: data.DataSource](#niclabs.insight.data.DataSource)
         * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
         * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
@@ -302,7 +301,6 @@ understand what is going on in the city
     * [class: data.Array](#niclabs.insight.data.Array)
       * [new data.Array(options)](#new_niclabs.insight.data.Array)
       * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
-      * [Array.self.asArray()](#niclabs.insight.data.Array.self.asArray)
     * [class: data.DataSource](#niclabs.insight.data.DataSource)
       * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
       * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
@@ -707,7 +705,6 @@ Contains all data operation classes
   * [class: data.Array](#niclabs.insight.data.Array)
     * [new data.Array(options)](#new_niclabs.insight.data.Array)
     * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
-    * [Array.self.asArray()](#niclabs.insight.data.Array.self.asArray)
   * [class: data.DataSource](#niclabs.insight.data.DataSource)
     * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
     * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
@@ -725,7 +722,6 @@ Contains all data operation classes
 * [class: data.Array](#niclabs.insight.data.Array)
   * [new data.Array(options)](#new_niclabs.insight.data.Array)
   * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
-  * [Array.self.asArray()](#niclabs.insight.data.Array.self.asArray)
 
 <a name="new_niclabs.insight.data.Array"></a>
 #####new data.Array(options)
@@ -747,12 +743,6 @@ Iterates over the elements of the array/
 **Params**
 
 - fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
-
-<a name="niclabs.insight.data.Array.self.asArray"></a>
-#####Array.self.asArray()
-Iterate over the data source elements
-
-Iterates over the elements of the array/
 
 <a name="niclabs.insight.data.DataSource"></a>
 ####class: data.DataSource

@@ -62,7 +62,7 @@
 
     <script type="text/javascript" src="js/chartist.min.js"></script>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?v="></script>
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
     <script type="text/javascript" src="js/chartist.min.js"></script>
     <script type="text/javascript" src="js/material.js"></script>
 
@@ -251,6 +251,17 @@
                 'type': 'hexagon',
                 'size': 32,
                 'fill': 'average'
+            }
+        });
+
+        niclabs.insight.layer({
+            name: 'Visitor Heatmap',
+            handler: 'heatmap-layer',
+            data: 'parisData',
+            heatmap: {
+                'type': 'point-heatmap',
+                'radius': 15,
+                'dissipating': true,
             }
         });
     </script>
