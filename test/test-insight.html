@@ -216,6 +216,33 @@
             'weight': 0.14
         }]);
 
+        niclabs.insight.data('anotherParisData', [{
+            'lat': 48.860611,
+            'lng': 2.337644,
+            'landmark': 'Musée du Louvre',
+            'weight': 0.5
+        }, {
+            'lat': 48.859961,
+            'lng': 2.326561,
+            'landmark': 'Musée d\'Orsay',
+            'weight': 0.8
+        }, {
+            'lat': 48.873792,
+            'lng': 2.295028,
+            'landmark': 'L’Arc de Triomphe',
+            'weight': 0.4
+        }, {
+            'lat': 48.852968,
+            'lng': 2.349902,
+            'landmark': 'Cathédrale Notre-Dame',
+            'weight': 0.95
+        }, {
+            'lat': 48.85837,
+            'lng': 2.294481,
+            'landmark': 'Tour Eiffel',
+            'weight': 0.14
+        }]);
+
         niclabs.insight.layer({
             handler: 'marker-layer',
             name: 'Museum Visitors',
@@ -257,7 +284,7 @@
         niclabs.insight.layer({
             name: 'Visitor Heatmap',
             handler: 'heatmap-layer',
-            data: 'parisData',
+            data: 'anotherParisData',
             heatmap: {
                 'type': 'point-heatmap',
                 'radius': 15,
