@@ -1,96 +1,131 @@
 <!DOCTYPE html>
 <html>
-  <head>
 
+<head>
     <!--
-    THIS IS A TEST.
+      THIS IS A TEST
+
+      IT SHOULD SHOW ONLY A GOOGLE MAPS
+
+      The map is over Santiago (center at La Moneda (-33.442909,-70.65387)), with a zoom level of 12.
 
     -->
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Test 0 - InfoView</title>
 
-    <title>Test 10 - JSON Fetch</title>
-
-    <style>
-      html,
-      body {
-        margin: 0;
-        width: 100%;
-        height: 100%;
-      }
-      #dashboard {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-    <link rel="stylesheet" type="text/css" href="css/CityDashboard.css">
-    <link rel="stylesheet" type="text/css" href="css/chartist.min.css">
-
-    <script src="js/chartist.min.js"></script>
-    <script src="js/jquery-1.11.1.min.js"></script>
-    <script src="//maps.googleapis.com/maps/api/js?v="></script>
-
-    <script src="js/CityDashboard.min.js"></script>
-
-
-  </head>
-
-  <body><div id="dashboard"></div></body>
-
-  <script type="text/javascript">
-    var myDashboard = new CityDashboard.Dashboard({
-      'anchor': '#dashboard',
-      'layout': 'left'
-    });
-
-    var map = new CityDashboard.GoogleMap({
-      'lat': -33.442909,
-      'lng': -70.65387,
-      'zoom': 12
-    });
-
-    var infoWindow = new CityDashboard.InfoWindow([{
-      'visualization': 'barchart-viz',
-      'id': '#mybarchart',
-      'data-source': 'position?1',
-      'labels': ['Mon','Tue','Wed','Thu','Fri'],
-      'title': 'Bars',
-      'preprocess':function (data) { return data[0];},
-      'properties': {
-        'class': 'ct-chart',
-        options: {
-          seriesBarDistance: 10
-        },
-        responsiveOptions: [
-          ['screen and (max-width: 640px)', {
-            seriesBarDistance: 5,
-            axisX: {
-              labelInterpolationFnc: function (value) {
-                return value[0];
-              }
-            }
-          }]
-        ]
-      }
-    }]);
-
-    myDashboard.addLayer({
-      'id': '#RandomPoints',
-      'layer': 'marker-layer',
-      'data-source': 'position?300',
-      'layer_attr': {
-        'type': 'simple',
-        'visualization': 'linechart-viz',
-        'id': '#randomLineChart',
-        'title': 'Random Point Data',
-        'labels': function (data) {
-          var N = data[0].length;
-          var a = Array.apply(null, {length: N}).map(Number.call, Number);
-          return a.map(function (el) {return el+"";});
-        },
-        'properties': {
-          'class': 'ct-chart ct-golden-section'
+    <style type="text/css">
+        html,
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
         }
-      }
-    });
 
-  </script>
+        #dashboard {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <style type="text/css">
+        .Pie {
+            fill: red;
+        }
+
+        .Pie:nth-child(2) {
+            fill: yellow;
+        }
+
+        .Pie:nth-child(3) {
+            fill: orange;
+        }
+
+        .Pie:nth-child(4) {
+            fill: green;
+        }
+
+        .Pie:nth-child(5) {
+            fill: SteelBlue;
+        }
+
+        .Pie:nth-child(6) {
+            fill: gray;
+        }
+
+        .Pie:nth-child(7) {
+            fill: aqua;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="css/chartist.min.css">
+    <link rel="stylesheet" type="text/css" href="css/material.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/insight.css">
+
+    <script type="text/javascript" src="js/chartist.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
+    <script type="text/javascript" src="js/material.js"></script>
+
+
+    <script type="text/javascript" src="js/insight.js"></script>
+
+
+</head>
+
+<body>
+    <div id="dashboard"></div>
+
+    <script type="text/html" id="template">
+        The marker
+        <span data-if="lat">in the location (
+            <span data-bind="lat">0</span>,
+            <span data-bind="lng">0</span>)</span>
+        shows the landmark
+        <span data-bind="landmark">landmark</span>
+    </script>
+
+    <script type="text/javascript">
+        // Binding the map and the information window.
+        var dashboard = niclabs.insight.dashboard({
+            'anchor': '#dashboard',
+            'layout': 'right'
+        });
+
+        var map = niclabs.insight.map({
+            'handler': 'google-map',
+            'lat': 48.8583,
+            'lng': 2.2944,
+            'zoom': 15
+        });
+
+        niclabs.insight.data('parisData', './test.json');
+
+        niclabs.insight.layer({
+            name: 'Just a Heatmap',
+            handler: 'heatmap-layer',
+            data: 'parisData',
+            heatmap: {
+                'type': 'point-heatmap',
+                'radius': 15,
+                'dissipating': true,
+            }
+        });
+
+        dashboard.filter({
+            handler: 'selection-filter',
+            description: 'Landmark', // the empty string is used if not provided
+            options: [{
+                name: 'Not Eiffel Tower',
+                filter: function(data) {
+                    return data.landmark.indexOf("Eiffel") < 0;
+                }
+            }, {
+                name: 'Not Orsay',
+                filter: function(data) {
+                    return data.landmark.indexOf("Orsay") < 0;
+                }
+            }, ]
+        });
+    </script>
+</body>
+
 </html>

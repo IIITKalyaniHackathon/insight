@@ -93,7 +93,7 @@ niclabs.insight.data.Array = (function() {
         };
 
         // DEBUGGING
-        self.asArray = function(fn) {
+        self.asArray = function() {
             return data;
         };
 
