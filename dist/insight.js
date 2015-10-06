@@ -1827,6 +1827,14 @@ niclabs.insight.data.Array = (function() {
             }
         };
 
+        /**
+         * Iterate over the data source elements, but skips the filtered elements
+         *
+         * Iterates over the elements of the array/
+         *
+         * @memberof niclabs.insight.data.Array
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         */
         self.filteredForEach = function(fn) {
             for (var i = 0; i < data.length; i++) {
                 if (data[i].visible) {
@@ -1835,6 +1843,12 @@ niclabs.insight.data.Array = (function() {
             }
         };
 
+        /**
+         * Iterate over the data source elements and marks data elements as not visible
+         *
+         * @memberof niclabs.insight.data.Array
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+         */
         self.filter = function(fn) {
             for (var i = 0; i < data.length; i++) {
                 if (!fn.call(data[i], data[i], i)) {
@@ -1843,8 +1857,36 @@ niclabs.insight.data.Array = (function() {
             }
         };
 
+        /**
+         * Fold function
+         *
+         * @memberof niclabs.insight.data.Array
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+         */
+        self.reduce = function(fn, init) {
+            var ret = fn.call(data[0], init, data[0]);
+            for (var i = 1; i < data.length; i++) {
+                ret = fn.call(data[i], ret, data[i], i);
+            }
+            return ret;
+        };
+
+        /**
+         * Map function
+         *
+         * @memberof niclabs.insight.data.Array
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+         */
+        self.map = function(fn) {
+            var array = data;
+            for (var i = 0; i < data.length; i++) {
+                array[i] = fn.call(data[i], data[i], i);
+            }
+            return array;
+        };
+
         // DEBUGGING
-        self.array = function(fn) {
+        self.asArray = function(fn) {
             return data;
         };
 
@@ -1887,6 +1929,46 @@ niclabs.insight.data.DataSource = (function() {
          * @abstract
          */
         self.forEach = function(fn) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Iterate over the data source elements, but skips the filtered elements
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         */
+        self.filteredForEach = function(fn) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Iterate over the data source elements and marks data elements as not visible
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+         */
+        self.filter = function(fn) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Fold function
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the reduce function
+         */
+        self.reduce = function(fn, init) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Map function
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the map function
+         */
+        self.map = function(fn) {
             throw Error("Not implemented");
         };
 
@@ -2842,6 +2924,7 @@ niclabs.insight.info.ChartistBlock = (function($) {
 
          self.refresh = function(data) {
              data = typeof data === 'undefined' ? self.data() : data;
+             console.log(data);
 
              // Call the parent
              refresh(data);

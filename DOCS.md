@@ -22,9 +22,17 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
       * [class: data.Array](#niclabs.insight.data.Array)
         * [new data.Array(options)](#new_niclabs.insight.data.Array)
         * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
+        * [Array.self.filteredForEach(fn)](#niclabs.insight.data.Array.self.filteredForEach)
+        * [Array.self.filter(fn)](#niclabs.insight.data.Array.self.filter)
+        * [Array.self.reduce(fn)](#niclabs.insight.data.Array.self.reduce)
+        * [Array.self.map(fn)](#niclabs.insight.data.Array.self.map)
       * [class: data.DataSource](#niclabs.insight.data.DataSource)
         * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
         * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
+        * [DataSource.self.filteredForEach(fn)](#niclabs.insight.data.DataSource.self.filteredForEach)
+        * [DataSource.self.filter(fn)](#niclabs.insight.data.DataSource.self.filter)
+        * [DataSource.self.reduce(fn)](#niclabs.insight.data.DataSource.self.reduce)
+        * [DataSource.self.map(fn)](#niclabs.insight.data.DataSource.self.map)
       * [class: data.JSON](#niclabs.insight.data.JSON)
         * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
         * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
@@ -301,9 +309,17 @@ understand what is going on in the city
     * [class: data.Array](#niclabs.insight.data.Array)
       * [new data.Array(options)](#new_niclabs.insight.data.Array)
       * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
+      * [Array.self.filteredForEach(fn)](#niclabs.insight.data.Array.self.filteredForEach)
+      * [Array.self.filter(fn)](#niclabs.insight.data.Array.self.filter)
+      * [Array.self.reduce(fn)](#niclabs.insight.data.Array.self.reduce)
+      * [Array.self.map(fn)](#niclabs.insight.data.Array.self.map)
     * [class: data.DataSource](#niclabs.insight.data.DataSource)
       * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
       * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
+      * [DataSource.self.filteredForEach(fn)](#niclabs.insight.data.DataSource.self.filteredForEach)
+      * [DataSource.self.filter(fn)](#niclabs.insight.data.DataSource.self.filter)
+      * [DataSource.self.reduce(fn)](#niclabs.insight.data.DataSource.self.reduce)
+      * [DataSource.self.map(fn)](#niclabs.insight.data.DataSource.self.map)
     * [class: data.JSON](#niclabs.insight.data.JSON)
       * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
       * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
@@ -705,9 +721,17 @@ Contains all data operation classes
   * [class: data.Array](#niclabs.insight.data.Array)
     * [new data.Array(options)](#new_niclabs.insight.data.Array)
     * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
+    * [Array.self.filteredForEach(fn)](#niclabs.insight.data.Array.self.filteredForEach)
+    * [Array.self.filter(fn)](#niclabs.insight.data.Array.self.filter)
+    * [Array.self.reduce(fn)](#niclabs.insight.data.Array.self.reduce)
+    * [Array.self.map(fn)](#niclabs.insight.data.Array.self.map)
   * [class: data.DataSource](#niclabs.insight.data.DataSource)
     * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
     * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
+    * [DataSource.self.filteredForEach(fn)](#niclabs.insight.data.DataSource.self.filteredForEach)
+    * [DataSource.self.filter(fn)](#niclabs.insight.data.DataSource.self.filter)
+    * [DataSource.self.reduce(fn)](#niclabs.insight.data.DataSource.self.reduce)
+    * [DataSource.self.map(fn)](#niclabs.insight.data.DataSource.self.map)
   * [class: data.JSON](#niclabs.insight.data.JSON)
     * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
     * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
@@ -722,6 +746,10 @@ Contains all data operation classes
 * [class: data.Array](#niclabs.insight.data.Array)
   * [new data.Array(options)](#new_niclabs.insight.data.Array)
   * [Array.self.forEach(fn)](#niclabs.insight.data.Array.self.forEach)
+  * [Array.self.filteredForEach(fn)](#niclabs.insight.data.Array.self.filteredForEach)
+  * [Array.self.filter(fn)](#niclabs.insight.data.Array.self.filter)
+  * [Array.self.reduce(fn)](#niclabs.insight.data.Array.self.reduce)
+  * [Array.self.map(fn)](#niclabs.insight.data.Array.self.map)
 
 <a name="new_niclabs.insight.data.Array"></a>
 #####new data.Array(options)
@@ -744,6 +772,40 @@ Iterates over the elements of the array/
 
 - fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
 
+<a name="niclabs.insight.data.Array.self.filteredForEach"></a>
+#####Array.self.filteredForEach(fn)
+Iterate over the data source elements, but skips the filtered elements
+
+Iterates over the elements of the array/
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
+
+<a name="niclabs.insight.data.Array.self.filter"></a>
+#####Array.self.filter(fn)
+Iterate over the data source elements and marks data elements as not visible
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - filter for the data element  
+
+<a name="niclabs.insight.data.Array.self.reduce"></a>
+#####Array.self.reduce(fn)
+Fold function
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - filter for the data element  
+
+<a name="niclabs.insight.data.Array.self.map"></a>
+#####Array.self.map(fn)
+Map function
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - filter for the data element  
+
 <a name="niclabs.insight.data.DataSource"></a>
 ####class: data.DataSource
 **Extends**: `niclabs.insight.Element`  
@@ -752,6 +814,10 @@ Iterates over the elements of the array/
 * [class: data.DataSource](#niclabs.insight.data.DataSource)
   * [new data.DataSource(options)](#new_niclabs.insight.data.DataSource)
   * [DataSource.self.forEach(fn)](#niclabs.insight.data.DataSource.self.forEach)
+  * [DataSource.self.filteredForEach(fn)](#niclabs.insight.data.DataSource.self.filteredForEach)
+  * [DataSource.self.filter(fn)](#niclabs.insight.data.DataSource.self.filter)
+  * [DataSource.self.reduce(fn)](#niclabs.insight.data.DataSource.self.reduce)
+  * [DataSource.self.map(fn)](#niclabs.insight.data.DataSource.self.map)
 
 <a name="new_niclabs.insight.data.DataSource"></a>
 #####new data.DataSource(options)
@@ -781,6 +847,38 @@ The order of the iteration must be defined by each data source.
 **Params**
 
 - fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
+
+<a name="niclabs.insight.data.DataSource.self.filteredForEach"></a>
+#####DataSource.self.filteredForEach(fn)
+Iterate over the data source elements, but skips the filtered elements
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
+
+<a name="niclabs.insight.data.DataSource.self.filter"></a>
+#####DataSource.self.filter(fn)
+Iterate over the data source elements and marks data elements as not visible
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - filter for the data element  
+
+<a name="niclabs.insight.data.DataSource.self.reduce"></a>
+#####DataSource.self.reduce(fn)
+Fold function
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - handler for the reduce function  
+
+<a name="niclabs.insight.data.DataSource.self.map"></a>
+#####DataSource.self.map(fn)
+Map function
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - handler for the map function  
 
 <a name="niclabs.insight.data.JSON"></a>
 ####class: data.JSON

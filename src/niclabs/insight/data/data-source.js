@@ -34,6 +34,46 @@ niclabs.insight.data.DataSource = (function() {
             throw Error("Not implemented");
         };
 
+        /**
+         * Iterate over the data source elements, but skips the filtered elements
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         */
+        self.filteredForEach = function(fn) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Iterate over the data source elements and marks data elements as not visible
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+         */
+        self.filter = function(fn) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Fold function
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the reduce function
+         */
+        self.reduce = function(fn, init) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Map function
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the map function
+         */
+        self.map = function(fn) {
+            throw Error("Not implemented");
+        };
+
         return self;
     };
 
