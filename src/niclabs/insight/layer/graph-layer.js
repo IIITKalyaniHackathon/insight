@@ -101,13 +101,15 @@ niclabs.insight.layer.GraphLayer = (function($) {
          * @param {string=} data[].description - description for the graphElement
          */
         layer.draw = function(data) {
-            for (var i = 0; i < data.length; i++) {
-                nodes.push(newNode(data, i, graphOptions));
+            //TODO: use for each
+            rawData = data.asArray();
+            for (var i = 0; i < rawData.length; i++) {
+                nodes.push(newNode(rawData, i, graphOptions));
             }
             for (i = 0; i < graphOptions.adj.length; i++) {
               for (var j = 0; j < i; j++) {
                 if (graphOptions.adj[i][j] == 1) {
-                  edges.push(newEdge(data, i, j, graphOptions));
+                  edges.push(newEdge(rawData, i, j, graphOptions));
                 }
               }
             }

@@ -26,12 +26,15 @@
       }
     </style>
 
-    <link rel="stylesheet" type="text/css" href="css/insight.css">
     <link rel="stylesheet" type="text/css" href="css/chartist.min.css">
+    <link rel="stylesheet" type="text/css" href="css/material.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/insight.css">
 
     <script src="js/chartist.min.js"></script>
     <script src="js/jquery-1.11.1.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
+    <script type="text/javascript" src="js/material.js"></script>
 
     <script src="js/insight.js"></script>
 
@@ -53,19 +56,22 @@
         'zoom': 15
     });
 
+    niclabs.insight.data('anotherParisData', [{
+        'coordinates': [[48.860611, 2.337644],
+                        [48.859961, 2.326561],
+                        [48.873792, 2.295028]],
+        'landmark': 'Street 1',
+        'weight': 0.1
+    }, {
+        'coordinates': [[48.852968, 2.349902],
+                [48.85837, 2.294481]],
+        'landmark': 'Street 2'
+    }]);
+
     niclabs.insight.layer({
+        name: 'Just a segment Heatmap',
         handler: 'heatmap-layer',
-        data: [{
-            'coordinates': [[48.860611, 2.337644],
-                            [48.859961, 2.326561],
-                            [48.873792, 2.295028]],
-            'landmark': 'Street 1',
-            'weight': 0.1
-        }, {
-            'coordinates': [[48.852968, 2.349902],
-                    [48.85837, 2.294481]],
-            'landmark': 'Street 2'
-        }],
+        data: 'anotherParisData',
         heatmap: {
             'type': 'segment-heatmap',
             'radius': 15,

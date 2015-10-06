@@ -63,7 +63,6 @@
     <script type="text/javascript" src="js/chartist.min.js"></script>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
     <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
-    <script type="text/javascript" src="js/chartist.min.js"></script>
     <script type="text/javascript" src="js/material.js"></script>
 
 
@@ -219,29 +218,24 @@
         niclabs.insight.data('anotherParisData', [{
             'lat': 48.860611,
             'lng': 2.337644,
-            'landmark': 'Musée du Louvre',
             'weight': 0.5
         }, {
-            'lat': 48.859961,
-            'lng': 2.326561,
-            'landmark': 'Musée d\'Orsay',
-            'weight': 0.8
+            'lat': 48.861700,
+            'lng': 2.337644,
+            'weight': 0.25
         }, {
-            'lat': 48.873792,
-            'lng': 2.295028,
-            'landmark': 'L’Arc de Triomphe',
-            'weight': 0.4
+            'lat': 48.860611,
+            'lng': 2.338500,
+            'weight': 0.25
         }, {
-            'lat': 48.852968,
-            'lng': 2.349902,
-            'landmark': 'Cathédrale Notre-Dame',
-            'weight': 0.95
+            'lat': 48.860200,
+            'lng': 2.335644,
+            'weight': 0.75
         }, {
-            'lat': 48.85837,
-            'lng': 2.294481,
-            'landmark': 'Tour Eiffel',
-            'weight': 0.14
-        }]);
+            'lat': 48.862611,
+            'lng': 2.336626,
+            'weight': 0.5
+        }, ]);
 
         niclabs.insight.layer({
             handler: 'marker-layer',
@@ -282,7 +276,7 @@
         });
 
         niclabs.insight.layer({
-            name: 'Visitor Heatmap',
+            name: 'Just a Heatmap',
             handler: 'heatmap-layer',
             data: 'anotherParisData',
             heatmap: {

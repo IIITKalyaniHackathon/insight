@@ -21,6 +21,7 @@ niclabs.insight.Dashboard = (function($) {
     return function(options) {
         var layoutOptions = ['left', 'right', 'none'];
         var dashboardId = "#insight-dashboard";
+        var layerCounter = 0;
 
         if (!('anchor' in options)) throw new Error('Anchor id is required for creating a dashboard');
         var anchor = options.anchor;
@@ -302,6 +303,7 @@ niclabs.insight.Dashboard = (function($) {
 
                 // Add the layer to the selector
                 layerSelector.add(lyr.id, lyr.name);
+                layerCounter = layerCounter+1;
 
                 return lyr;
             },

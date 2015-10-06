@@ -121,7 +121,7 @@ niclabs.insight.layer.Layer = (function($) {
 
                     if (summary) {
                         var summaryData = summary;
-                        if (typeof summary === 'function') summaryData = summary(data);
+                        if (typeof summary === 'function') summaryData = summary(data.asArray());
 
                         /**
                          * Event triggered when an update to the (filtering/update) has ocurred
