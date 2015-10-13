@@ -30,7 +30,7 @@ niclabs.insight.filter.LayerSelector = (function($) {
             .text('Select Layer');
 
         // Hide the selector if there are no elements
-        select.hide();
+        view.$.hide();
 
         select.on('change', function() {
             dashboard.active($(this).val());
@@ -55,7 +55,7 @@ niclabs.insight.filter.LayerSelector = (function($) {
             // Show the selector if there is more than one layer
             // Note: layers.length returns undefined
             if (Object.keys(layers).length > 1)
-                select.show();
+                view.$.show();
         };
 
         return view;

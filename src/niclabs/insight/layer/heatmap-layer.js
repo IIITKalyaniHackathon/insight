@@ -70,7 +70,10 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
          * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
         layer.filter = function(fn) {
-            // TODO. not sure if possible
+            var data = layer.data();
+            data.filter(fn);
+            layer.clear();
+            layer.draw(data);
         };
 
         return layer;

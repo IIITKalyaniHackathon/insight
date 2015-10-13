@@ -8,12 +8,12 @@ niclabs.insight.Element = (function($) {
      */
     var Element = function(options) {
         if (!('id' in options)) {
-            throw Error("All UI elements must define an identifier");
+            throw Error("All dashboard elements must define an identifier");
         }
 
         var id = options.id;
         if (!/^[^#. '"]+$/.test(id)) {
-            throw Error("The UI element id must be at least 1 character long and cannot contain the following characters ['#','.',' ', '\'', '\"'])");
+            throw Error("The dashboard element id must be at least 1 character long and cannot contain the following characters ['#','.',' ', '\'', '\"'])");
         }
 
         return {

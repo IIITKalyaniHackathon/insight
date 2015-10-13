@@ -723,6 +723,7 @@ niclabs.insight.Dashboard = (function($) {
     return function(options) {
         var layoutOptions = ['left', 'right', 'none'];
         var dashboardId = "#insight-dashboard";
+        var layerCounter = 0;
 
         if (!('anchor' in options)) throw new Error('Anchor id is required for creating a dashboard');
         var anchor = options.anchor;
@@ -734,24 +735,14 @@ niclabs.insight.Dashboard = (function($) {
 
         // Create the main container
         var main = $('<div>');
-        //.addClass('mdl-layout__content');
-        //.addClass(options.layout );
 
         var container = $('<div>')
             .setID(dashboardId)
             .addClass('mdl-grid');
 
-        //$(main).append(container);
 
         // Append the dashboard to the container
         $(anchor).append(container);
-
-        //var emptyHolder = $('<div>').addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--9-col-desktop');
-        //$(container).append(emptyHolder);
-
-        //$(anchor)
-        //.addClass('mdl-layout');
-        //.addClass('mdl-js-layout');
 
         var layers = {};
         var numberedLayers = 0;
@@ -805,6 +796,10 @@ niclabs.insight.Dashboard = (function($) {
                 .attr('href', '#insight-filter-tab')
                 .addClass('mdl-tabs__tab')
                 .html('Filters'));
+
+        tabs.click(function(){
+            $('#insight-map-view').width($('#insight-dashboard').innerWidth());
+        });
 
         var informationTab = $('<div>')
             .setID('insight-info-tab')
@@ -1004,6 +999,7 @@ niclabs.insight.Dashboard = (function($) {
 
                 // Add the layer to the selector
                 layerSelector.add(lyr.id, lyr.name);
+                layerCounter = layerCounter+1;
 
                 return lyr;
             },
@@ -1218,12 +1214,12 @@ niclabs.insight.Element = (function($) {
      */
     var Element = function(options) {
         if (!('id' in options)) {
-            throw Error("All UI elements must define an identifier");
+            throw Error("All dashboard elements must define an identifier");
         }
 
         var id = options.id;
         if (!/^[^#. '"]+$/.test(id)) {
-            throw Error("The UI element id must be at least 1 character long and cannot contain the following characters ['#','.',' ', '\'', '\"'])");
+            throw Error("The dashboard element id must be at least 1 character long and cannot contain the following characters ['#','.',' ', '\'', '\"'])");
         }
 
         return {
@@ -1289,10 +1285,13 @@ niclabs.insight.Filters = (function($) {
             filters.each(function(key, filter) {
                 if (!filter.apply(element)) {
                     result = false;
+                    //Mark element as not visible
+                    element.visible = false;
                     return false;
                 }
             });
 
+            element.visible = true;
             return result;
         }
 
@@ -1381,6 +1380,8 @@ niclabs.insight.InfoView = (function($) {
          * @returns {niclabs.insight.info.Block} - newly created block
          */
         element.block = function(obj) {
+            if (typeof obj == 'string') return blocks.element(obj);
+
             var blk = blocks.element(obj);
 
             // Append block to container
@@ -1636,6 +1637,51 @@ niclabs.insight.MapView = (function($) {
     };
 })(jQuery);
 
+/**
+ * General helper functions for the dashboard
+ *
+ * @mixin
+ */
+niclabs.insight.utils = (function() {
+    /**
+     * Get a location element from a url.
+     *
+     * Usage:
+     * ```javascript
+     * var loc = niclabs.insight.utils.getLocation("http://www.example.com");
+     * console.log(loc.hostname); // prints "www.example.com";
+     * ```
+     *
+     * @memberof niclabs.insight.utils
+     * @param {String} href url to get the location element
+     * @return {Element} location (`<a>`) DOM element
+     */
+    function getLocation(href) {
+        var location = document.createElement("a");
+        location.href = href;
+        return location;
+    }
+
+    var expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+    var regex = new RegExp(expression);
+
+    /**
+     * Check if the given string corresponds to a valid URL
+     *
+     * @memberof niclabs.insight.utils
+     * @param {String} url - URL to verify
+     * @return {boolean} true if the url is valid
+     */
+    function isValidURL(url) {
+        return url.match(regex);
+    }
+
+    return {
+        "isValidURL": isValidURL,
+        "getLocation": getLocation
+    };
+})();
+
 niclabs.insight.View = (function($) {
     /**
      * Construct a View
@@ -1703,6 +1749,529 @@ niclabs.insight.View = (function($) {
     };
 
     return View;
+})(jQuery);
+
+/**
+ * Contains all data operation classes
+ *
+ * @namespace
+ */
+niclabs.insight.data = (function () {
+    var sources = {};
+
+
+    /**
+     * Helper method to get/register a new data source for the dashboard
+     *
+     * @memberof niclabs.insight
+     * @variation 2
+     * @param {String} id - identifier for the data source
+     * @param {Object[]|String|Function|niclabs.insight.Data} src - source of data, it can be an array, a URL, a function or a DataSource object
+     * @param {Object=} options - extra options for the data source
+     * @returns {niclabs.insight.data.DataSource} data source
+     */
+    var data = function(id, src, options) {
+        if (typeof src === 'undefined') {
+            if (!(id in sources)) throw Error("No data source with id "+id);
+            return sources[id];
+        }
+
+        // if (typeof src === 'object') {
+        //     sources[id] = src;
+        //     return src;
+        // }
+
+        sources[id] = niclabs.insight.data.Selector(id, src, options);
+        return sources[id];
+    };
+
+    return data;
+})();
+
+niclabs.insight.data.Array = (function() {
+    /**
+     * Construct a new Array data source
+     *
+     * @class niclabs.insight.data.Array
+     * @extends niclabs.insight.data.DataSource
+     * @param {Object} options - configuration options for the data source
+     * @param {String} options.id - identifier for referencing this data source
+     * @param {Object[]} options.src - source of data
+     */
+    var constructor = function(options) {
+        var self = niclabs.insight.data.DataSource(options);
+
+        var data = options.src || [];
+
+        // filter purposes
+        for (var i = 0; i < data.length; i++) {
+            $.extend(data[i], {
+                visible: true
+            });
+        }
+
+        /**
+         * Iterate over the data source elements
+         *
+         * Iterates over the elements of the array/
+         *
+         * @memberof niclabs.insight.data.Array
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         */
+        self.forEach = function(fn) {
+            for (var i = 0; i < data.length; i++) {
+                fn.call(data[i], data[i], i);
+            }
+        };
+
+        /**
+         * Iterate over the data source elements, but skips the filtered elements
+         *
+         * Iterates over the elements of the array/
+         *
+         * @memberof niclabs.insight.data.Array
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         */
+        self.filteredForEach = function(fn) {
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].visible) {
+                    fn.call(data[i], data[i], i);
+                }
+            }
+        };
+
+        /**
+         * Iterate over the data source elements and marks data elements as not visible
+         *
+         * @memberof niclabs.insight.data.Array
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+         */
+        self.filter = function(fn) {
+            for (var i = 0; i < data.length; i++) {
+                if (!fn.call(data[i], data[i], i)) {
+                    data[i].visible = false;
+                }
+            }
+        };
+
+        /**
+         * Fold function
+         *
+         * @memberof niclabs.insight.data.Array
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+         */
+        self.reduce = function(fn, init) {
+            var ret = fn.call(data[0], init, data[0]);
+            for (var i = 1; i < data.length; i++) {
+                ret = fn.call(data[i], ret, data[i], i);
+            }
+            return ret;
+        };
+
+        /**
+         * Map function
+         *
+         * @memberof niclabs.insight.data.Array
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+         */
+        self.map = function(fn) {
+            var array = data;
+            for (var i = 0; i < data.length; i++) {
+                array[i] = fn.call(data[i], data[i], i);
+            }
+            return array;
+        };
+
+        // DEBUGGING
+        self.asArray = function() {
+            return data;
+        };
+
+        return self;
+    };
+
+    return constructor;
+})();
+
+niclabs.insight.data.DataSource = (function() {
+    /**
+     * Constructs a new data source
+     *
+     * A DataSource object encapsulates interaction with sources of data, whether they
+     * come from code defined arrays, a JSON/CSV remote source, API call, or other data sources
+     *
+     * @class niclabs.insight.data.DataSource
+     * @extends {niclabs.insight.Element}
+     * @param {Object} options - configuration options for the data source
+     * @param {String} options.id - identifier for referencing this data source
+     */
+    var constructor = function(options) {
+        var self = niclabs.insight.Element(options);
+
+        // TODO: we should find a way to notify that new data has been received
+
+        /**
+         * Iterate over the data source elements
+         *
+         * This method will iterate over the elements of the data source, passing their relative position in the
+         * data source and the value for the element in that position to the callback function.
+         *
+         * Although this method could sometimes be run synchronously (if the data source is an array), its better to assume
+         * that it runs asynchronously, specially when dealing with remote data sources
+         *
+         * The order of the iteration must be defined by each data source.
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         * @abstract
+         */
+        self.forEach = function(fn) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Iterate over the data source elements, but skips the filtered elements
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         */
+        self.filteredForEach = function(fn) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Iterate over the data source elements and marks data elements as not visible
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+         */
+        self.filter = function(fn) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Fold function
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the reduce function
+         */
+        self.reduce = function(fn, init) {
+            throw Error("Not implemented");
+        };
+
+        /**
+         * Map function
+         *
+         * @memberof niclabs.insight.data.DataSource
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the map function
+         */
+        self.map = function(fn) {
+            throw Error("Not implemented");
+        };
+
+        return self;
+    };
+
+    return constructor;
+})();
+
+niclabs.insight.data.JSON = (function($){
+    /**
+     * Construct a new JSON data source.
+     *
+     * @class niclabs.insight.data.JSON
+     * @extends niclabs.insight.data.DataSource
+     * @param {Object} options - configuration options for the data source
+     * @param {String} options.id - identifier for referencing this data source
+     * @param {String} options.src - URL source for the data
+     * @param {Object|String} [options.data] - request data to be sent to the server as an object or an url parameters string
+     * @param {String} [options.callback] - callback to use for JSONP data sources, can also be passed as a data or query parameter
+     * @param {String} [options.listkey] - key the data source list if the JSON response is an object
+     */
+    var constructor = function(options) {
+        var self = niclabs.insight.data.DataSource(options);
+
+        if (typeof options.src !== 'string' || !niclabs.insight.utils.isValidURL(options.src)) {
+            throw Error(options.src + " is not a valid URL");
+        }
+
+        var data = [];
+        var loaded = false;
+
+        // See if request data has been defined
+        var requestData = {};
+        if (options.data !== null && typeof options.data === 'object') {
+            requestData = options.data;
+        }
+        else if (options.data !== null && typeof options.data === 'string') {
+            // Convert the string to an object
+            options.data.split("&").forEach(function(part) {
+                var item = part.split("=");
+                requestData[item[0]] = decodeURIComponent(item[1]);
+            });
+        }
+
+        if (options.callback) requestData.callback = options.callback;
+
+        /**
+         * Iterate over the data source elements
+         *
+         * Iterates over the elements of the JSON data source. This function may run asynchronously
+         * if the JSON data has not been loaded
+         *
+         * @memberof niclabs.insight.data.JSON
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         */
+        self.forEach = function(fn) {
+            // Delegate the iteration
+            function iterate(data, f) {
+                for (var i = 0; i < data.length; i++) {
+                    f.call(data[i], data[i], i);
+                }
+            }
+
+            if (loaded) {
+                // We already have the data
+                iterate(data, fn);
+            }
+            else {
+                // Otherwise get it
+                $.getJSON(options.src, requestData, function(d) {
+                    var i;
+                    if (options.listkey) {
+                        data = d[options.listkey];
+                        for (i = 0; i < data.length; i++) {
+                            $.extend(data[i], {
+                                visible: true
+                            });
+                        }
+                    }
+                    else {
+                        data = d;
+                        for (i = 0; i < data.length; i++) {
+                            $.extend(data[i], {
+                                visible: true
+                            });
+                        }
+                    }
+
+                    // Set the data as loaded
+                    loaded = true;
+
+                    // Finally over the data
+                    iterate(data, fn);
+                });
+            }
+        };
+
+        /**
+         * Iterate over the data source elements, but skips the filtered elements
+         *
+         * Iterates over the elements of the array/
+         *
+         * @memberof niclabs.insight.data.JSON
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         */
+        self.filteredForEach = function(fn) {
+            // Delegate the iteration
+            function iterate(data, f) {
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].visible) {
+                        f.call(data[i], data[i], i);
+                    }
+                }
+            }
+
+            if (loaded) {
+                // We already have the data
+                iterate(data, fn);
+            }
+            else {
+                // Otherwise get it
+                $.getJSON(options.src, requestData, function(d) {
+                    var i;
+                    if (options.listkey) {
+                        data = d[options.listkey];
+                        for (i = 0; i < data.length; i++) {
+                            $.extend(data[i], {
+                                visible: true
+                            });
+                        }
+                    }
+                    else {
+                        data = d;
+                        for (i = 0; i < data.length; i++) {
+                            $.extend(data[i], {
+                                visible: true
+                            });
+                        }
+                    }
+
+                    // Set the data as loaded
+                    loaded = true;
+
+                    // Finally over the data
+                    iterate(data, fn);
+                });
+            }
+        };
+
+        /**
+         * Iterate over the data source elements and marks data elements as not visible
+         *
+         * @memberof niclabs.insight.data.JSON
+         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+         */
+        self.filter = function(fn) {
+            // Delegate the iteration
+            function iterate(data, f) {
+                for (var i = 0; i < data.length; i++) {
+                    if (!fn.call(data[i], data[i], i)) {
+                        data[i].visible = false;
+                    }
+                }
+            }
+
+            if (loaded) {
+                // We already have the data
+                iterate(data, fn);
+            }
+            else {
+                // Otherwise get it
+                $.getJSON(options.src, requestData, function(d) {
+                    var i;
+                    if (options.listkey) {
+                        data = d[options.listkey];
+                        for (i = 0; i < data.length; i++) {
+                            $.extend(data[i], {
+                                visible: true
+                            });
+                        }
+                    }
+                    else {
+                        data = d;
+                        for (i = 0; i < data.length; i++) {
+                            $.extend(data[i], {
+                                visible: true
+                            });
+                        }
+                    }
+
+                    // Set the data as loaded
+                    loaded = true;
+
+                    // Finally over the data
+                    iterate(data, fn);
+                });
+            }
+        };
+
+        // /**
+        //  * Fold function
+        //  *
+        //  * @memberof niclabs.insight.data.JSON
+        //  * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+        //  */
+        // self.reduce = function(fn, init) {
+        //     var ret = fn.call(data[0], init, data[0]);
+        //     for (var i = 1; i < data.length; i++) {
+        //         ret = fn.call(data[i], ret, data[i], i);
+        //     }
+        //     return ret;
+        // };
+        //
+        // /**
+        //  * Map function
+        //  *
+        //  * @memberof niclabs.insight.data.JSON
+        //  * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
+        //  */
+        // self.map = function(fn) {
+        //     var array = data;
+        //     for (var i = 0; i < data.length; i++) {
+        //         array[i] = fn.call(data[i], data[i], i);
+        //     }
+        //     return array;
+        // };
+
+        // DEBUGGING
+        self.asArray = function() {
+            if (loaded) {
+                // We already have the data
+                return data;
+            }
+            else {
+                // Otherwise get it
+                $.getJSON(options.src, requestData, function(d) {
+                    var i;
+                    if (options.listkey) {
+                        data = d[options.listkey];
+                        for (i = 0; i < data.length; i++) {
+                            $.extend(data[i], {
+                                visible: true
+                            });
+                        }
+                    }
+                    else {
+                        data = d;
+                        for (i = 0; i < data.length; i++) {
+                            $.extend(data[i], {
+                                visible: true
+                            });
+                        }
+                    }
+
+                    // Set the data as loaded
+                    loaded = true;
+
+                    // Finally over the data
+                    iterate(data, fn);
+                });
+                return data;
+            }
+        };
+
+        return self;
+    };
+
+    return constructor;
+})(jQuery);
+
+niclabs.insight.data.Selector = (function($){
+    /**
+     * Select a new data source depending on the type of input.
+     *
+     * If the parameter given by src is an array, an Array data source will be used,
+     * if it is a a URL, a JSON data source wil be used,
+     * if its a function returning an array in which case the result of the function will be used
+     * if it is none, then an empty Array source is created
+     *
+     * @class niclabs.insight.data.Selector
+     * @extends niclabs.insight.data.DataSource
+     * @param {String} id - identifier for the data source
+     * @param {Object[]|String|Function} src - source of data
+     * @param {Object=} options - extra options for the data source
+     */
+    var constructor = function(id, src, options) {
+        if (Array.isArray(src)) {
+            options = $.extend({'id' : id, 'src': src}, options);
+            return niclabs.insight.data.Array(options);
+        }
+        else if (typeof src === 'string') {
+            options = $.extend({'id' : id, 'src': src}, options);
+            return niclabs.insight.data.JSON(options);
+        }
+        else if (typeof src === 'function') {
+            options = $.extend({'id' : id, 'src': src.call()}, options);
+            return niclabs.insight.data.Array(options);
+        }
+        else {
+            options = $.extend({'id' : id, 'src': []}, options);
+            return niclabs.insight.data.Array(options);
+        }
+    };
+
+    return constructor;
 })(jQuery);
 
 /**
@@ -1962,7 +2531,7 @@ niclabs.insight.filter.LayerSelector = (function($) {
             .text('Select Layer');
 
         // Hide the selector if there are no elements
-        select.hide();
+        view.$.hide();
 
         select.on('change', function() {
             dashboard.active($(this).val());
@@ -1987,7 +2556,7 @@ niclabs.insight.filter.LayerSelector = (function($) {
             // Show the selector if there is more than one layer
             // Note: layers.length returns undefined
             if (Object.keys(layers).length > 1)
-                select.show();
+                view.$.show();
         };
 
         return view;
@@ -1997,6 +2566,117 @@ niclabs.insight.filter.LayerSelector = (function($) {
     niclabs.insight.handler('layer-selector', 'filter', LayerSelector);
 
     return LayerSelector;
+})(jQuery);
+
+niclabs.insight.filter.RadioFilter = (function($) {
+
+    /**
+     * Radio filter option
+     *
+     * @typedef niclabs.insight.filter.RadioFilter.Option
+     * @type {Object}
+     * @param {string} name - name for the option of the filter
+     * @param {niclabs.insight.Filters~filter} filter - callback to filter the data
+     */
+
+    /**
+     * Construct a radio filter for the dashboard
+     *
+     * A radio filter will be visualized as a `<input type="radio">`
+     * HTML element, and calls to apply will pass the call to the appropriate
+     * filtering function according to the selected option
+     *
+     * @class niclabs.insight.filter.RadioFilter
+     * @augments niclabs.insight.filter.Filter
+     * @param {niclabs.insight.Dashboard} dashboard - dashboard that this filter belongs to
+     * @param {Object} options - configuration options for the filter
+     * @param {string} options.description - description for this filter to use as default option of the select
+     * @param {niclabs.insight.filter.RadioFilter.Option[]} options.options - list of options for the filter
+     */
+    var RadioFilter = function(dashboard, options) {
+        var view = niclabs.insight.filter.Filter(dashboard, options);
+
+        var selectOptions = options.options || [];
+
+        // Configure the view
+        var selectDiv = $('<div>').addClass('mdl-select mdl-js-select mdl-select--floating-label');
+
+        view.$.append(
+            $('<div>').addClass('insight-radio-label')
+            .text(options.description));
+
+        inputs = [];
+
+        var addOption = function(id, value, text) {
+            var label = $('<label>')
+                .addClass('mdl-radio mdl-js-radio mdl-js-ripple-effect')
+                .attr('for', id);
+            var input = $('<input>')
+                .addClass('mdl-radio__button')
+                .setID(id)
+                .attr('type', 'radio')
+                .attr('name', options.id)
+                .attr('value', value);
+            label.append(input);
+            inputs.push(input);
+            label.append($('<span>')
+                .addClass('mdl-radio__label')
+                .text(text));
+            // Add the option to the view
+            view.$.append(label);
+            view.$.append($('<br>'));
+        };
+
+        //default
+        addOption(options.id + "__default", 0, "No filter");
+
+        var id = 1;
+
+        selectOptions.forEach(function(option) {
+            addOption(options.id + "__" + id, id, option.name);
+            id++;
+        });
+
+
+        function noFilter(element) {
+            return true;
+        }
+
+        var filter = noFilter;
+
+        $.each(inputs, function(a) {
+            $(this).on('change', function() {
+                filter = noFilter;
+                var index = $('input:radio[name=__1]:checked').val();
+                if (index > 0) {
+                    // Use the selected filter
+                    filter = selectOptions[index - 1].filter;
+                }
+
+                niclabs.insight.event.trigger('filter_selected', view);
+            });
+        });
+
+        /**
+         * Apply the filter to a data element
+         *
+         * @memberof niclabs.insight.filter.RadioFilter
+         * @abstract
+         * @param {Object} element - data element to evaluate
+         * @return {boolean} - true if the data element passes the filter
+         */
+        view.apply = function(element) {
+            // Use the selected filter function
+            return filter(element);
+        };
+
+        return view;
+    };
+
+    // Register the handler
+    niclabs.insight.handler('radio-filter', 'filter', RadioFilter);
+
+    return RadioFilter;
 })(jQuery);
 
 niclabs.insight.filter.SelectionFilter = (function($) {
@@ -2041,7 +2721,7 @@ niclabs.insight.filter.SelectionFilter = (function($) {
             .addClass('mdl-select__label')
             .attr('for', options.id)
             .attr('name', options.id)
-            .text('Filter');
+            .text(options.description);
 
         selectOptions.forEach(function(option) {
             select.append($('<option>').text(option.name));
@@ -2905,13 +3585,15 @@ niclabs.insight.layer.GraphLayer = (function($) {
          * @param {string=} data[].description - description for the graphElement
          */
         layer.draw = function(data) {
-            for (var i = 0; i < data.length; i++) {
-                nodes.push(newNode(data, i, graphOptions));
+            //TODO: use for each
+            rawData = data.asArray();
+            for (var i = 0; i < rawData.length; i++) {
+                nodes.push(newNode(rawData, i, graphOptions));
             }
             for (i = 0; i < graphOptions.adj.length; i++) {
               for (var j = 0; j < i; j++) {
                 if (graphOptions.adj[i][j] == 1) {
-                  edges.push(newEdge(data, i, j, graphOptions));
+                  edges.push(newEdge(rawData, i, j, graphOptions));
                 }
               }
             }
@@ -2978,14 +3660,16 @@ niclabs.insight.layer.GridLayer = (function() {
         function createGrid(data, obj) {
             var grid;
             if ('type' in obj) {
-                var attr = {'layer': layer.id, 'data': data};
+                var attr = {
+                    'layer': layer.id,
+                    'data': data
+                };
 
                 // Extend the attributes with the data and the options for the marker
                 $.extend(attr, obj);
 
                 grid = niclabs.insight.handler(obj.type)(dashboard, attr);
-            }
-            else {
+            } else {
                 grid = obj;
 
                 // Should we add a way to pass data to the grid?
@@ -3028,7 +3712,10 @@ niclabs.insight.layer.GridLayer = (function() {
          * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
         layer.filter = function(fn) {
-            // TODO. not sure if possible
+            var data = layer.data();
+            data.filter(fn);
+            layer.clear();
+            layer.draw(data);
         };
 
         return layer;
@@ -3112,7 +3799,10 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
          * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
         layer.filter = function(fn) {
-            // TODO. not sure if possible
+            var data = layer.data();
+            data.filter(fn);
+            layer.clear();
+            layer.draw(data);
         };
 
         return layer;
@@ -3124,7 +3814,7 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
     return HeatmapLayer;
 })(jQuery);
 
- niclabs.insight.layer.Layer = (function($) {
+niclabs.insight.layer.Layer = (function($) {
     "use strict";
 
     /**
@@ -3137,7 +3827,7 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
      * @param {Object} options - configuration options for the layer
      * @param {string} options.id - identifier for the layer
      * @param {string=} [options.name=options.id] - name for the layer in the filter bar
-     * @param {string|Object[]} options.data - uri or data array for the layer
+     * @param {string|Object[]} options.data - id of the dataSource
      * @param {Object|Function} [options.summary] - summary data
      */
     var Layer = function(dashboard, options) {
@@ -3154,13 +3844,14 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
         }
 
         var dataSource = false;
-        var data = [];
-        if (typeof options.data === 'string') {
-            dataSource = options.data;
-        }
-        else {
-            data = options.data && Array.isArray(options.data) ? options.data: [options.data];
-        }
+        // var data = [];
+        // if (typeof options.data === 'string') {
+        //     dataSource = options.data;
+        // } else {
+        //     data = options.data && Array.isArray(options.data) ? options.data : [options.data];
+        // }
+
+        var data = niclabs.insight.data(options.data);
 
         var summary = options.summary || false;
 
@@ -3173,7 +3864,7 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
              * @memberof niclabs.insight.layer.Layer
              * @member {string}
              */
-            get id () {
+            get id() {
                 return id;
             },
 
@@ -3199,15 +3890,14 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
              */
             data: function(obj) {
                 if (typeof obj === 'undefined') {
-                    return loaded || !dataSource? data : dataSource;
+                    return loaded || !dataSource ? data : dataSource;
                 }
 
                 if (typeof obj === 'string') {
                     dataSource = obj;
                     return dataSource;
-                }
-                else {
-                    data = obj.length ? obj: [obj];
+                } else {
+                    data = obj.length ? obj : [obj];
                 }
 
                 // If the layer has already been loaded, reload the data
@@ -3247,7 +3937,7 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
 
                     if (summary) {
                         var summaryData = summary;
-                        if (typeof summary === 'function') summaryData = summary(data);
+                        if (typeof summary === 'function') summaryData = summary(data.asArray());
 
                         /**
                          * Event triggered when an update to the (filtering/update) has ocurred
@@ -3276,8 +3966,7 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
                 if (dataSource) {
                     $.getJSON(dataSource, redraw);
                     // TODO: on error?
-                }
-                else {
+                } else {
                     redraw(data);
                 }
             },
@@ -3346,18 +4035,19 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {Object[]} data - layer data
          * @param {number} index - index of the marker in the data array
          * @param {Object} obj - configuration for the new marker
-          */
-        function newMarker(data, index, obj) {
+         */
+        function newMarker(data, obj) {
             var marker;
             if ('type' in obj) {
-                var attr = {'layer': layer.id};
+                var attr = {
+                    'layer': layer.id
+                };
 
                 // Extend the attributes with the data and the options for the marker
-                $.extend(attr, obj, data[index]);
+                $.extend(attr, obj, data);
 
                 marker = niclabs.insight.handler(attr.type)(dashboard, attr);
-            }
-            else {
+            } else {
                 marker = obj;
             }
 
@@ -3378,9 +4068,11 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {string=} data[].description - description for the marker
          */
         layer.draw = function(data) {
-            for (var i = 0; i < data.length; i++) {
-                markers.push(newMarker(data, i, attr));
-            }
+            data.filteredForEach(
+                function(dataValue, i) {
+                    markers.push(newMarker(dataValue, attr));
+                });
+
         };
 
         /**
@@ -3406,10 +4098,11 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
         layer.filter = function(fn) {
+            //TODO: for some reason inheritance doesnt work
             var data = layer.data();
-            for (var i = 0; i < markers.length; i++) {
-                markers[i].visible(fn(data[i]));
-            }
+            data.filter(fn);
+            layer.clear();
+            layer.draw(data);
         };
 
         return layer;
@@ -4609,121 +5302,124 @@ niclabs.insight.map.graph.Node = (function($) {
 niclabs.insight.map.grid = {};
 
 niclabs.insight.map.grid.Grid = (function() {
-	/**
-	 * Returns a function to calculate the fill as the interpolation on the average between the point weights
-	 *
-	 * @param {string} start_rgb - starting color for the interpolation
-	 * @param {string} end_rgb - ending color for the interpolation
-	 * @return {niclabs.insight.map.grid.Grid~fill} average function
-	 */
-	function averageFill(start_rgb, end_rgb) {
-		start_rgb = niclabs.insight.Color.hexToRgb(start_rgb);
-		end_rgb = niclabs.insight.Color.hexToRgb(end_rgb);
+    /**
+     * Returns a function to calculate the fill as the interpolation on the average between the point weights
+     *
+     * @param {string} start_rgb - starting color for the interpolation
+     * @param {string} end_rgb - ending color for the interpolation
+     * @return {niclabs.insight.map.grid.Grid~fill} average function
+     */
+    function averageFill(start_rgb, end_rgb) {
+        start_rgb = niclabs.insight.Color.hexToRgb(start_rgb);
+        end_rgb = niclabs.insight.Color.hexToRgb(end_rgb);
 
-		return function(points) {
-			var avg = 0;
-			var size = 0;
+        return function(points) {
+            var avg = 0;
+            var size = 0;
 
-			for (i = 0; i < points.length; i++) {
-				if ('weight' in points[i]) {
-					avg += points[i].weight;
-					size++;
-				}
-			}
+            for (i = 0; i < points.length; i++) {
+                if ('weight' in points[i]) {
+                    avg += points[i].weight;
+                    size++;
+                }
+            }
 
-			// Calculate average
-			if (size > 0) {
-				avg = avg / size;
-				return niclabs.insight.Color.rgbToHex(niclabs.insight.Interpolation.interpolateRgb(avg, 1, start_rgb, end_rgb));
-			}
+            // Calculate average
+            if (size > 0) {
+                avg = avg / size;
+                return niclabs.insight.Color.rgbToHex(niclabs.insight.Interpolation.interpolateRgb(avg, 1, start_rgb, end_rgb));
+            }
 
-			return '#ffffff';
-		};
-	}
+            return '#ffffff';
+        };
+    }
 
-	/**
-	 * Returns a function to calculate the fill by category described in colorMap
-	 *
-	 * @param {Object} colorMap - color map describing the each category color
-	 * @return {niclabs.insight.map.grid.Grid~fill} category function
-	 */
-	function categoryFill(colorMap) {
+    /**
+     * Returns a function to calculate the fill by category described in colorMap
+     *
+     * @param {Object} colorMap - color map describing the each category color
+     * @return {niclabs.insight.map.grid.Grid~fill} category function
+     */
+    function categoryFill(colorMap) {
 
-		return function(points) {
-			var size = 0;
+        return function(points) {
+            var size = 0;
 
-			hist = {};
+            hist = {};
 
-			for (i = 0; i < points.length; i++) {
-				if ('weight' in points[i] && 'category' in points[i]) {
-					if (points[i].category in hist) {
-						hist[points[i].category] += points[i].weight;
-					} else {
-						hist[points[i].category] = points[i].weight;
-					}
-					size++;
-				}
-			}
+            for (i = 0; i < points.length; i++) {
+                if ('weight' in points[i] && 'category' in points[i]) {
+                    if (points[i].category in hist) {
+                        hist[points[i].category] += points[i].weight;
+                    } else {
+                        hist[points[i].category] = points[i].weight;
+                    }
+                    size++;
+                }
+            }
 
-			var sortable = [];
-			for (var value in hist)
-			      sortable.push([value, hist[value]]);
-			sortable.sort(function(a, b) {return b[1] - a[1];});
+            var sortable = [];
+            for (var value in hist)
+                sortable.push([value, hist[value]]);
+            sortable.sort(function(a, b) {
+                return b[1] - a[1];
+            });
 
-			if (size > 0) {
-				return colorMap[sortable[0][0]];
-			}
+            if (size > 0) {
+                return colorMap[sortable[0][0]];
+            }
 
-			return '#ffffff';
-		};
-	}
+            return '#ffffff';
+        };
+    }
 
-	/**
-	 * Returns a function to calculate the fill as the interpolation on the median between the point weights
-	 *
-	 * @param {string} start_rgb - starting color for the interpolation
-	 * @param {string} end_rgb - ending color for the interpolation
-	 * @return {niclabs.insight.map.grid.Grid~fill} median function
-	 */
-	function medianFill(start_rgb, end_rgb) {
-		function partition(data, i, j) {
-	        var pivot = Math.floor((i+j)/2);
-	        var temp;
-	        while(i <= j){
-	            while(data[i].weight < data[pivot].weight)
-	                i++;
-	            while(data[j].weight > data[pivot].weight)
-	                j--;
-	            if(i <= j){
-	                temp = data[i];
-	                data[i]=data[j];
-	                data[j] = temp;
-	                i++;
-					j--;
-	            }
-	        }
-	        return pivot;
-	    }
+    /**
+     * Returns a function to calculate the fill as the interpolation on the median between the point weights
+     *
+     * @param {string} start_rgb - starting color for the interpolation
+     * @param {string} end_rgb - ending color for the interpolation
+     * @return {niclabs.insight.map.grid.Grid~fill} median function
+     */
+    function medianFill(start_rgb, end_rgb) {
+        function partition(data, i, j) {
+            var pivot = Math.floor((i + j) / 2);
+            var temp;
+            while (i <= j) {
+                while (data[i].weight < data[pivot].weight)
+                    i++;
+                while (data[j].weight > data[pivot].weight)
+                    j--;
+                if (i <= j) {
+                    temp = data[i];
+                    data[i] = data[j];
+                    data[j] = temp;
+                    i++;
+                    j--;
+                }
+            }
+            return pivot;
+        }
 
-		start_rgb = niclabs.insight.Color.hexToRgb(start_rgb);
-		end_rgb = niclabs.insight.Color.hexToRgb(end_rgb);
+        start_rgb = niclabs.insight.Color.hexToRgb(start_rgb);
+        end_rgb = niclabs.insight.Color.hexToRgb(end_rgb);
 
-		return function(points) {
-			var median = 0;
-			var left = 0, right = points.length > 0 ? points.length - 1: 0;
-	        var mid = Math.floor((left + right) / 2);
-	        median = partition(points, left, right);
-	        while (median !== mid) {
-	            if(median < mid)
-	                median = partition(points, mid, right);
-	            else median = partition(points, left, mid);
-	        }
+        return function(points) {
+            var median = 0;
+            var left = 0,
+                right = points.length > 0 ? points.length - 1 : 0;
+            var mid = Math.floor((left + right) / 2);
+            median = partition(points, left, right);
+            while (median !== mid) {
+                if (median < mid)
+                    median = partition(points, mid, right);
+                else median = partition(points, left, mid);
+            }
 
-			return niclabs.insight.Color.rgbToHex(niclabs.insight.Interpolation.interpolateRgb(points[median].weight, 1, start_rgb, end_rgb));
-		};
-	}
+            return niclabs.insight.Color.rgbToHex(niclabs.insight.Interpolation.interpolateRgb(points[median].weight, 1, start_rgb, end_rgb));
+        };
+    }
 
-	/**
+    /**
      * Data point for a grid
      *
      * @typedef niclabs.insight.map.grid.Grid.Data
@@ -4733,46 +5429,47 @@ niclabs.insight.map.grid.Grid = (function() {
      * @param {float=} weight - weight for the data point (between 0 and 1)
      */
 
-	/**
-	 * Fill calculation function. Receives the list of points of a grid tile and
-	 * returns a color for that tile
-	 * @callback niclabs.insight.map.grid.Grid~fill
-	 * @param {niclabs.insight.map.grid.Grid.Data[]} points
-	 * @param {string} fill color for the trile
-	 */
+    /**
+     * Fill calculation function. Receives the list of points of a grid tile and
+     * returns a color for that tile
+     * @callback niclabs.insight.map.grid.Grid~fill
+     * @param {niclabs.insight.map.grid.Grid.Data[]} points
+     * @param {string} fill color for the trile
+     */
 
-	/**
+    /**
      * Construct an grid from the data provided.
-	 *
-	 * The grid divides the visible map into equally sized tiles and draws only those
-	 * tiles that have elements below them. If a weight is provided for the the data points
-	 * each tile is painted with a function of the point weights inside the tile
+     *
+     * The grid divides the visible map into equally sized tiles and draws only those
+     * tiles that have elements below them. If a weight is provided for the the data points
+     * each tile is painted with a function of the point weights inside the tile
      *
      * @class niclabs.insight.map.grid.Grid
      * @param {niclabs.insight.Dashboard} dashboard - dashboard that this grid belongs to
      * @param {Object} options - configuration options for the grid
      * @param {string} options.layer - identifier for the layer that this grid belongs to
-	 * @param {string} [options.strokeColor='#000000'] - color for the stroke of each tile
-	 * @param {float} [options.strokeOpacity=0.6] - opacity for the stroke (between 0-1)
-	 * @param {integer} [options.strokeWeight=2] - border weight for the tile
-	 * @param {string|niclabs.insight.map.grid.Grid~fill} [options.fill='#ffffff'] - color for the fill of the tile,
-	 * 	it can have one of the following values:
-	 *  	- 'average' calculates the average of the weights in the tile and interpolates that value between the values for options.fill_start and options.fill_end
-	 *  	- 'median' calculates the median of the weights in the tile and interpolates as average
-	 *  	- rgb color (starting with '#') is used as a fixed color for all tiles
-	 *  	- a callback receiving the points in the tile and returning the value for the color
-	 * @param {string} [options.fillStart='#ff0000'] - if 'average' or 'median' are used as options for options.fill, it sets the begining of the interpolation interval for the fill function
-	 * @param {string} [options.fillEnd='#00ff00'] - if 'average' or 'median' are used as options for options.fill, it sets the end of the interpolation interval for the fill function
-	 * @param {float} [options.fillOpacity=0.6] - opacity for the fill of the tile
+     * @param {string} [options.strokeColor='#000000'] - color for the stroke of each tile
+     * @param {float} [options.strokeOpacity=0.6] - opacity for the stroke (between 0-1)
+     * @param {integer} [options.strokeWeight=2] - border weight for the tile
+     * @param {string|niclabs.insight.map.grid.Grid~fill} [options.fill='#ffffff'] - color for the fill of the tile,
+     * 	it can have one of the following values:
+     *  	- 'average' calculates the average of the weights in the tile and interpolates that value between the values for options.fill_start and options.fill_end
+     *  	- 'median' calculates the median of the weights in the tile and interpolates as average
+     *  	- rgb color (starting with '#') is used as a fixed color for all tiles
+     *  	- a callback receiving the points in the tile and returning the value for the color
+     * @param {string} [options.fillStart='#ff0000'] - if 'average' or 'median' are used as options for options.fill, it sets the begining of the interpolation interval for the fill function
+     * @param {string} [options.fillEnd='#00ff00'] - if 'average' or 'median' are used as options for options.fill, it sets the end of the interpolation interval for the fill function
+     * @param {float} [options.fillOpacity=0.6] - opacity for the fill of the tile
      * @param {niclabs.insight.map.grid.Grid.Data[]} options.data - data for the grid
      */
-	var Grid = function(dashboard, options) {
-		if (!('layer' in options))
+    var Grid = function(dashboard, options) {
+        console.log(options);
+        if (!('layer' in options))
             throw new Error('The grid must be associated to a layer');
 
         var layer;
         if (!(layer = dashboard.layer(options.layer)))
-            throw new Error('The layer '+layer+' does not exist in the dashboard');
+            throw new Error('The layer ' + layer + ' does not exist in the dashboard');
 
         var map;
         if (!(map = dashboard.map()))
@@ -4781,109 +5478,112 @@ niclabs.insight.map.grid.Grid = (function() {
         if (!('googlemap' in map))
             throw new Error("Grids are only supported for Google Maps at the moment");
 
-		var tiles = [];
+        var tiles = [];
 
-		var tileConfig = {
-			strokeColor: 'strokeColor' in options ? options.strokeColor : '#000000',
-			strokeOpacity: 'strokeOpacity' in options ? options.strokeOpacity : 0.6,
-			strokeWeight: 'strokeWeight' in options ? options.strokeWeight : 2,
-			fillOpacity: 'fillOpacity' in options ? options.fillOpacity : 0.6,
-		};
+        var tileConfig = {
+            strokeColor: 'strokeColor' in options ? options.strokeColor : '#000000',
+            strokeOpacity: 'strokeOpacity' in options ? options.strokeOpacity : 0.6,
+            strokeWeight: 'strokeWeight' in options ? options.strokeWeight : 2,
+            fillOpacity: 'fillOpacity' in options ? options.fillOpacity : 0.6,
+        };
 
-		// Default fill function
-		function fillColor() {
-			return '#ffffff';
-		}
+        // Default fill function
+        function fillColor() {
+            return '#ffffff';
+        }
 
-		var fill = options.fill || fillColor;
-		if (typeof fill === 'string') {
-			if (options.fill.charAt(0) === '#') {
-				fill = function() {return options.fill;};
-			}
-			else if (options.fill === 'average') {
-				fill = averageFill(options.fillStart || '#ff0000', options.fillEnd || '#00ff00');
-			}
-			else if (options.fill === 'median') {
-				fill = medianFill(options.fillStart || '#ff0000', options.fillEnd || '#00ff00');
-			}
-			else if (options.fill === 'category') {
-				fill = categoryFill(options.colorMap);
-			}
-			else {
-				fill = fillColor;
-			}
-		}
+        var fill = options.fill || fillColor;
+        if (typeof fill === 'string') {
+            if (options.fill.charAt(0) === '#') {
+                fill = function() {
+                    return options.fill;
+                };
+            } else if (options.fill === 'average') {
+                fill = averageFill(options.fillStart || '#ff0000', options.fillEnd || '#00ff00');
+            } else if (options.fill === 'median') {
+                fill = medianFill(options.fillStart || '#ff0000', options.fillEnd || '#00ff00');
+            } else if (options.fill === 'category') {
+                fill = categoryFill(options.colorMap);
+            } else {
+                fill = fillColor;
+            }
+        }
 
-		var worldBounds = niclabs.insight.quadtree.Bounds(
-			niclabs.insight.map.GoogleMercator.cartesian({lat: 90, lng: -180}),
-			niclabs.insight.map.GoogleMercator.cartesian({lat: -90, lng: 180})
-		);
+        var worldBounds = niclabs.insight.quadtree.Bounds(
+            niclabs.insight.map.GoogleMercator.cartesian({
+                lat: 90,
+                lng: -180
+            }),
+            niclabs.insight.map.GoogleMercator.cartesian({
+                lat: -90,
+                lng: 180
+            })
+        );
 
-		var quadtree = niclabs.insight.quadtree.PointQuadTree(worldBounds);
+        var quadtree = niclabs.insight.quadtree.PointQuadTree(worldBounds);
 
-		// TODO: put all data points in a world wide quad tree
-		for (var i = 0; i < options.data.length; i++) {
-			var coord = niclabs.insight.map.GoogleMercator.cartesian(options.data[i]);
+        // TODO: put all data points in a world wide quad tree
+        options.data.filteredForEach(function(dataElement) {
+            var coord = niclabs.insight.map.GoogleMercator.cartesian(dataElement);
 
-			options.data[i].x = coord.x;
-			options.data[i].y = coord.y;
+            dataElement.x = coord.x;
+            dataElement.y = coord.y;
 
-			quadtree.insert(options.data[i]);
-		}
+            quadtree.insert(dataElement);
+        });
 
-		/**
-		 * Notify clicks
-		 */
-		function notifyTileClick(points) {
-			return function() {
-				niclabs.insight.event.trigger('map_element_selected', points);
-			};
-		}
+        /**
+         * Notify clicks
+         */
+        function notifyTileClick(points) {
+            return function() {
+                niclabs.insight.event.trigger('map_element_selected', points);
+            };
+        }
 
-		/**
-		 * Remove tiles from the map
-		 */
-		function cleanMap() {
-			for (var i = 0; i < tiles.length; i++) {
-				tiles[i].setMap(null);
-			}
-		}
+        /**
+         * Remove tiles from the map
+         */
+        function cleanMap() {
+            for (var i = 0; i < tiles.length; i++) {
+                tiles[i].setMap(null);
+            }
+        }
 
-		/**
-		 * Refresh the map
-		 */
-		function refreshMap(bounds) {
-			bounds = typeof bounds !== 'undefined' ? bounds : map.googlemap().getBounds();
+        /**
+         * Refresh the map
+         */
+        function refreshMap(bounds) {
+            bounds = typeof bounds !== 'undefined' ? bounds : map.googlemap().getBounds();
 
-			// Clean the map
-			cleanMap();
+            // Clean the map
+            cleanMap();
 
-			// Build the initial grid
-			rebuild(bounds);
+            // Build the initial grid
+            rebuild(bounds);
 
-			// Listen for changes
-			listener.toggle(true);
-		}
+            // Listen for changes
+            listener.toggle(true);
+        }
 
-		var listener = (function () {
-			var handler;
+        var listener = (function() {
+            var handler;
 
-			return {
-				toggle: function(listen) {
-					if (listen && typeof handler === 'undefined') {
-						// Listen to boundary changes
-				        handler = google.maps.event.addListener(self.map.googlemap(), 'bounds_changed', function() {
-							refreshMap(this.getBounds());
-				        });
-					}
-					else if (!listen && typeof handler !== 'undefined') {
-						google.maps.event.removeListener(handler);
+            return {
+                toggle: function(listen) {
+                    if (listen && typeof handler === 'undefined') {
+                        // Listen to boundary changes
+                        handler = google.maps.event.addListener(self.map.googlemap(), 'bounds_changed', function() {
+                            refreshMap(this.getBounds());
+                        });
+                    } else if (!listen && typeof handler !== 'undefined') {
+                        google.maps.event.removeListener(handler);
 
-						handler = undefined;
-					}
-				}
-			};
-		})();
+                        handler = undefined;
+                    }
+                }
+            };
+        })();
 
         var self = {
             /**
@@ -4891,7 +5591,7 @@ niclabs.insight.map.grid.Grid = (function() {
              * @memberof niclabs.insight.map.grid.Grid
              * @member {niclabs.insight.MapView}
              */
-            get map () {
+            get map() {
                 return map;
             },
 
@@ -4901,27 +5601,27 @@ niclabs.insight.map.grid.Grid = (function() {
              * @memberof niclabs.insight.map.grid.Grid
              * @member {niclabs.insight.layer.Layer}
              */
-            get layer () {
+            get layer() {
                 return layer;
             },
 
-			/**
-			 * Refresh the grid with the current map bounds
-			 *
-			 * @memberof niclabs.insight.map.grid.Grid
-			 */
-			refresh: refreshMap,
+            /**
+             * Refresh the grid with the current map bounds
+             *
+             * @memberof niclabs.insight.map.grid.Grid
+             */
+            refresh: refreshMap,
 
-			/**
-			 * Construct a tile from the options of the grid
-			 *
-			 * @memberof niclabs.insight.map.grid.Grid
-			 * @abstract
-			 * @return {niclabs.insight.map.grid.Tile}
-			 */
-			tile: function() {
-				throw new Error("Not implemented");
-			},
+            /**
+             * Construct a tile from the options of the grid
+             *
+             * @memberof niclabs.insight.map.grid.Grid
+             * @abstract
+             * @return {niclabs.insight.map.grid.Tile}
+             */
+            tile: function() {
+                throw new Error("Not implemented");
+            },
 
             /**
              * Remove the grid from the map
@@ -4929,64 +5629,70 @@ niclabs.insight.map.grid.Grid = (function() {
              * @memberof niclabs.insight.map.grid.Grid
              */
             clear: function() {
-				// Clean the map
-				cleanMap();
+                // Clean the map
+                cleanMap();
 
-				// Disable the listener
-				listener.toggle(false);
+                // Disable the listener
+                listener.toggle(false);
             },
         };
 
 
-		// Build the grid
+        // Build the grid
         function rebuild(mapBounds) {
-			if (!mapBounds) return;
+            if (!mapBounds) return;
 
-			var tile = self.tile();
+            var tile = self.tile();
 
-			// find all points in the map bounds using the quadtree
-			var points = quadtree.query(niclabs.insight.quadtree.Bounds(
-				niclabs.insight.map.GoogleMercator.cartesian({lat: mapBounds.getNorthEast().lat(), lng: mapBounds.getSouthWest().lng()}),
-				niclabs.insight.map.GoogleMercator.cartesian({lat: mapBounds.getSouthWest().lat(), lng: mapBounds.getNorthEast().lng()})
-			));
+            // find all points in the map bounds using the quadtree
+            var points = quadtree.query(niclabs.insight.quadtree.Bounds(
+                niclabs.insight.map.GoogleMercator.cartesian({
+                    lat: mapBounds.getNorthEast().lat(),
+                    lng: mapBounds.getSouthWest().lng()
+                }),
+                niclabs.insight.map.GoogleMercator.cartesian({
+                    lat: mapBounds.getSouthWest().lat(),
+                    lng: mapBounds.getNorthEast().lng()
+                })
+            ));
 
-			var pointSets = [];
-			var tile_i, tile_j;
+            var pointSets = [];
+            var tile_i, tile_j;
 
-			for (var i = 0; i < points.length; i++) {
-				var coord = tile.query(points[i]);
-				tile_i = coord[0];
-				tile_j = coord[1];
+            for (var i = 0; i < points.length; i++) {
+                var coord = tile.query(points[i]);
+                tile_i = coord[0];
+                tile_j = coord[1];
 
-				if (!pointSets[tile_i]) pointSets[tile_i] = [];
-				if (!pointSets[tile_i][tile_j]) pointSets[tile_i][tile_j] = [];
+                if (!pointSets[tile_i]) pointSets[tile_i] = [];
+                if (!pointSets[tile_i][tile_j]) pointSets[tile_i][tile_j] = [];
 
-				// if pointSets[tile_i][tile_j] add the point to the list
-				pointSets[tile_i][tile_j].push(points[i]);
-			}
+                // if pointSets[tile_i][tile_j] add the point to the list
+                pointSets[tile_i][tile_j].push(points[i]);
+            }
 
-			tiles = [];
+            tiles = [];
 
-			// for each tile, average (or median) the weights and draw the map
-			for (tile_i in pointSets) {
-				for (tile_j in pointSets[tile_i]) {
-					tileConfig.fillColor = fill(pointSets[tile_i][tile_j]);
+            // for each tile, average (or median) the weights and draw the map
+            for (tile_i in pointSets) {
+                for (tile_j in pointSets[tile_i]) {
+                    tileConfig.fillColor = fill(pointSets[tile_i][tile_j]);
 
-					// Draw the tile
-					var mapTile = tile.draw(tile.origin(tile_i, tile_j), self.map, tileConfig);
+                    // Draw the tile
+                    var mapTile = tile.draw(tile.origin(tile_i, tile_j), self.map, tileConfig);
 
-					// Add an event to the click
-					google.maps.event.addListener(mapTile, 'click', notifyTileClick(pointSets[tile_i][tile_j]));
+                    // Add an event to the click
+                    google.maps.event.addListener(mapTile, 'click', notifyTileClick(pointSets[tile_i][tile_j]));
 
-					tiles.push(mapTile);
-				}
-			}
+                    tiles.push(mapTile);
+                }
+            }
         }
 
         return self;
-	};
+    };
 
-	return Grid;
+    return Grid;
 })();
 
 niclabs.insight.map.grid.HexagonTile = (function() {
@@ -5550,17 +6256,16 @@ niclabs.insight.map.heatmap.PointHeatmap = (function($) {
          */
         function googleMapsHeatmap(data) {
             var heatmapData = new google.maps.MVCArray();
-            for (var i = 0; i < data.length; i++) {
-                if ('weight' in data[i]) {
+            data.filteredForEach(function(data,i) {
+                if ('weight' in data) {
                     heatmapData.push({
-                        location: new google.maps.LatLng(data[i].lat, data[i].lng),
-                        weight: data[i].weight
+                        location: new google.maps.LatLng(data.lat, data.lng),
+                        weight: data.weight
                     });
+                } else {
+                    heatmapData.push(new google.maps.LatLng(data.lat, data.lng));
                 }
-                else {
-                    heatmapData.push(new google.maps.LatLng(data[i].lat, data[i].lng));
-                }
-            }
+            });
 
             return new google.maps.visualization.HeatmapLayer({
                 data: heatmapData,
@@ -5645,41 +6350,41 @@ niclabs.insight.map.heatmap.SegmentHeatmap = (function($) {
 
             var heatmapData = new google.maps.MVCArray();
 
-            for (i = 0; i < data.length; i++) {
+            data.filteredForEach(function(data,i) {
 
-                segment_size = data[i].coordinates.length;
+                segment_size = data.coordinates.length;
 
                 for (var j = 0; j < segment_size - 1; j++) {
 
                     //Distance of point a to b
-                    var d = Math.sqrt(Math.pow((data[i].coordinates[j + 1][0] - data[i].coordinates[j][0]), 2) + Math.pow((data[i].coordinates[j + 1][1] - data[i].coordinates[j][1]), 2));
+                    var d = Math.sqrt(Math.pow((data.coordinates[j + 1][0] - data.coordinates[j][0]), 2) + Math.pow((data.coordinates[j + 1][1] - data.coordinates[j][1]), 2));
 
                     //Number of points with distance 0.00001 in between, colinear with a to b line
                     var l = Math.floor(d / 0.00001);
 
                     //Distance to jump
                     var delta = {
-                        lat: (data[i].coordinates[j + 1][0] - data[i].coordinates[j][0]) / l,
-                        lng: (data[i].coordinates[j + 1][1] - data[i].coordinates[j][1]) / l
+                        lat: (data.coordinates[j + 1][0] - data.coordinates[j][0]) / l,
+                        lng: (data.coordinates[j + 1][1] - data.coordinates[j][1]) / l
                     };
 
                     //Storing the line
                     for (var k = 0; k < l; k++) {
-                        if ('weight' in data[i]) {
+                        if ('weight' in data) {
                             heatmapData.push({
-                                location: new google.maps.LatLng(data[i].coordinates[j][0] + delta.lat * k,
-                                                                 data[i].coordinates[j][1] + delta.lng * k),
-                                weight: data[i].weight
+                                location: new google.maps.LatLng(data.coordinates[j][0] + delta.lat * k,
+                                                                 data.coordinates[j][1] + delta.lng * k),
+                                weight: data.weight
                             });
                         }
                         else {
-                            heatmapData.push(new google.maps.LatLng(data[i].coordinates[j][0] + delta.lat * k,
-                                                                    data[i].coordinates[j][1] + delta.lng * k));
+                            heatmapData.push(new google.maps.LatLng(data.coordinates[j][0] + delta.lat * k,
+                                                                    data.coordinates[j][1] + delta.lng * k));
                         }
                     }
                 }
 
-            }
+            });
 
             return new google.maps.visualization.HeatmapLayer({
                 data: heatmapData,

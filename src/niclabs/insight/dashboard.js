@@ -21,6 +21,7 @@ niclabs.insight.Dashboard = (function($) {
     return function(options) {
         var layoutOptions = ['left', 'right', 'none'];
         var dashboardId = "#insight-dashboard";
+        var layerCounter = 0;
 
         if (!('anchor' in options)) throw new Error('Anchor id is required for creating a dashboard');
         var anchor = options.anchor;
@@ -32,24 +33,14 @@ niclabs.insight.Dashboard = (function($) {
 
         // Create the main container
         var main = $('<div>');
-        //.addClass('mdl-layout__content');
-        //.addClass(options.layout );
 
         var container = $('<div>')
             .setID(dashboardId)
             .addClass('mdl-grid');
 
-        //$(main).append(container);
 
         // Append the dashboard to the container
         $(anchor).append(container);
-
-        //var emptyHolder = $('<div>').addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--9-col-desktop');
-        //$(container).append(emptyHolder);
-
-        //$(anchor)
-        //.addClass('mdl-layout');
-        //.addClass('mdl-js-layout');
 
         var layers = {};
         var numberedLayers = 0;
@@ -103,6 +94,10 @@ niclabs.insight.Dashboard = (function($) {
                 .attr('href', '#insight-filter-tab')
                 .addClass('mdl-tabs__tab')
                 .html('Filters'));
+
+        tabs.click(function(){
+            $('#insight-map-view').width($('#insight-dashboard').innerWidth());
+        });
 
         var informationTab = $('<div>')
             .setID('insight-info-tab')
@@ -302,6 +297,7 @@ niclabs.insight.Dashboard = (function($) {
 
                 // Add the layer to the selector
                 layerSelector.add(lyr.id, lyr.name);
+                layerCounter = layerCounter+1;
 
                 return lyr;
             },

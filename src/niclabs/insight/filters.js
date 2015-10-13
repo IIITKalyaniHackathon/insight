@@ -45,10 +45,13 @@ niclabs.insight.Filters = (function($) {
             filters.each(function(key, filter) {
                 if (!filter.apply(element)) {
                     result = false;
+                    //Mark element as not visible
+                    element.visible = false;
                     return false;
                 }
             });
 
+            element.visible = true;
             return result;
         }
 

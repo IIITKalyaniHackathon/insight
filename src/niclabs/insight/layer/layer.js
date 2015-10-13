@@ -1,4 +1,4 @@
- niclabs.insight.layer.Layer = (function($) {
+niclabs.insight.layer.Layer = (function($) {
     "use strict";
 
     /**
@@ -11,7 +11,7 @@
      * @param {Object} options - configuration options for the layer
      * @param {string} options.id - identifier for the layer
      * @param {string=} [options.name=options.id] - name for the layer in the filter bar
-     * @param {string|Object[]} options.data - uri or data array for the layer
+     * @param {string|Object[]} options.data - id of the dataSource
      * @param {Object|Function} [options.summary] - summary data
      */
     var Layer = function(dashboard, options) {
@@ -28,13 +28,14 @@
         }
 
         var dataSource = false;
-        var data = [];
-        if (typeof options.data === 'string') {
-            dataSource = options.data;
-        }
-        else {
-            data = options.data && Array.isArray(options.data) ? options.data: [options.data];
-        }
+        // var data = [];
+        // if (typeof options.data === 'string') {
+        //     dataSource = options.data;
+        // } else {
+        //     data = options.data && Array.isArray(options.data) ? options.data : [options.data];
+        // }
+
+        var data = niclabs.insight.data(options.data);
 
         var summary = options.summary || false;
 
@@ -47,7 +48,7 @@
              * @memberof niclabs.insight.layer.Layer
              * @member {string}
              */
-            get id () {
+            get id() {
                 return id;
             },
 
@@ -73,15 +74,14 @@
              */
             data: function(obj) {
                 if (typeof obj === 'undefined') {
-                    return loaded || !dataSource? data : dataSource;
+                    return loaded || !dataSource ? data : dataSource;
                 }
 
                 if (typeof obj === 'string') {
                     dataSource = obj;
                     return dataSource;
-                }
-                else {
-                    data = obj.length ? obj: [obj];
+                } else {
+                    data = obj.length ? obj : [obj];
                 }
 
                 // If the layer has already been loaded, reload the data
@@ -121,7 +121,7 @@
 
                     if (summary) {
                         var summaryData = summary;
-                        if (typeof summary === 'function') summaryData = summary(data);
+                        if (typeof summary === 'function') summaryData = summary(data.asArray());
 
                         /**
                          * Event triggered when an update to the (filtering/update) has ocurred
@@ -150,8 +150,7 @@
                 if (dataSource) {
                     $.getJSON(dataSource, redraw);
                     // TODO: on error?
-                }
-                else {
+                } else {
                     redraw(data);
                 }
             },

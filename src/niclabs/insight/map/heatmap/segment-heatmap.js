@@ -38,41 +38,41 @@ niclabs.insight.map.heatmap.SegmentHeatmap = (function($) {
 
             var heatmapData = new google.maps.MVCArray();
 
-            for (i = 0; i < data.length; i++) {
+            data.filteredForEach(function(data,i) {
 
-                segment_size = data[i].coordinates.length;
+                segment_size = data.coordinates.length;
 
                 for (var j = 0; j < segment_size - 1; j++) {
 
                     //Distance of point a to b
-                    var d = Math.sqrt(Math.pow((data[i].coordinates[j + 1][0] - data[i].coordinates[j][0]), 2) + Math.pow((data[i].coordinates[j + 1][1] - data[i].coordinates[j][1]), 2));
+                    var d = Math.sqrt(Math.pow((data.coordinates[j + 1][0] - data.coordinates[j][0]), 2) + Math.pow((data.coordinates[j + 1][1] - data.coordinates[j][1]), 2));
 
                     //Number of points with distance 0.00001 in between, colinear with a to b line
                     var l = Math.floor(d / 0.00001);
 
                     //Distance to jump
                     var delta = {
-                        lat: (data[i].coordinates[j + 1][0] - data[i].coordinates[j][0]) / l,
-                        lng: (data[i].coordinates[j + 1][1] - data[i].coordinates[j][1]) / l
+                        lat: (data.coordinates[j + 1][0] - data.coordinates[j][0]) / l,
+                        lng: (data.coordinates[j + 1][1] - data.coordinates[j][1]) / l
                     };
 
                     //Storing the line
                     for (var k = 0; k < l; k++) {
-                        if ('weight' in data[i]) {
+                        if ('weight' in data) {
                             heatmapData.push({
-                                location: new google.maps.LatLng(data[i].coordinates[j][0] + delta.lat * k,
-                                                                 data[i].coordinates[j][1] + delta.lng * k),
-                                weight: data[i].weight
+                                location: new google.maps.LatLng(data.coordinates[j][0] + delta.lat * k,
+                                                                 data.coordinates[j][1] + delta.lng * k),
+                                weight: data.weight
                             });
                         }
                         else {
-                            heatmapData.push(new google.maps.LatLng(data[i].coordinates[j][0] + delta.lat * k,
-                                                                    data[i].coordinates[j][1] + delta.lng * k));
+                            heatmapData.push(new google.maps.LatLng(data.coordinates[j][0] + delta.lat * k,
+                                                                    data.coordinates[j][1] + delta.lng * k));
                         }
                     }
                 }
 
-            }
+            });
 
             return new google.maps.visualization.HeatmapLayer({
                 data: heatmapData,

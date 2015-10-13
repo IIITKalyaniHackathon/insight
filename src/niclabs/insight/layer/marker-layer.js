@@ -24,18 +24,19 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {Object[]} data - layer data
          * @param {number} index - index of the marker in the data array
          * @param {Object} obj - configuration for the new marker
-          */
-        function newMarker(data, index, obj) {
+         */
+        function newMarker(data, obj) {
             var marker;
             if ('type' in obj) {
-                var attr = {'layer': layer.id};
+                var attr = {
+                    'layer': layer.id
+                };
 
                 // Extend the attributes with the data and the options for the marker
-                $.extend(attr, obj, data[index]);
+                $.extend(attr, obj, data);
 
                 marker = niclabs.insight.handler(attr.type)(dashboard, attr);
-            }
-            else {
+            } else {
                 marker = obj;
             }
 
@@ -56,9 +57,11 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {string=} data[].description - description for the marker
          */
         layer.draw = function(data) {
-            for (var i = 0; i < data.length; i++) {
-                markers.push(newMarker(data, i, attr));
-            }
+            data.filteredForEach(
+                function(dataValue, i) {
+                    markers.push(newMarker(dataValue, attr));
+                });
+
         };
 
         /**
@@ -84,10 +87,11 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
         layer.filter = function(fn) {
+            //TODO: for some reason inheritance doesnt work
             var data = layer.data();
-            for (var i = 0; i < markers.length; i++) {
-                markers[i].visible(fn(data[i]));
-            }
+            data.filter(fn);
+            layer.clear();
+            layer.draw(data);
         };
 
         return layer;
