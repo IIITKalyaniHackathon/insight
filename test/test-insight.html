@@ -103,7 +103,23 @@
                 filter: function(data) {
                     return data.landmark.indexOf("Orsay") < 0;
                 }
-            }, ]
+            }]
+        });
+
+        dashboard.filter({
+            handler: 'radio-filter',
+            description: 'LatLng', // the empty string is used if not provided
+            options: [{
+                name: 'lat > 48.859961',
+                filter: function(data) {
+                    return data.lat > 48.859961;
+                }
+            }, {
+                name: 'lat <= 48.859961',
+                filter: function(data) {
+                    return data.lat <= 48.859961;
+                }
+            }]
         });
 
         var map = niclabs.insight.map({

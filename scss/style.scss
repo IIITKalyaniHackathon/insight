@@ -20,10 +20,12 @@
 }
 .filters {
     padding-right: 14px;
+    padding-left: 14px;
     .filter {
         position: relative;
         z-index: 1;
-        float: right;
+        margin-bottom: 10px;
+        //float: right;
         margin: 2px;
     }
 }
@@ -73,19 +75,22 @@
         margin: 2px;
     }
 }
-
+.insight-radio-label {
+    color: #00acc1;
+    font-size: 12px;
+}
 .insight-info-view * {
     text-align: -webkit-left;
 }
-
 .insight-info-view__title {
-    padding-top: 0px;
+    padding-top: 0;
     color: white;
 }
 .insight-info-view__subtitle {
     color: white;
     width: 100%;
-    padding-top: 0px;
+    padding-top: 0;
+
     //padding-bottom: 0px;
 }
 .insight-info-view__subtitle p {
@@ -96,24 +101,19 @@
     opacity: 0.54;
     margin-bottom: 0;
 }
-
 .insight-geocode-textfield {
     max-width: 90%;
     bottom: 7px;
 }
-
 .insight-geocode-textfield__input {
     border-bottom: 1px solid rgba(255, 255, 255, 0.72);
 }
-
 .insight-geocode-textfield__label {
     color: rgba(255, 255, 255, 0.72);
 }
-
 .insight-geocode-textfield__label:after {
     background-color: rgba(255, 255, 255, 0.26);
 }
-
 .map {
     position: absolute;
     left: 0;
@@ -122,7 +122,6 @@
 .right {
     right: 25px;
 }
-
 #insight-blocks {
     margin-top: 55px;
 }
@@ -135,15 +134,17 @@
 .show-button-right {
     text-align: right;
 }
-
 .mdl-tabs__panel h4 {
     margin-top: 52px;
     margin-left: 16px;
-    margin-bottom: 0px;
+    margin-bottom: 0;
+}
+
+.mdl-tabs__tab {
+    z-index: 3;
 }
 
 /* selector */
-
 .mdl-select {
     position: relative;
     font-size: 16px;
@@ -200,13 +201,15 @@
     -webkit-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
-.mdl-select--floating-label.is-focused .mdl-select__label, .mdl-select--floating-label.is-dirty .mdl-select__label {
+.mdl-select--floating-label.is-focused .mdl-select__label,
+.mdl-select--floating-label.is-dirty .mdl-select__label {
     color: rgb(0,172,193);
     font-size: 12px;
     top: 4px;
     visibility: visible;
 }
-.mdl-select--floating-label.is-focused .mdl-select__expandable-holder .mdl-select__label, .mdl-select--floating-label.is-dirty .mdl-select__expandable-holder .mdl-select__label {
+.mdl-select--floating-label.is-focused .mdl-select__expandable-holder .mdl-select__label,
+.mdl-select--floating-label.is-dirty .mdl-select__expandable-holder .mdl-select__label {
     top: -16px;
 }
 .mdl-select--floating-label.is-invalid .mdl-select__label {
@@ -256,7 +259,8 @@
     display: inline-block;
     max-width: 0.1px;
 }
-.mdl-select.is-focused .mdl-select__expandable-holder, .mdl-select.is-dirty .mdl-select__expandable-holder {
+.mdl-select.is-focused .mdl-select__expandable-holder,
+.mdl-select.is-dirty .mdl-select__expandable-holder {
     max-width: 600px;
 }
 .mdl-select__expandable-holder .mdl-select__label:after {

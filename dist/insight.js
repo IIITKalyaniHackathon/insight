@@ -735,24 +735,14 @@ niclabs.insight.Dashboard = (function($) {
 
         // Create the main container
         var main = $('<div>');
-        //.addClass('mdl-layout__content');
-        //.addClass(options.layout );
 
         var container = $('<div>')
             .setID(dashboardId)
             .addClass('mdl-grid');
 
-        //$(main).append(container);
 
         // Append the dashboard to the container
         $(anchor).append(container);
-
-        //var emptyHolder = $('<div>').addClass('mdl-cell mdl-cell--4-col-phone mdl-cell--9-col-desktop');
-        //$(container).append(emptyHolder);
-
-        //$(anchor)
-        //.addClass('mdl-layout');
-        //.addClass('mdl-js-layout');
 
         var layers = {};
         var numberedLayers = 0;
@@ -806,6 +796,10 @@ niclabs.insight.Dashboard = (function($) {
                 .attr('href', '#insight-filter-tab')
                 .addClass('mdl-tabs__tab')
                 .html('Filters'));
+
+        tabs.click(function(){
+            $('#insight-map-view').width($('#insight-dashboard').innerWidth());
+        });
 
         var informationTab = $('<div>')
             .setID('insight-info-tab')
@@ -1293,7 +1287,6 @@ niclabs.insight.Filters = (function($) {
                     result = false;
                     //Mark element as not visible
                     element.visible = false;
-                    console.log(element);
                     return false;
                 }
             });
@@ -2573,6 +2566,117 @@ niclabs.insight.filter.LayerSelector = (function($) {
     return LayerSelector;
 })(jQuery);
 
+niclabs.insight.filter.RadioFilter = (function($) {
+
+    /**
+     * Radio filter option
+     *
+     * @typedef niclabs.insight.filter.RadioFilter.Option
+     * @type {Object}
+     * @param {string} name - name for the option of the filter
+     * @param {niclabs.insight.Filters~filter} filter - callback to filter the data
+     */
+
+    /**
+     * Construct a radio filter for the dashboard
+     *
+     * A radio filter will be visualized as a `<input type="radio">`
+     * HTML element, and calls to apply will pass the call to the appropriate
+     * filtering function according to the selected option
+     *
+     * @class niclabs.insight.filter.RadioFilter
+     * @augments niclabs.insight.filter.Filter
+     * @param {niclabs.insight.Dashboard} dashboard - dashboard that this filter belongs to
+     * @param {Object} options - configuration options for the filter
+     * @param {string} options.description - description for this filter to use as default option of the select
+     * @param {niclabs.insight.filter.RadioFilter.Option[]} options.options - list of options for the filter
+     */
+    var RadioFilter = function(dashboard, options) {
+        var view = niclabs.insight.filter.Filter(dashboard, options);
+
+        var selectOptions = options.options || [];
+
+        // Configure the view
+        var selectDiv = $('<div>').addClass('mdl-select mdl-js-select mdl-select--floating-label');
+
+        view.$.append(
+            $('<div>').addClass('insight-radio-label')
+            .text(options.description));
+
+        inputs = [];
+
+        var addOption = function(id, value, text) {
+            var label = $('<label>')
+                .addClass('mdl-radio mdl-js-radio mdl-js-ripple-effect')
+                .attr('for', id);
+            var input = $('<input>')
+                .addClass('mdl-radio__button')
+                .setID(id)
+                .attr('type', 'radio')
+                .attr('name', options.id)
+                .attr('value', value);
+            label.append(input);
+            inputs.push(input);
+            label.append($('<span>')
+                .addClass('mdl-radio__label')
+                .text(text));
+            // Add the option to the view
+            view.$.append(label);
+            view.$.append($('<br>'));
+        };
+
+        //default
+        addOption(options.id + "__default", 0, "No filter");
+
+        var id = 1;
+
+        selectOptions.forEach(function(option) {
+            addOption(options.id + "__" + id, id, option.name);
+            id++;
+        });
+
+
+        function noFilter(element) {
+            return true;
+        }
+
+        var filter = noFilter;
+
+        $.each(inputs, function(a) {
+            $(this).on('change', function() {
+                filter = noFilter;
+                var index = $('input:radio[name=__1]:checked').val();
+                if (index > 0) {
+                    // Use the selected filter
+                    filter = selectOptions[index - 1].filter;
+                }
+
+                niclabs.insight.event.trigger('filter_selected', view);
+            });
+        });
+
+        /**
+         * Apply the filter to a data element
+         *
+         * @memberof niclabs.insight.filter.RadioFilter
+         * @abstract
+         * @param {Object} element - data element to evaluate
+         * @return {boolean} - true if the data element passes the filter
+         */
+        view.apply = function(element) {
+            // Use the selected filter function
+            return filter(element);
+        };
+
+        return view;
+    };
+
+    // Register the handler
+    niclabs.insight.handler('radio-filter', 'filter', RadioFilter);
+
+    return RadioFilter;
+})(jQuery);
+
 niclabs.insight.filter.SelectionFilter = (function($) {
 
     /**
@@ -2615,7 +2719,7 @@ niclabs.insight.filter.SelectionFilter = (function($) {
             .addClass('mdl-select__label')
             .attr('for', options.id)
             .attr('name', options.id)
-            .text('Filter');
+            .text(options.description);
 
         selectOptions.forEach(function(option) {
             select.append($('<option>').text(option.name));

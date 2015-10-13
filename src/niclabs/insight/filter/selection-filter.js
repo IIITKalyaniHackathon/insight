@@ -40,7 +40,7 @@ niclabs.insight.filter.SelectionFilter = (function($) {
             .addClass('mdl-select__label')
             .attr('for', options.id)
             .attr('name', options.id)
-            .text('Filter');
+            .text(options.description);
 
         selectOptions.forEach(function(option) {
             select.append($('<option>').text(option.name));

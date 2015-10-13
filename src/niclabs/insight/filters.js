@@ -47,7 +47,6 @@ niclabs.insight.Filters = (function($) {
                     result = false;
                     //Mark element as not visible
                     element.visible = false;
-                    console.log(element);
                     return false;
                 }
             });

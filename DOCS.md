@@ -36,6 +36,8 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
       * [class: data.JSON](#niclabs.insight.data.JSON)
         * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
         * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
+        * [JSON.self.filteredForEach(fn)](#niclabs.insight.data.JSON.self.filteredForEach)
+        * [JSON.self.filter(fn)](#niclabs.insight.data.JSON.self.filter)
       * [class: data.Selector](#niclabs.insight.data.Selector)
         * [new data.Selector(id, src, [options])](#new_niclabs.insight.data.Selector)
     * [insight.event](#niclabs.insight.event)
@@ -52,6 +54,10 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
       * [class: filter.LayerSelector](#niclabs.insight.filter.LayerSelector)
         * [new filter.LayerSelector(dashboard, options)](#new_niclabs.insight.filter.LayerSelector)
         * [LayerSelector.view.add(id, name)](#niclabs.insight.filter.LayerSelector.view.add)
+      * [class: filter.RadioFilter](#niclabs.insight.filter.RadioFilter)
+        * [new filter.RadioFilter(dashboard, options)](#new_niclabs.insight.filter.RadioFilter)
+        * [RadioFilter.view.apply(element)](#niclabs.insight.filter.RadioFilter.view.apply)
+        * [type: RadioFilter.Option](#niclabs.insight.filter.RadioFilter.Option)
       * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
         * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
         * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
@@ -323,6 +329,8 @@ understand what is going on in the city
     * [class: data.JSON](#niclabs.insight.data.JSON)
       * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
       * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
+      * [JSON.self.filteredForEach(fn)](#niclabs.insight.data.JSON.self.filteredForEach)
+      * [JSON.self.filter(fn)](#niclabs.insight.data.JSON.self.filter)
     * [class: data.Selector](#niclabs.insight.data.Selector)
       * [new data.Selector(id, src, [options])](#new_niclabs.insight.data.Selector)
   * [insight.event](#niclabs.insight.event)
@@ -339,6 +347,10 @@ understand what is going on in the city
     * [class: filter.LayerSelector](#niclabs.insight.filter.LayerSelector)
       * [new filter.LayerSelector(dashboard, options)](#new_niclabs.insight.filter.LayerSelector)
       * [LayerSelector.view.add(id, name)](#niclabs.insight.filter.LayerSelector.view.add)
+    * [class: filter.RadioFilter](#niclabs.insight.filter.RadioFilter)
+      * [new filter.RadioFilter(dashboard, options)](#new_niclabs.insight.filter.RadioFilter)
+      * [RadioFilter.view.apply(element)](#niclabs.insight.filter.RadioFilter.view.apply)
+      * [type: RadioFilter.Option](#niclabs.insight.filter.RadioFilter.Option)
     * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
       * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
       * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
@@ -735,6 +747,8 @@ Contains all data operation classes
   * [class: data.JSON](#niclabs.insight.data.JSON)
     * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
     * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
+    * [JSON.self.filteredForEach(fn)](#niclabs.insight.data.JSON.self.filteredForEach)
+    * [JSON.self.filter(fn)](#niclabs.insight.data.JSON.self.filter)
   * [class: data.Selector](#niclabs.insight.data.Selector)
     * [new data.Selector(id, src, [options])](#new_niclabs.insight.data.Selector)
 
@@ -888,6 +902,8 @@ Map function
 * [class: data.JSON](#niclabs.insight.data.JSON)
   * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
   * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
+  * [JSON.self.filteredForEach(fn)](#niclabs.insight.data.JSON.self.filteredForEach)
+  * [JSON.self.filter(fn)](#niclabs.insight.data.JSON.self.filter)
 
 <a name="new_niclabs.insight.data.JSON"></a>
 #####new data.JSON(options)
@@ -913,6 +929,24 @@ if the JSON data has not been loaded
 **Params**
 
 - fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
+
+<a name="niclabs.insight.data.JSON.self.filteredForEach"></a>
+#####JSON.self.filteredForEach(fn)
+Iterate over the data source elements, but skips the filtered elements
+
+Iterates over the elements of the array/
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
+
+<a name="niclabs.insight.data.JSON.self.filter"></a>
+#####JSON.self.filter(fn)
+Iterate over the data source elements and marks data elements as not visible
+
+**Params**
+
+- fn `niclabs.insight.data.DataSource~useDataElement` - filter for the data element  
 
 <a name="niclabs.insight.data.Selector"></a>
 ####class: data.Selector
@@ -1018,6 +1052,10 @@ Define all possible filters for the dashboard
   * [class: filter.LayerSelector](#niclabs.insight.filter.LayerSelector)
     * [new filter.LayerSelector(dashboard, options)](#new_niclabs.insight.filter.LayerSelector)
     * [LayerSelector.view.add(id, name)](#niclabs.insight.filter.LayerSelector.view.add)
+  * [class: filter.RadioFilter](#niclabs.insight.filter.RadioFilter)
+    * [new filter.RadioFilter(dashboard, options)](#new_niclabs.insight.filter.RadioFilter)
+    * [RadioFilter.view.apply(element)](#niclabs.insight.filter.RadioFilter.view.apply)
+    * [type: RadioFilter.Option](#niclabs.insight.filter.RadioFilter.Option)
   * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
     * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
     * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
@@ -1110,6 +1148,51 @@ Add a layer to the selector
 - id `string` - id for the layer  
 - name `name` - name of the layer  
 
+<a name="niclabs.insight.filter.RadioFilter"></a>
+####class: filter.RadioFilter
+**Extends**: `niclabs.insight.filter.Filter`  
+**Members**
+
+* [class: filter.RadioFilter](#niclabs.insight.filter.RadioFilter)
+  * [new filter.RadioFilter(dashboard, options)](#new_niclabs.insight.filter.RadioFilter)
+  * [RadioFilter.view.apply(element)](#niclabs.insight.filter.RadioFilter.view.apply)
+  * [type: RadioFilter.Option](#niclabs.insight.filter.RadioFilter.Option)
+
+<a name="new_niclabs.insight.filter.RadioFilter"></a>
+#####new filter.RadioFilter(dashboard, options)
+Construct a radio filter for the dashboard
+
+A radio filter will be visualized as a `<input type="radio">`
+HTML element, and calls to apply will pass the call to the appropriate
+filtering function according to the selected option
+
+**Params**
+
+- dashboard <code>[Dashboard](#niclabs.insight.Dashboard)</code> - dashboard that this filter belongs to  
+- options `Object` - configuration options for the filter  
+  - description `string` - description for this filter to use as default option of the select  
+  - options <code>[Array.&lt;Option&gt;](#niclabs.insight.filter.RadioFilter.Option)</code> - list of options for the filter  
+
+**Extends**: `niclabs.insight.filter.Filter`  
+<a name="niclabs.insight.filter.RadioFilter.view.apply"></a>
+#####RadioFilter.view.apply(element)
+Apply the filter to a data element
+
+**Params**
+
+- element `Object` - data element to evaluate  
+
+**Returns**: `boolean` - - true if the data element passes the filter  
+<a name="niclabs.insight.filter.RadioFilter.Option"></a>
+#####type: RadioFilter.Option
+Radio filter option
+
+**Params**
+
+- name `string` - name for the option of the filter  
+- filter <code>[filter](#niclabs.insight.Filters..filter)</code> - callback to filter the data  
+
+**Type**: `Object`  
 <a name="niclabs.insight.filter.SelectionFilter"></a>
 ####class: filter.SelectionFilter
 **Extends**: `niclabs.insight.filter.Filter`  
