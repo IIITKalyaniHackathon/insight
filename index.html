@@ -50,10 +50,10 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="//storage.googleapis.com/code.getmdl.io/1.0.4/material.css">
     <link rel="stylesheet" type="text/css" href="//rawgit.com/niclabs/insight/master/dist/insight.css">
-    
+
     <script type="text/javascript" src="js/chartist.min.js"></script>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?v="></script>
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
     <script type="text/javascript" src="//storage.googleapis.com/code.getmdl.io/1.0.4/material.min.js"></script>
 
     <script type="text/javascript" src="//rawgit.com/niclabs/insight/master/dist/insight.js"></script>
@@ -93,7 +93,22 @@
                 filter: function(data) {
                     return data.landmark.indexOf("Orsay") < 0;
                 }
-            }, ]
+            }]
+        });
+        dashboard.filter({
+            handler: 'radio-filter',
+            description: 'LatLng', // the empty string is used if not provided
+            options: [{
+                name: 'lat > 48.859961',
+                filter: function(data) {
+                    return data.lat > 48.859961;
+                }
+            }, {
+                name: 'lat <= 48.859961',
+                filter: function(data) {
+                    return data.lat <= 48.859961;
+                }
+            }]
         });
 
         var map = niclabs.insight.map({
@@ -168,55 +183,78 @@
             }]
         });
 
+        niclabs.insight.data('parisData', [{
+            'lat': 48.860611,
+            'lng': 2.337644,
+            'landmark': 'Musée du Louvre',
+            'value': [
+                [2237, 4650, 5221, 8089, 2970, 2847, 9059]
+            ],
+            'note': 'This is not the actual number of visitors.',
+            'weight': 0.5
+        }, {
+            'lat': 48.859961,
+            'lng': 2.326561,
+            'landmark': 'Musée d\'Orsay',
+            'value': [
+                [8971, 10724, 5257, 2434, 10583, 9038, 5240]
+            ],
+            'note': 'This is not the actual number of visitors.',
+            'weight': 0.8
+        }, {
+            'lat': 48.873792,
+            'lng': 2.295028,
+            'landmark': 'L’Arc de Triomphe',
+            'value': [
+                [9679, 10777, 9417, 1521, 6218, 1740, 2490]
+            ],
+            'note': 'This is not the actual number of visitors.',
+            'weight': 0.4
+        }, {
+            'lat': 48.852968,
+            'lng': 2.349902,
+            'landmark': 'Cathédrale Notre-Dame',
+            'value': [
+                [9806, 10989, 8219, 1503, 3847, 2007, 10751]
+            ],
+            'note': 'This is not the actual number of visitors.',
+            'weight': 0.95
+        }, {
+            'lat': 48.85837,
+            'lng': 2.294481,
+            'landmark': 'Tour Eiffel',
+            'value': [
+                [3576, 10255, 2112, 5716, 9728, 10805, 6082]
+            ],
+            'note': 'This is not the actual number of visitors.',
+            'weight': 0.14
+        }]);
+        niclabs.insight.data('anotherParisData', [{
+            'lat': 48.860611,
+            'lng': 2.337644,
+            'weight': 0.5
+        }, {
+            'lat': 48.861700,
+            'lng': 2.337644,
+            'weight': 0.25
+        }, {
+            'lat': 48.860611,
+            'lng': 2.338500,
+            'weight': 0.25
+        }, {
+            'lat': 48.860200,
+            'lng': 2.335644,
+            'weight': 0.75
+        }, {
+            'lat': 48.862611,
+            'lng': 2.336626,
+            'weight': 0.5
+        }, ]);
 
         niclabs.insight.layer({
             handler: 'marker-layer',
             name: 'Museum Visitors',
-            data: [{
-                'type': 'simple-marker',
-                'lat': 48.860611,
-                'lng': 2.337644,
-                'landmark': 'Musée du Louvre',
-                'value': [
-                    [2237, 4650, 5221, 8089, 2970, 2847, 9059]
-                ],
-                'note': 'This is not the actual number of visitors.'
-            }, {
-                'type': 'simple-marker',
-                'lat': 48.859961,
-                'lng': 2.326561,
-                'landmark': 'Musée d\'Orsay',
-                'value': [
-                    [8971, 10724, 5257, 2434, 10583, 9038, 5240]
-                ],
-                'note': 'This is not the actual number of visitors.'
-            }, {
-                'lat': 48.873792,
-                'lng': 2.295028,
-                'landmark': 'L’Arc de Triomphe',
-                'value': [
-                    [9679, 10777, 9417, 1521, 6218, 1740, 2490]
-                ],
-                'note': 'This is not the actual number of visitors.'
-            }, {
-                'type': 'circle-marker',
-                'radius': 100,
-                'lat': 48.852968,
-                'lng': 2.349902,
-                'landmark': 'Cathédrale Notre-Dame',
-                'value': [
-                    [9806, 10989, 8219, 1503, 3847, 2007, 10751]
-                ],
-                'note': 'This is not the actual number of visitors.'
-            }, {
-                'lat': 48.85837,
-                'lng': 2.294481,
-                'landmark': 'Tour Eiffel',
-                'value': [
-                    [3576, 10255, 2112, 5716, 9728, 10805, 6082]
-                ],
-                'note': 'This is not the actual number of visitors.'
-            }],
+            data: 'parisData',
             summary: function(data) {
                 var totals = {
                     description: 'Weeky visitors for '+data.length+' museums in Paris',
@@ -243,36 +281,22 @@
         niclabs.insight.layer({
             name: 'Visitor Grid',
             handler: 'grid-layer',
-            data: [{
-                'lat': 48.860611,
-                'lng': 2.337644,
-                'landmark': 'Musee du Louvre',
-                'weight': 0.5
-            }, {
-                'lat': 48.859961,
-                'lng': 2.326561,
-                'landmark': 'Musée D’Orsay',
-                'weight': 0.8
-            }, {
-                'lat': 48.873792,
-                'lng': 2.295028,
-                'landmark': 'L’Arc de Triomphe',
-                'weight': 0.4,
-            }, {
-                'lat': 48.852968,
-                'lng': 2.349902,
-                'landmark': 'Cathédrale Notre-Dame',
-                'weight': 0.95
-            }, {
-                'lat': 48.85837,
-                'lng': 2.294481,
-                'landmark': 'Tour Eiffel',
-                'weight': 0.14
-            }],
+            data: parisData,
             grid: {
                 'type': 'hexagon',
                 'size': 32,
                 'fill': 'average'
+            }
+        });
+
+        niclabs.insight.layer({
+            name: 'Just a Heatmap',
+            handler: 'heatmap-layer',
+            data: 'anotherParisData',
+            heatmap: {
+                'type': 'point-heatmap',
+                'radius': 15,
+                'dissipating': true,
             }
         });
     </script>
