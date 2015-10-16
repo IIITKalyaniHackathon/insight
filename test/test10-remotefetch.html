@@ -97,7 +97,11 @@
             'zoom': 15
         });
 
-        niclabs.insight.data('parisData', './test.json');
+        niclabs.insight.data({
+            handler: 'json-data',
+            id: 'parisData',
+            src: './test.json'
+        });
 
         niclabs.insight.layer({
             name: 'Just a Heatmap',
@@ -111,7 +115,20 @@
         });
 
         dashboard.filter({
-            handler: 'selection-filter',
+            handler: 'radio-filter',
+            description: 'Year', // the empty string is used if not provided
+            parameterKey: 'year'
+            options: [{
+                name: '2014',
+                value: 2014
+            }, {
+                name: '2015',
+                value: 2015
+            }]
+        });
+
+        dashboard.filter({
+            handler: 'radio-filter',
             description: 'Landmark', // the empty string is used if not provided
             options: [{
                 name: 'Not Eiffel Tower',

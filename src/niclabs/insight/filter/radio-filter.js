@@ -77,7 +77,7 @@ niclabs.insight.filter.RadioFilter = (function($) {
         $.each(inputs, function(a) {
             $(this).on('change', function() {
                 filter = noFilter;
-                var index = $('input:radio[name=__1]:checked').val();
+                var index = $('input:radio[name='+ options.id +']:checked').val();
                 if (index > 0) {
                     // Use the selected filter
                     filter = selectOptions[index - 1].filter;

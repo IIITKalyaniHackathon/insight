@@ -10,7 +10,7 @@ niclabs.insight.data.DataSource = (function() {
      * @param {Object} options - configuration options for the data source
      * @param {String} options.id - identifier for referencing this data source
      */
-    var constructor = function(options) {
+    var constructor = function(dashboard, options) {
         var self = niclabs.insight.Element(options);
 
         // TODO: we should find a way to notify that new data has been received

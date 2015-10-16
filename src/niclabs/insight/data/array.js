@@ -8,8 +8,8 @@ niclabs.insight.data.Array = (function() {
      * @param {String} options.id - identifier for referencing this data source
      * @param {Object[]} options.src - source of data
      */
-    var constructor = function(options) {
-        var self = niclabs.insight.data.DataSource(options);
+    var constructor = function(dashboard, options) {
+        var self = niclabs.insight.data.DataSource(dashboard, options);
 
         var data = options.src || [];
 
@@ -99,6 +99,9 @@ niclabs.insight.data.Array = (function() {
 
         return self;
     };
+
+    // Register the handler
+    niclabs.insight.handler('array-data', 'data', constructor);
 
     return constructor;
 })();

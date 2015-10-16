@@ -748,6 +748,8 @@ niclabs.insight.Dashboard = (function($) {
         var numberedLayers = 0;
         var activeLayer;
 
+        var data = {};
+
         /**
          * Get a new layer id for a layer without id
          */
@@ -1005,20 +1007,46 @@ niclabs.insight.Dashboard = (function($) {
             },
 
             /**
-             * Set/get the data for the active layer
+             * Add a {@link niclabs.insight.data.DataSource} for the dashboard
              *
-             * If a new source for the data is provided, this method updates the internal
-             * data for the layer and reloads the layer by calling {@link niclabs.insight.layer.Layer.load}
+             * A data source is a collection of elements to be proccesed on the dashboard
+             *
+             * - If a generic object is provided with the handler defined in the 'handler' property, a new dataSource
+             * is created using the handler and the dataSource is added to the list of
+             * dataSources of the dashboard
              *
              * @memberof niclabs.insight.Dashboard
-             * @param {string|Object[]} [obj] - optional new data source or data array for the layer
-             * @returns {string|Object[]} data source for the layer if the data has not been loaded yet or object array if the
-             *  data has been loaded
+             * @param {Object} obj - configuration options for the new dataSource
+             * @returns {niclabs.insight.data.DataSource} - dataSource for the provided id
              */
-            data: function(obj) {
-                if (activeLayer) return activeLayer.data(obj);
-                return [];
+            dataSource: function(obj) {
+                var dataSrc;
+                if ('handler' in obj) {
+                    dataSrc = niclabs.insight.handler(obj.handler)(self, obj);
+                } else {
+                    throw new Error("No handler specified");
+                }
+
+                data[obj.id] = dataSrc;
+
+                return dataSrc;
             },
+
+            // /**
+            //  * Set/get the data for the active layer
+            //  *
+            //  * If a new source for the data is provided, this method updates the internal
+            //  * data for the layer and reloads the layer by calling {@link niclabs.insight.layer.Layer.load}
+            //  *
+            //  * @memberof niclabs.insight.Dashboard
+            //  * @param {string|Object[]} [obj] - optional new data source or data array for the layer
+            //  * @returns {string|Object[]} data source for the layer if the data has not been loaded yet or object array if the
+            //  *  data has been loaded
+            //  */
+            // data: function(obj) {
+            //     if (activeLayer) return activeLayer.data(obj);
+            //     return [];
+            // },
 
             /**
              * Set/get the active layer
@@ -1673,7 +1701,9 @@ niclabs.insight.utils = (function() {
      * @return {boolean} true if the url is valid
      */
     function isValidURL(url) {
-        return url.match(regex);
+        return true;
+        // TODO: this returns false with localhost:8001/api/events/summaries/antennasignal/type/?format=json&year=2015&month=6
+        //return url.match(regex) === true;
     }
 
     return {
@@ -1756,7 +1786,7 @@ niclabs.insight.View = (function($) {
  *
  * @namespace
  */
-niclabs.insight.data = (function () {
+niclabs.insight.data = (function() {
     var sources = {};
 
 
@@ -1770,19 +1800,16 @@ niclabs.insight.data = (function () {
      * @param {Object=} options - extra options for the data source
      * @returns {niclabs.insight.data.DataSource} data source
      */
-    var data = function(id, src, options) {
-        if (typeof src === 'undefined') {
-            if (!(id in sources)) throw Error("No data source with id "+id);
-            return sources[id];
+    var data = function(obj) {
+        var dashboard = niclabs.insight.dashboard();
+        if (typeof dashboard === 'undefined') throw new Error("Dashboard has not been initialized");
+
+        if (typeof obj === 'string') {
+            if (!(obj in sources)) throw Error("No data source with id " + obj);
+            return sources[obj];
         }
-
-        // if (typeof src === 'object') {
-        //     sources[id] = src;
-        //     return src;
-        // }
-
-        sources[id] = niclabs.insight.data.Selector(id, src, options);
-        return sources[id];
+        sources[obj.id] = dashboard.dataSource(obj);
+        return dashboard.dataSource(obj);
     };
 
     return data;
@@ -1798,8 +1825,8 @@ niclabs.insight.data.Array = (function() {
      * @param {String} options.id - identifier for referencing this data source
      * @param {Object[]} options.src - source of data
      */
-    var constructor = function(options) {
-        var self = niclabs.insight.data.DataSource(options);
+    var constructor = function(dashboard, options) {
+        var self = niclabs.insight.data.DataSource(dashboard, options);
 
         var data = options.src || [];
 
@@ -1890,6 +1917,9 @@ niclabs.insight.data.Array = (function() {
         return self;
     };
 
+    // Register the handler
+    niclabs.insight.handler('array-data', 'data', constructor);
+
     return constructor;
 })();
 
@@ -1905,7 +1935,7 @@ niclabs.insight.data.DataSource = (function() {
      * @param {Object} options - configuration options for the data source
      * @param {String} options.id - identifier for referencing this data source
      */
-    var constructor = function(options) {
+    var constructor = function(dashboard, options) {
         var self = niclabs.insight.Element(options);
 
         // TODO: we should find a way to notify that new data has been received
@@ -1988,8 +2018,8 @@ niclabs.insight.data.JSON = (function($){
      * @param {String} [options.callback] - callback to use for JSONP data sources, can also be passed as a data or query parameter
      * @param {String} [options.listkey] - key the data source list if the JSON response is an object
      */
-    var constructor = function(options) {
-        var self = niclabs.insight.data.DataSource(options);
+    var constructor = function(dashboard, options) {
+        var self = niclabs.insight.data.DataSource(dashboard, options);
 
         if (typeof options.src !== 'string' || !niclabs.insight.utils.isValidURL(options.src)) {
             throw Error(options.src + " is not a valid URL");
@@ -2040,19 +2070,16 @@ niclabs.insight.data.JSON = (function($){
                     var i;
                     if (options.listkey) {
                         data = d[options.listkey];
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
                     }
                     else {
                         data = d;
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
+                    }
+
+                    // filter purposes
+                    for (i = 0; i < data.length; i++) {
+                        $.extend(data[i], {
+                            visible: true
+                        });
                     }
 
                     // Set the data as loaded
@@ -2092,19 +2119,16 @@ niclabs.insight.data.JSON = (function($){
                     var i;
                     if (options.listkey) {
                         data = d[options.listkey];
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
                     }
                     else {
                         data = d;
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
+                    }
+
+                    // filter purposes
+                    for (i = 0; i < data.length; i++) {
+                        $.extend(data[i], {
+                            visible: true
+                        });
                     }
 
                     // Set the data as loaded
@@ -2130,6 +2154,7 @@ niclabs.insight.data.JSON = (function($){
                         data[i].visible = false;
                     }
                 }
+                console.log(data);
             }
 
             if (loaded) {
@@ -2142,19 +2167,16 @@ niclabs.insight.data.JSON = (function($){
                     var i;
                     if (options.listkey) {
                         data = d[options.listkey];
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
                     }
                     else {
                         data = d;
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
+                    }
+
+                    // filter purposes
+                    for (i = 0; i < data.length; i++) {
+                        $.extend(data[i], {
+                            visible: true
+                        });
                     }
 
                     // Set the data as loaded
@@ -2206,19 +2228,16 @@ niclabs.insight.data.JSON = (function($){
                     var i;
                     if (options.listkey) {
                         data = d[options.listkey];
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
                     }
                     else {
                         data = d;
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
+                    }
+
+                    // filter purposes
+                    for (i = 0; i < data.length; i++) {
+                        $.extend(data[i], {
+                            visible: true
+                        });
                     }
 
                     // Set the data as loaded
@@ -2233,6 +2252,9 @@ niclabs.insight.data.JSON = (function($){
 
         return self;
     };
+
+    // Register the handler
+    niclabs.insight.handler('json-data', 'data', constructor);
 
     return constructor;
 })(jQuery);
@@ -2647,7 +2669,7 @@ niclabs.insight.filter.RadioFilter = (function($) {
         $.each(inputs, function(a) {
             $(this).on('change', function() {
                 filter = noFilter;
-                var index = $('input:radio[name=__1]:checked').val();
+                var index = $('input:radio[name='+ options.id +']:checked').val();
                 if (index > 0) {
                     // Use the selected filter
                     filter = selectOptions[index - 1].filter;
@@ -5463,7 +5485,6 @@ niclabs.insight.map.grid.Grid = (function() {
      * @param {niclabs.insight.map.grid.Grid.Data[]} options.data - data for the grid
      */
     var Grid = function(dashboard, options) {
-        console.log(options);
         if (!('layer' in options))
             throw new Error('The grid must be associated to a layer');
 

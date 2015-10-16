@@ -3,7 +3,7 @@
  *
  * @namespace
  */
-niclabs.insight.data = (function () {
+niclabs.insight.data = (function() {
     var sources = {};
 
 
@@ -17,19 +17,16 @@ niclabs.insight.data = (function () {
      * @param {Object=} options - extra options for the data source
      * @returns {niclabs.insight.data.DataSource} data source
      */
-    var data = function(id, src, options) {
-        if (typeof src === 'undefined') {
-            if (!(id in sources)) throw Error("No data source with id "+id);
-            return sources[id];
+    var data = function(obj) {
+        var dashboard = niclabs.insight.dashboard();
+        if (typeof dashboard === 'undefined') throw new Error("Dashboard has not been initialized");
+
+        if (typeof obj === 'string') {
+            if (!(obj in sources)) throw Error("No data source with id " + obj);
+            return sources[obj];
         }
-
-        // if (typeof src === 'object') {
-        //     sources[id] = src;
-        //     return src;
-        // }
-
-        sources[id] = niclabs.insight.data.Selector(id, src, options);
-        return sources[id];
+        sources[obj.id] = dashboard.dataSource(obj);
+        return dashboard.dataSource(obj);
     };
 
     return data;

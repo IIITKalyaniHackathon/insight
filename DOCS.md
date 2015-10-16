@@ -243,7 +243,7 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
       * [Dashboard.layout()](#niclabs.insight.Dashboard.layout)
       * [Dashboard.map([obj])](#niclabs.insight.Dashboard.map)
       * [Dashboard.layer(obj, [activate])](#niclabs.insight.Dashboard.layer)
-      * [Dashboard.data([obj])](#niclabs.insight.Dashboard.data)
+      * [Dashboard.dataSource(obj)](#niclabs.insight.Dashboard.dataSource)
       * [Dashboard.active([id])](#niclabs.insight.Dashboard.active)
       * [Dashboard.filter(filter)](#niclabs.insight.Dashboard.filter)
       * [Dashboard.clear()](#niclabs.insight.Dashboard.clear)
@@ -536,7 +536,7 @@ understand what is going on in the city
     * [Dashboard.layout()](#niclabs.insight.Dashboard.layout)
     * [Dashboard.map([obj])](#niclabs.insight.Dashboard.map)
     * [Dashboard.layer(obj, [activate])](#niclabs.insight.Dashboard.layer)
-    * [Dashboard.data([obj])](#niclabs.insight.Dashboard.data)
+    * [Dashboard.dataSource(obj)](#niclabs.insight.Dashboard.dataSource)
     * [Dashboard.active([id])](#niclabs.insight.Dashboard.active)
     * [Dashboard.filter(filter)](#niclabs.insight.Dashboard.filter)
     * [Dashboard.clear()](#niclabs.insight.Dashboard.clear)
@@ -3216,7 +3216,7 @@ Constructs an insight element (visualization, layer, etc.)
   * [Dashboard.layout()](#niclabs.insight.Dashboard.layout)
   * [Dashboard.map([obj])](#niclabs.insight.Dashboard.map)
   * [Dashboard.layer(obj, [activate])](#niclabs.insight.Dashboard.layer)
-  * [Dashboard.data([obj])](#niclabs.insight.Dashboard.data)
+  * [Dashboard.dataSource(obj)](#niclabs.insight.Dashboard.dataSource)
   * [Dashboard.active([id])](#niclabs.insight.Dashboard.active)
   * [Dashboard.filter(filter)](#niclabs.insight.Dashboard.filter)
   * [Dashboard.clear()](#niclabs.insight.Dashboard.clear)
@@ -3304,19 +3304,21 @@ layer list as is.
 - \[activate=false\] `boolean` - if true, set the layer as the active layer of the dashboard  
 
 **Returns**: `niclabs.insight.info.Layer` - - layer for the provided id  
-<a name="niclabs.insight.Dashboard.data"></a>
-####Dashboard.data([obj])
-Set/get the data for the active layer
+<a name="niclabs.insight.Dashboard.dataSource"></a>
+####Dashboard.dataSource(obj)
+Add a [DataSource](#niclabs.insight.data.DataSource) for the dashboard
 
-If a new source for the data is provided, this method updates the internal
-data for the layer and reloads the layer by calling [load](#niclabs.insight.layer.Layer.load)
+A data source is a collection of elements to be proccesed on the dashboard
+
+- If a generic object is provided with the handler defined in the 'handler' property, a new dataSource
+is created using the handler and the dataSource is added to the list of
+dataSources of the dashboard
 
 **Params**
 
-- \[obj\] `string` | `Array.<Object>` - optional new data source or data array for the layer  
+- obj `Object` - configuration options for the new dataSource  
 
-**Returns**: `string` | `Array.<Object>` - data source for the layer if the data has not been loaded yet or object array if the
- data has been loaded  
+**Returns**: [DataSource](#niclabs.insight.data.DataSource) - - dataSource for the provided id  
 <a name="niclabs.insight.Dashboard.active"></a>
 ####Dashboard.active([id])
 Set/get the active layer

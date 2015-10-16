@@ -11,8 +11,8 @@ niclabs.insight.data.JSON = (function($){
      * @param {String} [options.callback] - callback to use for JSONP data sources, can also be passed as a data or query parameter
      * @param {String} [options.listkey] - key the data source list if the JSON response is an object
      */
-    var constructor = function(options) {
-        var self = niclabs.insight.data.DataSource(options);
+    var constructor = function(dashboard, options) {
+        var self = niclabs.insight.data.DataSource(dashboard, options);
 
         if (typeof options.src !== 'string' || !niclabs.insight.utils.isValidURL(options.src)) {
             throw Error(options.src + " is not a valid URL");
@@ -63,19 +63,16 @@ niclabs.insight.data.JSON = (function($){
                     var i;
                     if (options.listkey) {
                         data = d[options.listkey];
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
                     }
                     else {
                         data = d;
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
+                    }
+
+                    // filter purposes
+                    for (i = 0; i < data.length; i++) {
+                        $.extend(data[i], {
+                            visible: true
+                        });
                     }
 
                     // Set the data as loaded
@@ -115,19 +112,16 @@ niclabs.insight.data.JSON = (function($){
                     var i;
                     if (options.listkey) {
                         data = d[options.listkey];
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
                     }
                     else {
                         data = d;
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
+                    }
+
+                    // filter purposes
+                    for (i = 0; i < data.length; i++) {
+                        $.extend(data[i], {
+                            visible: true
+                        });
                     }
 
                     // Set the data as loaded
@@ -153,6 +147,7 @@ niclabs.insight.data.JSON = (function($){
                         data[i].visible = false;
                     }
                 }
+                console.log(data);
             }
 
             if (loaded) {
@@ -165,19 +160,16 @@ niclabs.insight.data.JSON = (function($){
                     var i;
                     if (options.listkey) {
                         data = d[options.listkey];
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
                     }
                     else {
                         data = d;
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
+                    }
+
+                    // filter purposes
+                    for (i = 0; i < data.length; i++) {
+                        $.extend(data[i], {
+                            visible: true
+                        });
                     }
 
                     // Set the data as loaded
@@ -229,19 +221,16 @@ niclabs.insight.data.JSON = (function($){
                     var i;
                     if (options.listkey) {
                         data = d[options.listkey];
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
                     }
                     else {
                         data = d;
-                        for (i = 0; i < data.length; i++) {
-                            $.extend(data[i], {
-                                visible: true
-                            });
-                        }
+                    }
+
+                    // filter purposes
+                    for (i = 0; i < data.length; i++) {
+                        $.extend(data[i], {
+                            visible: true
+                        });
                     }
 
                     // Set the data as loaded
@@ -256,6 +245,9 @@ niclabs.insight.data.JSON = (function($){
 
         return self;
     };
+
+    // Register the handler
+    niclabs.insight.handler('json-data', 'data', constructor);
 
     return constructor;
 })(jQuery);

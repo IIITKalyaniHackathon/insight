@@ -160,7 +160,6 @@ niclabs.insight.map.grid.Grid = (function() {
      * @param {niclabs.insight.map.grid.Grid.Data[]} options.data - data for the grid
      */
     var Grid = function(dashboard, options) {
-        console.log(options);
         if (!('layer' in options))
             throw new Error('The grid must be associated to a layer');
 
