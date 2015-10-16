@@ -147,7 +147,6 @@ niclabs.insight.data.JSON = (function($){
                         data[i].visible = false;
                     }
                 }
-                console.log(data);
             }
 
             if (loaded) {

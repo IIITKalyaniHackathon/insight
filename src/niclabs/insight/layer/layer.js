@@ -77,12 +77,14 @@ niclabs.insight.layer.Layer = (function($) {
                     return loaded || !dataSource ? data : dataSource;
                 }
 
-                if (typeof obj === 'string') {
-                    dataSource = obj;
-                    return dataSource;
-                } else {
-                    data = obj.length ? obj : [obj];
-                }
+                // if (typeof obj === 'string') {
+                //     dataSource = obj;
+                //     return dataSource;
+                // } else {
+                //     data = obj.length ? obj : [obj];
+                // }
+
+                data = niclabs.insight.data(obj);
 
                 // If the layer has already been loaded, reload the data
                 if (loaded) self.load();

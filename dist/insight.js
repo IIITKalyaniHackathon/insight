@@ -1032,21 +1032,21 @@ niclabs.insight.Dashboard = (function($) {
                 return dataSrc;
             },
 
-            // /**
-            //  * Set/get the data for the active layer
-            //  *
-            //  * If a new source for the data is provided, this method updates the internal
-            //  * data for the layer and reloads the layer by calling {@link niclabs.insight.layer.Layer.load}
-            //  *
-            //  * @memberof niclabs.insight.Dashboard
-            //  * @param {string|Object[]} [obj] - optional new data source or data array for the layer
-            //  * @returns {string|Object[]} data source for the layer if the data has not been loaded yet or object array if the
-            //  *  data has been loaded
-            //  */
-            // data: function(obj) {
-            //     if (activeLayer) return activeLayer.data(obj);
-            //     return [];
-            // },
+            /**
+             * Set/get the data for the active layer
+             *
+             * If a new source for the data is provided, this method updates the internal
+             * data for the layer and reloads the layer by calling {@link niclabs.insight.layer.Layer.load}
+             *
+             * @memberof niclabs.insight.Dashboard
+             * @param {string|Object[]} [obj] - optional new data source or data array for the layer
+             * @returns {string|Object[]} data source for the layer if the data has not been loaded yet or object array if the
+             *  data has been loaded
+             */
+            data: function(obj) {
+                if (activeLayer) return activeLayer.data(obj);
+                return [];
+            },
 
             /**
              * Set/get the active layer
@@ -2154,7 +2154,6 @@ niclabs.insight.data.JSON = (function($){
                         data[i].visible = false;
                     }
                 }
-                console.log(data);
             }
 
             if (loaded) {
@@ -3915,12 +3914,14 @@ niclabs.insight.layer.Layer = (function($) {
                     return loaded || !dataSource ? data : dataSource;
                 }
 
-                if (typeof obj === 'string') {
-                    dataSource = obj;
-                    return dataSource;
-                } else {
-                    data = obj.length ? obj : [obj];
-                }
+                // if (typeof obj === 'string') {
+                //     dataSource = obj;
+                //     return dataSource;
+                // } else {
+                //     data = obj.length ? obj : [obj];
+                // }
+
+                data = niclabs.insight.data(obj);
 
                 // If the layer has already been loaded, reload the data
                 if (loaded) self.load();

@@ -330,21 +330,21 @@ niclabs.insight.Dashboard = (function($) {
                 return dataSrc;
             },
 
-            // /**
-            //  * Set/get the data for the active layer
-            //  *
-            //  * If a new source for the data is provided, this method updates the internal
-            //  * data for the layer and reloads the layer by calling {@link niclabs.insight.layer.Layer.load}
-            //  *
-            //  * @memberof niclabs.insight.Dashboard
-            //  * @param {string|Object[]} [obj] - optional new data source or data array for the layer
-            //  * @returns {string|Object[]} data source for the layer if the data has not been loaded yet or object array if the
-            //  *  data has been loaded
-            //  */
-            // data: function(obj) {
-            //     if (activeLayer) return activeLayer.data(obj);
-            //     return [];
-            // },
+            /**
+             * Set/get the data for the active layer
+             *
+             * If a new source for the data is provided, this method updates the internal
+             * data for the layer and reloads the layer by calling {@link niclabs.insight.layer.Layer.load}
+             *
+             * @memberof niclabs.insight.Dashboard
+             * @param {string|Object[]} [obj] - optional new data source or data array for the layer
+             * @returns {string|Object[]} data source for the layer if the data has not been loaded yet or object array if the
+             *  data has been loaded
+             */
+            data: function(obj) {
+                if (activeLayer) return activeLayer.data(obj);
+                return [];
+            },
 
             /**
              * Set/get the active layer
