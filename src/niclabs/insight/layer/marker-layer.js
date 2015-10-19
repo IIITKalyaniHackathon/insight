@@ -56,11 +56,11 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {float} data[].lng - longitude for the marker
          * @param {string=} data[].description - description for the marker
          */
-        layer.draw = function(data) {
-            data.filteredForEach(
+        layer.draw = function(data, filter) {
+            data.forEach(
                 function(dataValue, i) {
                     markers.push(newMarker(dataValue, attr));
-                });
+                }, filter);
 
         };
 
@@ -89,9 +89,8 @@ niclabs.insight.layer.MarkerLayer = (function($) {
         layer.filter = function(fn) {
             //TODO: for some reason inheritance doesnt work
             var data = layer.data();
-            data.filter(fn);
             layer.clear();
-            layer.draw(data);
+            layer.draw(data, fn);
         };
 
         return layer;

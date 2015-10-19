@@ -29,7 +29,7 @@ niclabs.insight.filter.RadioFilter = (function($) {
         var selectOptions = options.options || [];
 
         // Configure the view
-        var selectDiv = $('<div>').addClass('mdl-select mdl-js-select mdl-select--floating-label');
+        var selectDiv = $('<div>');
 
         view.$.append(
             $('<div>').addClass('insight-radio-label')
@@ -77,7 +77,7 @@ niclabs.insight.filter.RadioFilter = (function($) {
         $.each(inputs, function(a) {
             $(this).on('change', function() {
                 filter = noFilter;
-                var index = $('input:radio[name='+ options.id +']:checked').val();
+                var index = $('input:radio[name=' + options.id + ']:checked').val();
                 if (index > 0) {
                     // Use the selected filter
                     filter = selectOptions[index - 1].filter;

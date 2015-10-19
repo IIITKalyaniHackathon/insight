@@ -73,9 +73,8 @@ niclabs.insight.layer.GridLayer = (function() {
          */
         layer.filter = function(fn) {
             var data = layer.data();
-            data.filter(fn);
             layer.clear();
-            layer.draw(data);
+            layer.draw(data, fn);
         };
 
         return layer;
