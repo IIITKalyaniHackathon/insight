@@ -31,6 +31,8 @@ niclabs.insight.map.heatmap.SegmentHeatmap = (function($) {
 
         var self = niclabs.insight.map.heatmap.Heatmap(dashboard, options);
 
+        var filter = options.filter;
+
         /**
          * Create a google map heatmap
          */
@@ -38,7 +40,7 @@ niclabs.insight.map.heatmap.SegmentHeatmap = (function($) {
 
             var heatmapData = new google.maps.MVCArray();
 
-            data.filteredForEach(function(data,i) {
+            data.forEach(function(data,i) {
 
                 segment_size = data.coordinates.length;
 
@@ -72,7 +74,7 @@ niclabs.insight.map.heatmap.SegmentHeatmap = (function($) {
                     }
                 }
 
-            });
+            }, filter);
 
             return new google.maps.visualization.HeatmapLayer({
                 data: heatmapData,

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <!--
     THIS IS A TEST.
@@ -14,16 +15,17 @@
     <title>Test 8 - Heatmap</title>
 
     <style>
-      html,
-      body {
-        margin: 0;
-        width: 100%;
-        height: 100%;
-      }
-      #dashboard {
-        width: 100%;
-        height: 100%;
-      }
+        html,
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #dashboard {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 
     <link rel="stylesheet" type="text/css" href="css/chartist.min.css">
@@ -38,11 +40,13 @@
 
     <script src="js/insight.js"></script>
 
-  </head>
+</head>
 
-  <body><div id="dashboard"></div></body>
+<body>
+    <div id="dashboard"></div>
+</body>
 
-  <script>
+<script>
     /// Binding the map and the information window.
     var dashboard = niclabs.insight.dashboard({
         'anchor': '#dashboard',
@@ -56,17 +60,37 @@
         'zoom': 15
     });
 
-    niclabs.insight.data('anotherParisData', [{
-        'coordinates': [[48.860611, 2.337644],
-                        [48.859961, 2.326561],
-                        [48.873792, 2.295028]],
-        'landmark': 'Street 1',
-        'weight': 0.1
-    }, {
-        'coordinates': [[48.852968, 2.349902],
-                [48.85837, 2.294481]],
-        'landmark': 'Street 2'
-    }]);
+    dashboard.filter({
+        handler: 'selection-filter',
+        description: 'Weight', // the empty string is used if not provided
+        options: [{
+            name: 'Weight > 0.2',
+            filter: function(data) {
+                return data.weight > 0.2;
+            }
+        }]
+    });
+
+    niclabs.insight.data({
+        handler: 'array-data',
+        id: 'anotherParisData',
+        src: [{
+            'coordinates': [
+                [48.860611, 2.337644],
+                [48.859961, 2.326561],
+                [48.873792, 2.295028]
+            ],
+            'landmark': 'Street 1',
+            'weight': 0.1
+        }, {
+            'coordinates': [
+                [48.852968, 2.349902],
+                [48.85837, 2.294481]
+            ],
+            'landmark': 'Street 2',
+            'weight': 0.3,
+        }]
+    });
 
     niclabs.insight.layer({
         name: 'Just a segment Heatmap',
@@ -78,6 +102,6 @@
             'dissipating': true,
         }
     });
+</script>
 
-  </script>
 </html>

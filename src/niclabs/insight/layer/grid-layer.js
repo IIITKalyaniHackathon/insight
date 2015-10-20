@@ -17,12 +17,13 @@ niclabs.insight.layer.GridLayer = (function() {
             'type': 'hexagon'
         };
 
-        function createGrid(data, obj) {
+        function createGrid(data, obj, fn) {
             var grid;
             if ('type' in obj) {
                 var attr = {
                     'layer': layer.id,
-                    'data': data
+                    'data': data,
+                    'filter': fn
                 };
 
                 // Extend the attributes with the data and the options for the marker
@@ -49,9 +50,10 @@ niclabs.insight.layer.GridLayer = (function() {
          * @param {float} data[].lat - latitude for the marker
          * @param {float} data[].lng - longitude for the marker
          * @param {string=} data[].description - description for the marker
+         * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
-        layer.draw = function(data) {
-            grid = createGrid(data, gridOptions);
+        layer.draw = function(data, fn) {
+            grid = createGrid(data, gridOptions, fn);
         };
 
         /**

@@ -175,6 +175,7 @@ niclabs.insight.map.grid.Grid = (function() {
             throw new Error("Grids are only supported for Google Maps at the moment");
 
         var tiles = [];
+        var filter = options.filter;
 
         var tileConfig = {
             strokeColor: 'strokeColor' in options ? options.strokeColor : '#000000',
@@ -226,7 +227,7 @@ niclabs.insight.map.grid.Grid = (function() {
             dataElement.y = coord.y;
 
             quadtree.insert(dataElement);
-        });
+        },filter);
 
         /**
          * Notify clicks

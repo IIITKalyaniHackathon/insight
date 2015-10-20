@@ -31,12 +31,13 @@ niclabs.insight.map.heatmap.PointHeatmap = (function($) {
 
         var self = niclabs.insight.map.heatmap.Heatmap(dashboard, options);
 
+        var filter = options.filter;
         /**
          * Create a google map heatmap
          */
         function googleMapsHeatmap(data) {
             var heatmapData = new google.maps.MVCArray();
-            data.filteredForEach(function(data,i) {
+            data.forEach(function(data,i) {
                 if ('weight' in data) {
                     heatmapData.push({
                         location: new google.maps.LatLng(data.lat, data.lng),
@@ -45,7 +46,7 @@ niclabs.insight.map.heatmap.PointHeatmap = (function($) {
                 } else {
                     heatmapData.push(new google.maps.LatLng(data.lat, data.lng));
                 }
-            });
+            }, filter);
 
             return new google.maps.visualization.HeatmapLayer({
                 data: heatmapData,

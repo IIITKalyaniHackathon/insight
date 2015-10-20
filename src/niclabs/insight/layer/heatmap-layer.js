@@ -17,10 +17,10 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
             'type': 'point-heatmap'
         };
 
-        function createHeatmap(data, obj) {
+        function createHeatmap(data, obj, fn) {
             var heatmap;
             if ('type' in obj) {
-                var attr = {'layer': layer.id, 'data': data};
+                var attr = {'layer': layer.id, 'data': data, 'filter': fn};
 
                 // Extend the attributes with the data and the options for the marker
                 $.extend(attr, obj);
@@ -47,9 +47,10 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
          * @param {float} data[].lat - latitude for the marker
          * @param {float} data[].lng - longitude for the marker
          * @param {string=} data[].description - description for the marker
+         * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
-        layer.draw = function(data) {
-            heatmap = createHeatmap(data, heatmapOptions);
+        layer.draw = function(data, fn) {
+            heatmap = createHeatmap(data, heatmapOptions, fn);
         };
 
         /**
@@ -71,9 +72,8 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
          */
         layer.filter = function(fn) {
             var data = layer.data();
-            data.filter(fn);
             layer.clear();
-            layer.draw(data);
+            layer.draw(data, fn);
         };
 
         return layer;

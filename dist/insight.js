@@ -1314,12 +1314,10 @@ niclabs.insight.Filters = (function($) {
                 if (!filter.apply(element)) {
                     result = false;
                     //Mark element as not visible
-                    element.visible = false;
                     return false;
                 }
             });
 
-            element.visible = true;
             return result;
         }
 
@@ -1830,13 +1828,6 @@ niclabs.insight.data.Array = (function() {
 
         var data = options.src || [];
 
-        // filter purposes
-        for (var i = 0; i < data.length; i++) {
-            $.extend(data[i], {
-                visible: true
-            });
-        }
-
         /**
          * Iterate over the data source elements
          *
@@ -1844,39 +1835,16 @@ niclabs.insight.data.Array = (function() {
          *
          * @memberof niclabs.insight.data.Array
          * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
+         * @param {} filter -
          */
-        self.forEach = function(fn) {
+        self.forEach = function(fn, filter) {
+            noFilter =  function() {
+                return true;
+            };
+            currentFilter = filter || noFilter;
             for (var i = 0; i < data.length; i++) {
-                fn.call(data[i], data[i], i);
-            }
-        };
-
-        /**
-         * Iterate over the data source elements, but skips the filtered elements
-         *
-         * Iterates over the elements of the array/
-         *
-         * @memberof niclabs.insight.data.Array
-         * @param {niclabs.insight.data.DataSource~useDataElement} fn - handler for the data element
-         */
-        self.filteredForEach = function(fn) {
-            for (var i = 0; i < data.length; i++) {
-                if (data[i].visible) {
+                if (currentFilter.call(data[i], data[i], i)) {
                     fn.call(data[i], data[i], i);
-                }
-            }
-        };
-
-        /**
-         * Iterate over the data source elements and marks data elements as not visible
-         *
-         * @memberof niclabs.insight.data.Array
-         * @param {niclabs.insight.data.DataSource~useDataElement} fn - filter for the data element
-         */
-        self.filter = function(fn) {
-            for (var i = 0; i < data.length; i++) {
-                if (!fn.call(data[i], data[i], i)) {
-                    data[i].visible = false;
                 }
             }
         };
@@ -2258,43 +2226,6 @@ niclabs.insight.data.JSON = (function($){
     return constructor;
 })(jQuery);
 
-niclabs.insight.data.Selector = (function($){
-    /**
-     * Select a new data source depending on the type of input.
-     *
-     * If the parameter given by src is an array, an Array data source will be used,
-     * if it is a a URL, a JSON data source wil be used,
-     * if its a function returning an array in which case the result of the function will be used
-     * if it is none, then an empty Array source is created
-     *
-     * @class niclabs.insight.data.Selector
-     * @extends niclabs.insight.data.DataSource
-     * @param {String} id - identifier for the data source
-     * @param {Object[]|String|Function} src - source of data
-     * @param {Object=} options - extra options for the data source
-     */
-    var constructor = function(id, src, options) {
-        if (Array.isArray(src)) {
-            options = $.extend({'id' : id, 'src': src}, options);
-            return niclabs.insight.data.Array(options);
-        }
-        else if (typeof src === 'string') {
-            options = $.extend({'id' : id, 'src': src}, options);
-            return niclabs.insight.data.JSON(options);
-        }
-        else if (typeof src === 'function') {
-            options = $.extend({'id' : id, 'src': src.call()}, options);
-            return niclabs.insight.data.Array(options);
-        }
-        else {
-            options = $.extend({'id' : id, 'src': []}, options);
-            return niclabs.insight.data.Array(options);
-        }
-    };
-
-    return constructor;
-})(jQuery);
-
 /**
  * Very basic event manager for the dashboard
  *
@@ -2620,7 +2551,7 @@ niclabs.insight.filter.RadioFilter = (function($) {
         var selectOptions = options.options || [];
 
         // Configure the view
-        var selectDiv = $('<div>').addClass('mdl-select mdl-js-select mdl-select--floating-label');
+        var selectDiv = $('<div>');
 
         view.$.append(
             $('<div>').addClass('insight-radio-label')
@@ -2668,7 +2599,7 @@ niclabs.insight.filter.RadioFilter = (function($) {
         $.each(inputs, function(a) {
             $(this).on('change', function() {
                 filter = noFilter;
-                var index = $('input:radio[name='+ options.id +']:checked').val();
+                var index = $('input:radio[name=' + options.id + ']:checked').val();
                 if (index > 0) {
                     // Use the selected filter
                     filter = selectOptions[index - 1].filter;
@@ -3678,12 +3609,13 @@ niclabs.insight.layer.GridLayer = (function() {
             'type': 'hexagon'
         };
 
-        function createGrid(data, obj) {
+        function createGrid(data, obj, fn) {
             var grid;
             if ('type' in obj) {
                 var attr = {
                     'layer': layer.id,
-                    'data': data
+                    'data': data,
+                    'filter': fn
                 };
 
                 // Extend the attributes with the data and the options for the marker
@@ -3710,9 +3642,10 @@ niclabs.insight.layer.GridLayer = (function() {
          * @param {float} data[].lat - latitude for the marker
          * @param {float} data[].lng - longitude for the marker
          * @param {string=} data[].description - description for the marker
+         * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
-        layer.draw = function(data) {
-            grid = createGrid(data, gridOptions);
+        layer.draw = function(data, fn) {
+            grid = createGrid(data, gridOptions, fn);
         };
 
         /**
@@ -3734,9 +3667,8 @@ niclabs.insight.layer.GridLayer = (function() {
          */
         layer.filter = function(fn) {
             var data = layer.data();
-            data.filter(fn);
             layer.clear();
-            layer.draw(data);
+            layer.draw(data, fn);
         };
 
         return layer;
@@ -3767,10 +3699,10 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
             'type': 'point-heatmap'
         };
 
-        function createHeatmap(data, obj) {
+        function createHeatmap(data, obj, fn) {
             var heatmap;
             if ('type' in obj) {
-                var attr = {'layer': layer.id, 'data': data};
+                var attr = {'layer': layer.id, 'data': data, 'filter': fn};
 
                 // Extend the attributes with the data and the options for the marker
                 $.extend(attr, obj);
@@ -3797,9 +3729,10 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
          * @param {float} data[].lat - latitude for the marker
          * @param {float} data[].lng - longitude for the marker
          * @param {string=} data[].description - description for the marker
+         * @param {niclabs.insight.layer.Layer~Filter} fn - filtering function
          */
-        layer.draw = function(data) {
-            heatmap = createHeatmap(data, heatmapOptions);
+        layer.draw = function(data, fn) {
+            heatmap = createHeatmap(data, heatmapOptions, fn);
         };
 
         /**
@@ -3821,9 +3754,8 @@ niclabs.insight.layer.HeatmapLayer = (function($) {
          */
         layer.filter = function(fn) {
             var data = layer.data();
-            data.filter(fn);
             layer.clear();
-            layer.draw(data);
+            layer.draw(data, fn);
         };
 
         return layer;
@@ -4090,11 +4022,11 @@ niclabs.insight.layer.MarkerLayer = (function($) {
          * @param {float} data[].lng - longitude for the marker
          * @param {string=} data[].description - description for the marker
          */
-        layer.draw = function(data) {
-            data.filteredForEach(
+        layer.draw = function(data, filter) {
+            data.forEach(
                 function(dataValue, i) {
                     markers.push(newMarker(dataValue, attr));
-                });
+                }, filter);
 
         };
 
@@ -4123,9 +4055,8 @@ niclabs.insight.layer.MarkerLayer = (function($) {
         layer.filter = function(fn) {
             //TODO: for some reason inheritance doesnt work
             var data = layer.data();
-            data.filter(fn);
             layer.clear();
-            layer.draw(data);
+            layer.draw(data, fn);
         };
 
         return layer;
@@ -5501,6 +5432,7 @@ niclabs.insight.map.grid.Grid = (function() {
             throw new Error("Grids are only supported for Google Maps at the moment");
 
         var tiles = [];
+        var filter = options.filter;
 
         var tileConfig = {
             strokeColor: 'strokeColor' in options ? options.strokeColor : '#000000',
@@ -5545,14 +5477,14 @@ niclabs.insight.map.grid.Grid = (function() {
         var quadtree = niclabs.insight.quadtree.PointQuadTree(worldBounds);
 
         // TODO: put all data points in a world wide quad tree
-        options.data.filteredForEach(function(dataElement) {
+        options.data.forEach(function(dataElement) {
             var coord = niclabs.insight.map.GoogleMercator.cartesian(dataElement);
 
             dataElement.x = coord.x;
             dataElement.y = coord.y;
 
             quadtree.insert(dataElement);
-        });
+        },filter);
 
         /**
          * Notify clicks
@@ -6273,12 +6205,13 @@ niclabs.insight.map.heatmap.PointHeatmap = (function($) {
 
         var self = niclabs.insight.map.heatmap.Heatmap(dashboard, options);
 
+        var filter = options.filter;
         /**
          * Create a google map heatmap
          */
         function googleMapsHeatmap(data) {
             var heatmapData = new google.maps.MVCArray();
-            data.filteredForEach(function(data,i) {
+            data.forEach(function(data,i) {
                 if ('weight' in data) {
                     heatmapData.push({
                         location: new google.maps.LatLng(data.lat, data.lng),
@@ -6287,7 +6220,7 @@ niclabs.insight.map.heatmap.PointHeatmap = (function($) {
                 } else {
                     heatmapData.push(new google.maps.LatLng(data.lat, data.lng));
                 }
-            });
+            }, filter);
 
             return new google.maps.visualization.HeatmapLayer({
                 data: heatmapData,
@@ -6365,6 +6298,8 @@ niclabs.insight.map.heatmap.SegmentHeatmap = (function($) {
 
         var self = niclabs.insight.map.heatmap.Heatmap(dashboard, options);
 
+        var filter = options.filter;
+
         /**
          * Create a google map heatmap
          */
@@ -6372,7 +6307,7 @@ niclabs.insight.map.heatmap.SegmentHeatmap = (function($) {
 
             var heatmapData = new google.maps.MVCArray();
 
-            data.filteredForEach(function(data,i) {
+            data.forEach(function(data,i) {
 
                 segment_size = data.coordinates.length;
 
@@ -6406,7 +6341,7 @@ niclabs.insight.map.heatmap.SegmentHeatmap = (function($) {
                     }
                 }
 
-            });
+            }, filter);
 
             return new google.maps.visualization.HeatmapLayer({
                 data: heatmapData,
