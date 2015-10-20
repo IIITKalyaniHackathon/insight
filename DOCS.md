@@ -33,9 +33,8 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
         * [DataSource.self.map(fn)](#niclabs.insight.data.DataSource.self.map)
       * [class: data.JSON](#niclabs.insight.data.JSON)
         * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
+        * [JSON.self.changeParam(k, v)](#niclabs.insight.data.JSON.self.changeParam)
         * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
-        * [JSON.self.filteredForEach(fn)](#niclabs.insight.data.JSON.self.filteredForEach)
-        * [JSON.self.filter(fn)](#niclabs.insight.data.JSON.self.filter)
     * [insight.event](#niclabs.insight.event)
       * [event.on(event, listener)](#niclabs.insight.event.on)
       * [event.off(event, listener)](#niclabs.insight.event.off)
@@ -134,6 +133,19 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
           * [new diagram.VoronoiDiagram(dashboard, options)](#new_niclabs.insight.map.diagram.VoronoiDiagram)
           * [VoronoiDiagram.self.clear()](#niclabs.insight.map.diagram.VoronoiDiagram.self.clear)
           * [type: VoronoiDiagram.Data](#niclabs.insight.map.diagram.VoronoiDiagram.Data)
+      * [map.graph](#niclabs.insight.map.graph)
+        * [class: graph.Edge](#niclabs.insight.map.graph.Edge)
+          * [new graph.Edge(dashboard, options)](#new_niclabs.insight.map.graph.Edge)
+        * [class: graph.GraphElement](#niclabs.insight.map.graph.GraphElement)
+          * [new graph.GraphElement(dashboard, options)](#new_niclabs.insight.map.graph.GraphElement)
+          * [GraphElement.map](#niclabs.insight.map.graph.GraphElement.map)
+          * [GraphElement.layer](#niclabs.insight.map.graph.GraphElement.layer)
+          * [GraphElement.graphElement()](#niclabs.insight.map.graph.GraphElement.graphElement)
+          * [GraphElement.clickable([activate])](#niclabs.insight.map.graph.GraphElement.clickable)
+          * [GraphElement.clear()](#niclabs.insight.map.graph.GraphElement.clear)
+          * [GraphElement.visible([visible])](#niclabs.insight.map.graph.GraphElement.visible)
+        * [class: graph.Node](#niclabs.insight.map.graph.Node)
+          * [new graph.Node(dashboard, options)](#new_niclabs.insight.map.graph.Node)
       * [map.grid](#niclabs.insight.map.grid)
         * [class: grid.Grid](#niclabs.insight.map.grid.Grid)
           * [new grid.Grid(dashboard, options)](#new_niclabs.insight.map.grid.Grid)
@@ -164,19 +176,6 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
           * [Tile.query(coord)](#niclabs.insight.map.grid.Tile.query)
           * [Tile.vertices(coord)](#niclabs.insight.map.grid.Tile.vertices)
           * [Tile.draw(coord, map, options)](#niclabs.insight.map.grid.Tile.draw)
-      * [map.graph](#niclabs.insight.map.graph)
-        * [class: graph.Edge](#niclabs.insight.map.graph.Edge)
-          * [new graph.Edge(dashboard, options)](#new_niclabs.insight.map.graph.Edge)
-        * [class: graph.GraphElement](#niclabs.insight.map.graph.GraphElement)
-          * [new graph.GraphElement(dashboard, options)](#new_niclabs.insight.map.graph.GraphElement)
-          * [GraphElement.map](#niclabs.insight.map.graph.GraphElement.map)
-          * [GraphElement.layer](#niclabs.insight.map.graph.GraphElement.layer)
-          * [GraphElement.graphElement()](#niclabs.insight.map.graph.GraphElement.graphElement)
-          * [GraphElement.clickable([activate])](#niclabs.insight.map.graph.GraphElement.clickable)
-          * [GraphElement.clear()](#niclabs.insight.map.graph.GraphElement.clear)
-          * [GraphElement.visible([visible])](#niclabs.insight.map.graph.GraphElement.visible)
-        * [class: graph.Node](#niclabs.insight.map.graph.Node)
-          * [new graph.Node(dashboard, options)](#new_niclabs.insight.map.graph.Node)
       * [map.heatmap](#niclabs.insight.map.heatmap)
         * [class: heatmap.Heatmap](#niclabs.insight.map.heatmap.Heatmap)
           * [new heatmap.Heatmap(dashboard, options)](#new_niclabs.insight.map.heatmap.Heatmap)
@@ -323,9 +322,8 @@ understand what is going on in the city
       * [DataSource.self.map(fn)](#niclabs.insight.data.DataSource.self.map)
     * [class: data.JSON](#niclabs.insight.data.JSON)
       * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
+      * [JSON.self.changeParam(k, v)](#niclabs.insight.data.JSON.self.changeParam)
       * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
-      * [JSON.self.filteredForEach(fn)](#niclabs.insight.data.JSON.self.filteredForEach)
-      * [JSON.self.filter(fn)](#niclabs.insight.data.JSON.self.filter)
   * [insight.event](#niclabs.insight.event)
     * [event.on(event, listener)](#niclabs.insight.event.on)
     * [event.off(event, listener)](#niclabs.insight.event.off)
@@ -424,6 +422,19 @@ understand what is going on in the city
         * [new diagram.VoronoiDiagram(dashboard, options)](#new_niclabs.insight.map.diagram.VoronoiDiagram)
         * [VoronoiDiagram.self.clear()](#niclabs.insight.map.diagram.VoronoiDiagram.self.clear)
         * [type: VoronoiDiagram.Data](#niclabs.insight.map.diagram.VoronoiDiagram.Data)
+    * [map.graph](#niclabs.insight.map.graph)
+      * [class: graph.Edge](#niclabs.insight.map.graph.Edge)
+        * [new graph.Edge(dashboard, options)](#new_niclabs.insight.map.graph.Edge)
+      * [class: graph.GraphElement](#niclabs.insight.map.graph.GraphElement)
+        * [new graph.GraphElement(dashboard, options)](#new_niclabs.insight.map.graph.GraphElement)
+        * [GraphElement.map](#niclabs.insight.map.graph.GraphElement.map)
+        * [GraphElement.layer](#niclabs.insight.map.graph.GraphElement.layer)
+        * [GraphElement.graphElement()](#niclabs.insight.map.graph.GraphElement.graphElement)
+        * [GraphElement.clickable([activate])](#niclabs.insight.map.graph.GraphElement.clickable)
+        * [GraphElement.clear()](#niclabs.insight.map.graph.GraphElement.clear)
+        * [GraphElement.visible([visible])](#niclabs.insight.map.graph.GraphElement.visible)
+      * [class: graph.Node](#niclabs.insight.map.graph.Node)
+        * [new graph.Node(dashboard, options)](#new_niclabs.insight.map.graph.Node)
     * [map.grid](#niclabs.insight.map.grid)
       * [class: grid.Grid](#niclabs.insight.map.grid.Grid)
         * [new grid.Grid(dashboard, options)](#new_niclabs.insight.map.grid.Grid)
@@ -454,19 +465,6 @@ understand what is going on in the city
         * [Tile.query(coord)](#niclabs.insight.map.grid.Tile.query)
         * [Tile.vertices(coord)](#niclabs.insight.map.grid.Tile.vertices)
         * [Tile.draw(coord, map, options)](#niclabs.insight.map.grid.Tile.draw)
-    * [map.graph](#niclabs.insight.map.graph)
-      * [class: graph.Edge](#niclabs.insight.map.graph.Edge)
-        * [new graph.Edge(dashboard, options)](#new_niclabs.insight.map.graph.Edge)
-      * [class: graph.GraphElement](#niclabs.insight.map.graph.GraphElement)
-        * [new graph.GraphElement(dashboard, options)](#new_niclabs.insight.map.graph.GraphElement)
-        * [GraphElement.map](#niclabs.insight.map.graph.GraphElement.map)
-        * [GraphElement.layer](#niclabs.insight.map.graph.GraphElement.layer)
-        * [GraphElement.graphElement()](#niclabs.insight.map.graph.GraphElement.graphElement)
-        * [GraphElement.clickable([activate])](#niclabs.insight.map.graph.GraphElement.clickable)
-        * [GraphElement.clear()](#niclabs.insight.map.graph.GraphElement.clear)
-        * [GraphElement.visible([visible])](#niclabs.insight.map.graph.GraphElement.visible)
-      * [class: graph.Node](#niclabs.insight.map.graph.Node)
-        * [new graph.Node(dashboard, options)](#new_niclabs.insight.map.graph.Node)
     * [map.heatmap](#niclabs.insight.map.heatmap)
       * [class: heatmap.Heatmap](#niclabs.insight.map.heatmap.Heatmap)
         * [new heatmap.Heatmap(dashboard, options)](#new_niclabs.insight.map.heatmap.Heatmap)
@@ -738,9 +736,8 @@ Contains all data operation classes
     * [DataSource.self.map(fn)](#niclabs.insight.data.DataSource.self.map)
   * [class: data.JSON](#niclabs.insight.data.JSON)
     * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
+    * [JSON.self.changeParam(k, v)](#niclabs.insight.data.JSON.self.changeParam)
     * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
-    * [JSON.self.filteredForEach(fn)](#niclabs.insight.data.JSON.self.filteredForEach)
-    * [JSON.self.filter(fn)](#niclabs.insight.data.JSON.self.filter)
 
 <a name="niclabs.insight.data.Array"></a>
 ####class: data.Array
@@ -872,9 +869,8 @@ Map function
 
 * [class: data.JSON](#niclabs.insight.data.JSON)
   * [new data.JSON(options)](#new_niclabs.insight.data.JSON)
+  * [JSON.self.changeParam(k, v)](#niclabs.insight.data.JSON.self.changeParam)
   * [JSON.self.forEach(fn)](#niclabs.insight.data.JSON.self.forEach)
-  * [JSON.self.filteredForEach(fn)](#niclabs.insight.data.JSON.self.filteredForEach)
-  * [JSON.self.filter(fn)](#niclabs.insight.data.JSON.self.filter)
 
 <a name="new_niclabs.insight.data.JSON"></a>
 #####new data.JSON(options)
@@ -890,6 +886,15 @@ Construct a new JSON data source.
   - \[listkey\] `String` - key the data source list if the JSON response is an object  
 
 **Extends**: `niclabs.insight.data.DataSource`  
+<a name="niclabs.insight.data.JSON.self.changeParam"></a>
+#####JSON.self.changeParam(k, v)
+Changes the parameter key to a desired value of the JSON data source
+
+**Params**
+
+- k `String` - Key to change  
+- v `String` - Desired value  
+
 <a name="niclabs.insight.data.JSON.self.forEach"></a>
 #####JSON.self.forEach(fn)
 Iterate over the data source elements
@@ -900,24 +905,6 @@ if the JSON data has not been loaded
 **Params**
 
 - fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
-
-<a name="niclabs.insight.data.JSON.self.filteredForEach"></a>
-#####JSON.self.filteredForEach(fn)
-Iterate over the data source elements, but skips the filtered elements
-
-Iterates over the elements of the array/
-
-**Params**
-
-- fn `niclabs.insight.data.DataSource~useDataElement` - handler for the data element  
-
-<a name="niclabs.insight.data.JSON.self.filter"></a>
-#####JSON.self.filter(fn)
-Iterate over the data source elements and marks data elements as not visible
-
-**Params**
-
-- fn `niclabs.insight.data.DataSource~useDataElement` - filter for the data element  
 
 <a name="niclabs.insight.event"></a>
 ###insight.event
@@ -1859,6 +1846,19 @@ Map compatibility for the insight dashboard
       * [new diagram.VoronoiDiagram(dashboard, options)](#new_niclabs.insight.map.diagram.VoronoiDiagram)
       * [VoronoiDiagram.self.clear()](#niclabs.insight.map.diagram.VoronoiDiagram.self.clear)
       * [type: VoronoiDiagram.Data](#niclabs.insight.map.diagram.VoronoiDiagram.Data)
+  * [map.graph](#niclabs.insight.map.graph)
+    * [class: graph.Edge](#niclabs.insight.map.graph.Edge)
+      * [new graph.Edge(dashboard, options)](#new_niclabs.insight.map.graph.Edge)
+    * [class: graph.GraphElement](#niclabs.insight.map.graph.GraphElement)
+      * [new graph.GraphElement(dashboard, options)](#new_niclabs.insight.map.graph.GraphElement)
+      * [GraphElement.map](#niclabs.insight.map.graph.GraphElement.map)
+      * [GraphElement.layer](#niclabs.insight.map.graph.GraphElement.layer)
+      * [GraphElement.graphElement()](#niclabs.insight.map.graph.GraphElement.graphElement)
+      * [GraphElement.clickable([activate])](#niclabs.insight.map.graph.GraphElement.clickable)
+      * [GraphElement.clear()](#niclabs.insight.map.graph.GraphElement.clear)
+      * [GraphElement.visible([visible])](#niclabs.insight.map.graph.GraphElement.visible)
+    * [class: graph.Node](#niclabs.insight.map.graph.Node)
+      * [new graph.Node(dashboard, options)](#new_niclabs.insight.map.graph.Node)
   * [map.grid](#niclabs.insight.map.grid)
     * [class: grid.Grid](#niclabs.insight.map.grid.Grid)
       * [new grid.Grid(dashboard, options)](#new_niclabs.insight.map.grid.Grid)
@@ -1889,19 +1889,6 @@ Map compatibility for the insight dashboard
       * [Tile.query(coord)](#niclabs.insight.map.grid.Tile.query)
       * [Tile.vertices(coord)](#niclabs.insight.map.grid.Tile.vertices)
       * [Tile.draw(coord, map, options)](#niclabs.insight.map.grid.Tile.draw)
-  * [map.graph](#niclabs.insight.map.graph)
-    * [class: graph.Edge](#niclabs.insight.map.graph.Edge)
-      * [new graph.Edge(dashboard, options)](#new_niclabs.insight.map.graph.Edge)
-    * [class: graph.GraphElement](#niclabs.insight.map.graph.GraphElement)
-      * [new graph.GraphElement(dashboard, options)](#new_niclabs.insight.map.graph.GraphElement)
-      * [GraphElement.map](#niclabs.insight.map.graph.GraphElement.map)
-      * [GraphElement.layer](#niclabs.insight.map.graph.GraphElement.layer)
-      * [GraphElement.graphElement()](#niclabs.insight.map.graph.GraphElement.graphElement)
-      * [GraphElement.clickable([activate])](#niclabs.insight.map.graph.GraphElement.clickable)
-      * [GraphElement.clear()](#niclabs.insight.map.graph.GraphElement.clear)
-      * [GraphElement.visible([visible])](#niclabs.insight.map.graph.GraphElement.visible)
-    * [class: graph.Node](#niclabs.insight.map.graph.Node)
-      * [new graph.Node(dashboard, options)](#new_niclabs.insight.map.graph.Node)
   * [map.heatmap](#niclabs.insight.map.heatmap)
     * [class: heatmap.Heatmap](#niclabs.insight.map.heatmap.Heatmap)
       * [new heatmap.Heatmap(dashboard, options)](#new_niclabs.insight.map.heatmap.Heatmap)
@@ -2112,6 +2099,148 @@ Data point for VoronoiDiagram
 - landmark `string` - landmark that the point indicates  
 
 **Type**: `Object`  
+<a name="niclabs.insight.map.graph"></a>
+####map.graph
+Contains all graph definitions for the dashboard
+
+**Members**
+
+* [map.graph](#niclabs.insight.map.graph)
+  * [class: graph.Edge](#niclabs.insight.map.graph.Edge)
+    * [new graph.Edge(dashboard, options)](#new_niclabs.insight.map.graph.Edge)
+  * [class: graph.GraphElement](#niclabs.insight.map.graph.GraphElement)
+    * [new graph.GraphElement(dashboard, options)](#new_niclabs.insight.map.graph.GraphElement)
+    * [GraphElement.map](#niclabs.insight.map.graph.GraphElement.map)
+    * [GraphElement.layer](#niclabs.insight.map.graph.GraphElement.layer)
+    * [GraphElement.graphElement()](#niclabs.insight.map.graph.GraphElement.graphElement)
+    * [GraphElement.clickable([activate])](#niclabs.insight.map.graph.GraphElement.clickable)
+    * [GraphElement.clear()](#niclabs.insight.map.graph.GraphElement.clear)
+    * [GraphElement.visible([visible])](#niclabs.insight.map.graph.GraphElement.visible)
+  * [class: graph.Node](#niclabs.insight.map.graph.Node)
+    * [new graph.Node(dashboard, options)](#new_niclabs.insight.map.graph.Node)
+
+<a name="niclabs.insight.map.graph.Edge"></a>
+#####class: graph.Edge
+**Extends**: `niclabs.insight.map.graph.GraphElement`  
+**Members**
+
+* [class: graph.Edge](#niclabs.insight.map.graph.Edge)
+  * [new graph.Edge(dashboard, options)](#new_niclabs.insight.map.graph.Edge)
+
+<a name="new_niclabs.insight.map.graph.Edge"></a>
+######new graph.Edge(dashboard, options)
+Constructor for graph edges
+
+Graph edge are shown in the map as basic segments, with no style options
+TODO: make segment customizable
+
+**Params**
+
+- dashboard <code>[Dashboard](#niclabs.insight.Dashboard)</code> - dashboard that this edge belongs to  
+- options `Object` - configuration options for the layer  
+  - adj `string` - adjacency matrix of the graph  
+  - layer `string` - identifier for the layer that this edge belongs to  
+  - startNode `Object` - data for the first node that this edge connects to  
+  - endNode `Object` - data for the second node that this edge connects to  
+  - lat `float` - latitude for the first graph node  
+  - lng `float` - longitude for the first graph node  
+  - landmark `string` - landmark that the first node indicates  
+  - lat `float` - latitude for the second graph node  
+  - lng `float` - longitude for the second graph node  
+  - landmark `string` - landmark that the second node indicates  
+
+**Extends**: `niclabs.insight.map.graph.GraphElement`  
+<a name="niclabs.insight.map.graph.GraphElement"></a>
+#####class: graph.GraphElement
+**Members**
+
+* [class: graph.GraphElement](#niclabs.insight.map.graph.GraphElement)
+  * [new graph.GraphElement(dashboard, options)](#new_niclabs.insight.map.graph.GraphElement)
+  * [GraphElement.map](#niclabs.insight.map.graph.GraphElement.map)
+  * [GraphElement.layer](#niclabs.insight.map.graph.GraphElement.layer)
+  * [GraphElement.graphElement()](#niclabs.insight.map.graph.GraphElement.graphElement)
+  * [GraphElement.clickable([activate])](#niclabs.insight.map.graph.GraphElement.clickable)
+  * [GraphElement.clear()](#niclabs.insight.map.graph.GraphElement.clear)
+  * [GraphElement.visible([visible])](#niclabs.insight.map.graph.GraphElement.visible)
+
+<a name="new_niclabs.insight.map.graph.GraphElement"></a>
+######new graph.GraphElement(dashboard, options)
+Construct a new GraphElement
+
+**Params**
+
+- dashboard <code>[Dashboard](#niclabs.insight.Dashboard)</code> - dashboard that this graph element belongs to  
+- options `Object` - configuration options for the layer  
+  - adj `string` - adjacency matrix of the graph  
+  - layer `string` - identifier for the layer that this graph element belongs to  
+  - lat `float` - latitude for the graph graph element  
+  - lng `float` - longitude for the graph graph element  
+  - landmark `string` - landmark that the graph element indicates  
+
+<a name="niclabs.insight.map.graph.GraphElement.map"></a>
+######GraphElement.map
+Map view where the map belongs to
+
+**Type**: [MapView](#niclabs.insight.MapView)  
+<a name="niclabs.insight.map.graph.GraphElement.layer"></a>
+######GraphElement.layer
+Layer to which the graphElement belongs to
+
+**Type**: [Layer](#niclabs.insight.layer.Layer)  
+<a name="niclabs.insight.map.graph.GraphElement.graphElement"></a>
+######GraphElement.graphElement()
+Return the internal marker object associated with this graphElement
+
+**Returns**:  - internal graphElement  
+<a name="niclabs.insight.map.graph.GraphElement.clickable"></a>
+######GraphElement.clickable([activate])
+Get/activate clickable status for the graphElement
+
+When clicked the graphElement will trigger a `niclabs.insight.MapView#map_element_selected` event
+with the particular data for the graphElement
+
+**Params**
+
+- \[activate=true\] `boolean` - true to make clickable  
+
+<a name="niclabs.insight.map.graph.GraphElement.clear"></a>
+######GraphElement.clear()
+Clear the graphElement from the map
+
+<a name="niclabs.insight.map.graph.GraphElement.visible"></a>
+######GraphElement.visible([visible])
+Set/get the visibility for the graphElement
+
+**Params**
+
+- \[visible\] `boolean` - new value for the visibility of the graphElement  
+
+**Returns**: `boolean` - true if the graphElement is visible  
+<a name="niclabs.insight.map.graph.Node"></a>
+#####class: graph.Node
+**Extends**: `niclabs.insight.map.graph.GraphElement`  
+**Members**
+
+* [class: graph.Node](#niclabs.insight.map.graph.Node)
+  * [new graph.Node(dashboard, options)](#new_niclabs.insight.map.graph.Node)
+
+<a name="new_niclabs.insight.map.graph.Node"></a>
+######new graph.Node(dashboard, options)
+Constructor for graph nodes
+
+Graph nodes are shown in the map as basic waypoints, with no style options
+
+**Params**
+
+- dashboard <code>[Dashboard](#niclabs.insight.Dashboard)</code> - dashboard that this node belongs to  
+- options `Object` - configuration options for the layer  
+  - adj `string` - adjacency matrix of the graph  
+  - layer `string` - identifier for the layer that this node belongs to  
+  - lat `float` - latitude for the graph node  
+  - lng `float` - longitude for the graph node  
+  - landmark `string` - landmark that the node indicates  
+
+**Extends**: `niclabs.insight.map.graph.GraphElement`  
 <a name="niclabs.insight.map.grid"></a>
 ####map.grid
 Contains all grids definitions for the dashboard
@@ -2476,148 +2605,6 @@ Draw a tile in the given coordinates on the specified map view
   - \[fillOpacity=0.6\] `float` - opacity for the fill of the tile  
 
 **Returns**: `object` - object drawn on the map (e.g.) google maps polygon  
-<a name="niclabs.insight.map.graph"></a>
-####map.graph
-Contains all graph definitions for the dashboard
-
-**Members**
-
-* [map.graph](#niclabs.insight.map.graph)
-  * [class: graph.Edge](#niclabs.insight.map.graph.Edge)
-    * [new graph.Edge(dashboard, options)](#new_niclabs.insight.map.graph.Edge)
-  * [class: graph.GraphElement](#niclabs.insight.map.graph.GraphElement)
-    * [new graph.GraphElement(dashboard, options)](#new_niclabs.insight.map.graph.GraphElement)
-    * [GraphElement.map](#niclabs.insight.map.graph.GraphElement.map)
-    * [GraphElement.layer](#niclabs.insight.map.graph.GraphElement.layer)
-    * [GraphElement.graphElement()](#niclabs.insight.map.graph.GraphElement.graphElement)
-    * [GraphElement.clickable([activate])](#niclabs.insight.map.graph.GraphElement.clickable)
-    * [GraphElement.clear()](#niclabs.insight.map.graph.GraphElement.clear)
-    * [GraphElement.visible([visible])](#niclabs.insight.map.graph.GraphElement.visible)
-  * [class: graph.Node](#niclabs.insight.map.graph.Node)
-    * [new graph.Node(dashboard, options)](#new_niclabs.insight.map.graph.Node)
-
-<a name="niclabs.insight.map.graph.Edge"></a>
-#####class: graph.Edge
-**Extends**: `niclabs.insight.map.graph.GraphElement`  
-**Members**
-
-* [class: graph.Edge](#niclabs.insight.map.graph.Edge)
-  * [new graph.Edge(dashboard, options)](#new_niclabs.insight.map.graph.Edge)
-
-<a name="new_niclabs.insight.map.graph.Edge"></a>
-######new graph.Edge(dashboard, options)
-Constructor for graph edges
-
-Graph edge are shown in the map as basic segments, with no style options
-TODO: make segment customizable
-
-**Params**
-
-- dashboard <code>[Dashboard](#niclabs.insight.Dashboard)</code> - dashboard that this edge belongs to  
-- options `Object` - configuration options for the layer  
-  - adj `string` - adjacency matrix of the graph  
-  - layer `string` - identifier for the layer that this edge belongs to  
-  - startNode `Object` - data for the first node that this edge connects to  
-  - endNode `Object` - data for the second node that this edge connects to  
-  - lat `float` - latitude for the first graph node  
-  - lng `float` - longitude for the first graph node  
-  - landmark `string` - landmark that the first node indicates  
-  - lat `float` - latitude for the second graph node  
-  - lng `float` - longitude for the second graph node  
-  - landmark `string` - landmark that the second node indicates  
-
-**Extends**: `niclabs.insight.map.graph.GraphElement`  
-<a name="niclabs.insight.map.graph.GraphElement"></a>
-#####class: graph.GraphElement
-**Members**
-
-* [class: graph.GraphElement](#niclabs.insight.map.graph.GraphElement)
-  * [new graph.GraphElement(dashboard, options)](#new_niclabs.insight.map.graph.GraphElement)
-  * [GraphElement.map](#niclabs.insight.map.graph.GraphElement.map)
-  * [GraphElement.layer](#niclabs.insight.map.graph.GraphElement.layer)
-  * [GraphElement.graphElement()](#niclabs.insight.map.graph.GraphElement.graphElement)
-  * [GraphElement.clickable([activate])](#niclabs.insight.map.graph.GraphElement.clickable)
-  * [GraphElement.clear()](#niclabs.insight.map.graph.GraphElement.clear)
-  * [GraphElement.visible([visible])](#niclabs.insight.map.graph.GraphElement.visible)
-
-<a name="new_niclabs.insight.map.graph.GraphElement"></a>
-######new graph.GraphElement(dashboard, options)
-Construct a new GraphElement
-
-**Params**
-
-- dashboard <code>[Dashboard](#niclabs.insight.Dashboard)</code> - dashboard that this graph element belongs to  
-- options `Object` - configuration options for the layer  
-  - adj `string` - adjacency matrix of the graph  
-  - layer `string` - identifier for the layer that this graph element belongs to  
-  - lat `float` - latitude for the graph graph element  
-  - lng `float` - longitude for the graph graph element  
-  - landmark `string` - landmark that the graph element indicates  
-
-<a name="niclabs.insight.map.graph.GraphElement.map"></a>
-######GraphElement.map
-Map view where the map belongs to
-
-**Type**: [MapView](#niclabs.insight.MapView)  
-<a name="niclabs.insight.map.graph.GraphElement.layer"></a>
-######GraphElement.layer
-Layer to which the graphElement belongs to
-
-**Type**: [Layer](#niclabs.insight.layer.Layer)  
-<a name="niclabs.insight.map.graph.GraphElement.graphElement"></a>
-######GraphElement.graphElement()
-Return the internal marker object associated with this graphElement
-
-**Returns**:  - internal graphElement  
-<a name="niclabs.insight.map.graph.GraphElement.clickable"></a>
-######GraphElement.clickable([activate])
-Get/activate clickable status for the graphElement
-
-When clicked the graphElement will trigger a `niclabs.insight.MapView#map_element_selected` event
-with the particular data for the graphElement
-
-**Params**
-
-- \[activate=true\] `boolean` - true to make clickable  
-
-<a name="niclabs.insight.map.graph.GraphElement.clear"></a>
-######GraphElement.clear()
-Clear the graphElement from the map
-
-<a name="niclabs.insight.map.graph.GraphElement.visible"></a>
-######GraphElement.visible([visible])
-Set/get the visibility for the graphElement
-
-**Params**
-
-- \[visible\] `boolean` - new value for the visibility of the graphElement  
-
-**Returns**: `boolean` - true if the graphElement is visible  
-<a name="niclabs.insight.map.graph.Node"></a>
-#####class: graph.Node
-**Extends**: `niclabs.insight.map.graph.GraphElement`  
-**Members**
-
-* [class: graph.Node](#niclabs.insight.map.graph.Node)
-  * [new graph.Node(dashboard, options)](#new_niclabs.insight.map.graph.Node)
-
-<a name="new_niclabs.insight.map.graph.Node"></a>
-######new graph.Node(dashboard, options)
-Constructor for graph nodes
-
-Graph nodes are shown in the map as basic waypoints, with no style options
-
-**Params**
-
-- dashboard <code>[Dashboard](#niclabs.insight.Dashboard)</code> - dashboard that this node belongs to  
-- options `Object` - configuration options for the layer  
-  - adj `string` - adjacency matrix of the graph  
-  - layer `string` - identifier for the layer that this node belongs to  
-  - lat `float` - latitude for the graph node  
-  - lng `float` - longitude for the graph node  
-  - landmark `string` - landmark that the node indicates  
-
-**Extends**: `niclabs.insight.map.graph.GraphElement`  
 <a name="niclabs.insight.map.heatmap"></a>
 ####map.heatmap
 Tools for drawing heatmaps on the map

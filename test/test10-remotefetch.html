@@ -103,6 +103,32 @@
             src: './test.json'
         });
 
+        niclabs.insight.data({
+            handler: 'array-data',
+            id: 'anotherParisData',
+            src: [{
+                'lat': 48.860611,
+                'lng': 2.337644,
+                'weight': 0.5
+            }, {
+                'lat': 48.861700,
+                'lng': 2.337644,
+                'weight': 0.25
+            }, {
+                'lat': 48.860611,
+                'lng': 2.338500,
+                'weight': 0.25
+            }, {
+                'lat': 48.860200,
+                'lng': 2.335644,
+                'weight': 0.75
+            }, {
+                'lat': 48.862611,
+                'lng': 2.336626,
+                'weight': 0.5
+            }]
+        });
+
         niclabs.insight.layer({
             name: 'Just a Heatmap',
             handler: 'heatmap-layer',
@@ -114,17 +140,10 @@
             }
         });
 
-        dashboard.filter({
-            handler: 'radio-filter',
-            description: 'Year', // the empty string is used if not provided
-            parameterKey: 'year',
-            options: [{
-                name: 'Year 2014',
-                value: 2014
-            }, {
-                name: 'Year 2015',
-                value: 2015
-            }]
+        niclabs.insight.layer({
+            name: 'Markers',
+            handler: 'marker-layer',
+            data: 'anotherParisData',
         });
 
         dashboard.filter({
@@ -142,6 +161,41 @@
                 }
             }, ]
         });
+
+        // This should be only applicable on JSON?
+        dashboard.filter({
+            handler: 'data-selector',
+            description: 'Data Selector',
+            dataSourceID: 'parisData',
+            paramKey: 'year',
+            options: [{
+                name: 'Year 2013',
+                value: '2013'
+            }, {
+                name: 'Year 2014',
+                value: '2014'
+            }, {
+                name: 'Year 2015',
+                value: '2015'
+            }]
+        })
+
+        dashboard.filter({
+            handler: 'data-selector',
+            description: 'Data Selector',
+            dataSourceID: 'parisData',
+            paramKey: 'month',
+            options: [{
+                name: 'January',
+                value: '0'
+            }, {
+                name: 'February',
+                value: '1'
+            }, {
+                name: 'March',
+                value: '2'
+            }]
+        })
     </script>
 </body>
 
