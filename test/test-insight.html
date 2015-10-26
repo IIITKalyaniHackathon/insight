@@ -122,6 +122,16 @@
             }]
         });
 
+        dashboard.filter({
+            handler: 'slider-filter',
+            description: 'Weight < Slider Value', // the empty string is used if not provided
+            min: 0,
+            max: 1,
+            filter: function(data) {
+                return data.weight < sliderVal;
+            }
+        });
+
         var map = niclabs.insight.map({
             'handler': 'google-map',
             'lat': 48.8583,

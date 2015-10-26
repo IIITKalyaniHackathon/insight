@@ -56,7 +56,11 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
       * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
         * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
         * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
+        * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
         * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
+        * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
+      * [class: filter.SliderFilter](#niclabs.insight.filter.SliderFilter)
+        * [new filter.SliderFilter(dashboard, options)](#new_niclabs.insight.filter.SliderFilter)
     * [insight.info](#niclabs.insight.info)
       * [class: info.Block](#niclabs.insight.info.Block)
         * [new info.Block(dashboard, options)](#new_niclabs.insight.info.Block)
@@ -345,7 +349,11 @@ understand what is going on in the city
     * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
       * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
       * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
+      * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
       * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
+      * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
+    * [class: filter.SliderFilter](#niclabs.insight.filter.SliderFilter)
+      * [new filter.SliderFilter(dashboard, options)](#new_niclabs.insight.filter.SliderFilter)
   * [insight.info](#niclabs.insight.info)
     * [class: info.Block](#niclabs.insight.info.Block)
       * [new info.Block(dashboard, options)](#new_niclabs.insight.info.Block)
@@ -993,7 +1001,11 @@ Define all possible filters for the dashboard
   * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
     * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
     * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
+    * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
     * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
+    * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
+  * [class: filter.SliderFilter](#niclabs.insight.filter.SliderFilter)
+    * [new filter.SliderFilter(dashboard, options)](#new_niclabs.insight.filter.SliderFilter)
 
 <a name="niclabs.insight.filter.Filter"></a>
 ####class: filter.Filter
@@ -1135,6 +1147,8 @@ Radio filter option
 * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
   * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
   * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
+  * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
+  * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
   * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
 
 <a name="new_niclabs.insight.filter.SelectionFilter"></a>
@@ -1162,6 +1176,15 @@ Apply the filter to a data element
 - element `Object` - data element to evaluate  
 
 **Returns**: `boolean` - - true if the data element passes the filter  
+<a name="niclabs.insight.filter.SelectionFilter.view.apply"></a>
+#####SelectionFilter.view.apply(element)
+Apply the filter to a data element
+
+**Params**
+
+- element `Object` - data element to evaluate  
+
+**Returns**: `boolean` - - true if the data element passes the filter  
 <a name="niclabs.insight.filter.SelectionFilter.Option"></a>
 #####type: SelectionFilter.Option
 Selection filter option
@@ -1172,6 +1195,40 @@ Selection filter option
 - filter <code>[filter](#niclabs.insight.Filters..filter)</code> - callback to filter the data  
 
 **Type**: `Object`  
+<a name="niclabs.insight.filter.SelectionFilter.Option"></a>
+#####type: SelectionFilter.Option
+Selection filter option
+
+**Params**
+
+- name `string` - name for the option of the filter  
+- filter <code>[filter](#niclabs.insight.Filters..filter)</code> - callback to filter the data  
+
+**Type**: `Object`  
+<a name="niclabs.insight.filter.SliderFilter"></a>
+####class: filter.SliderFilter
+**Extends**: `niclabs.insight.filter.Filter`  
+**Members**
+
+* [class: filter.SliderFilter](#niclabs.insight.filter.SliderFilter)
+  * [new filter.SliderFilter(dashboard, options)](#new_niclabs.insight.filter.SliderFilter)
+
+<a name="new_niclabs.insight.filter.SliderFilter"></a>
+#####new filter.SliderFilter(dashboard, options)
+Construct a slider filter for the dashboard
+
+A selection filter will be visualized as a `<select>`
+HTML element, and calls to apply will pass the call to the appropriate
+filtering function according to the selected option
+
+**Params**
+
+- dashboard <code>[Dashboard](#niclabs.insight.Dashboard)</code> - dashboard that this filter belongs to  
+- options `Object` - configuration options for the filter  
+  - description `string` - description for this filter to use as default option of the select  
+  - options `Array.<niclabs.insight.filter.SliderFilter.Option>` - list of options for the filter  
+
+**Extends**: `niclabs.insight.filter.Filter`  
 <a name="niclabs.insight.info"></a>
 ###insight.info
 Contains the definitions for the information blocks supported by insight
