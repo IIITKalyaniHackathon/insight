@@ -18,7 +18,8 @@ There are multiple elements associated with an insight dashboard, both in terms 
 * [Map View](DOCS.md#niclabs.insight.MapView). Is the main view of the dashboard, where visualization elements related to a city location can be displayed on a map.
 * [Info View](DOCS.md#niclabs.insight.InfoView). The side view of the dashboard. Here, multiple information blocks can be setup to convey useful information regarding the dashboard.
 * [Block](DOCS.md#niclabs.insight.info.Block). Serves to communicate pieces of information related to the data in the dashboard. For instance, they can show a description of the dashboard data, a chart to display more information about an individual element on the map, or any other piece of relevant information.
-* [Layer](DOCS.md#niclabs.insight.layer.Layer) Ties a data source with a visualization over the map. A data source can be provided literally (as an array by the code) or as URL to a JSON data source.
+* [DataSource](DOCS.md#niclabs.insight.data.DataSource) Encapsulates operations over an specified data (such as forEach, map or reduce). A data source can be provided literally (as an array by the code) or as URL to a JSON data source.
+* [Layer](DOCS.md#niclabs.insight.layer.Layer) Ties a data source with a visualization over the map.
 * [Filter](DOCS.md#niclabs.insight.filter.Filter). Provides a means to update the visualization depending on specific criteria.
 
 
