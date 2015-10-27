@@ -132,12 +132,12 @@ infoview.block({
 });
 ```
 When creating a block, the `handler` keyword, specifies the type of block to build (`summary-block`, `chartist-barchart`, `chartist-piechart`). A block can display independent data or depend on the data given by layers of the dashboard. The keyword `data` sets the data for the block, which by default will use the layer data. The keyword `default` sets the default data for the block while data from the layer is not received.
-* Finally, we need to provide layers of data to the dashboard. A layer ties a dataset with a specific visualization on the map. The dataset can be a URL or an array.
+* Next, we describe the data source for the dashboard. A data source is an object that encapsulates all actions between the filter or visualization with the data. For now, it can be a javascript array or a JSON URL. The user provide this data with an unique ID to reference later in the layer definition.
 ```javascript
-niclabs.insight.layer({
-    handler: 'marker-layer', // Type of layer
-    name: 'Museum Visitors', // Name
-    data: [{ // Dataset
+infoview.block({
+    'handler': 'array-data',
+    'id': 'parisData',
+    'src': [{ // Dataset
         'lat': 48.860611,
         'lng': 2.337644,
         'landmark': 'Musée du Louvre',
@@ -177,7 +177,15 @@ niclabs.insight.layer({
             [3576, 10255, 2112, 5716, 9728, 10805, 6082]
         ],
         'note': 'This is not the actual number of visitors.'
-    }],
+    }]
+});
+```
+* Finally, we need to provide layers of data to the dashboard. A layer ties a data source with a specific visualization on the map.
+```javascript
+niclabs.insight.layer({
+    handler: 'marker-layer', // Type of layer
+    name: 'Museum Visitors', // Name
+    data: 'parisData',
     summary: function(data) { // Calculates summary to pass to the summary blocks
         var totals = {
             description: 'Weeky visitors for '+data.length+' museums in Paris',
