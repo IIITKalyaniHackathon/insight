@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>Insight Demo</title>
@@ -95,6 +96,17 @@
                 }
             }]
         });
+
+        dashboard.filter({
+            handler: 'slider-filter',
+            description: 'Weight < Slider Value', // the empty string is used if not provided
+            min: 0,
+            max: 1,
+            filter: function(data) {
+                return data.weight < sliderVal;
+            }
+        });
+
         dashboard.filter({
             handler: 'radio-filter',
             description: 'LatLng', // the empty string is used if not provided
@@ -129,8 +141,7 @@
                 'data': {
                     'description': 'This block is not affected by map events'
                 }
-            },
-            {
+            }, {
                 'handler': 'summary-block',
                 'id': '#summary',
                 'title': 'My Marker Summary',
@@ -183,73 +194,81 @@
             }]
         });
 
-        niclabs.insight.data('parisData', [{
-            'lat': 48.860611,
-            'lng': 2.337644,
-            'landmark': 'Musée du Louvre',
-            'value': [
-                [2237, 4650, 5221, 8089, 2970, 2847, 9059]
-            ],
-            'note': 'This is not the actual number of visitors.',
-            'weight': 0.5
-        }, {
-            'lat': 48.859961,
-            'lng': 2.326561,
-            'landmark': 'Musée d\'Orsay',
-            'value': [
-                [8971, 10724, 5257, 2434, 10583, 9038, 5240]
-            ],
-            'note': 'This is not the actual number of visitors.',
-            'weight': 0.8
-        }, {
-            'lat': 48.873792,
-            'lng': 2.295028,
-            'landmark': 'L’Arc de Triomphe',
-            'value': [
-                [9679, 10777, 9417, 1521, 6218, 1740, 2490]
-            ],
-            'note': 'This is not the actual number of visitors.',
-            'weight': 0.4
-        }, {
-            'lat': 48.852968,
-            'lng': 2.349902,
-            'landmark': 'Cathédrale Notre-Dame',
-            'value': [
-                [9806, 10989, 8219, 1503, 3847, 2007, 10751]
-            ],
-            'note': 'This is not the actual number of visitors.',
-            'weight': 0.95
-        }, {
-            'lat': 48.85837,
-            'lng': 2.294481,
-            'landmark': 'Tour Eiffel',
-            'value': [
-                [3576, 10255, 2112, 5716, 9728, 10805, 6082]
-            ],
-            'note': 'This is not the actual number of visitors.',
-            'weight': 0.14
-        }]);
-        niclabs.insight.data('anotherParisData', [{
-            'lat': 48.860611,
-            'lng': 2.337644,
-            'weight': 0.5
-        }, {
-            'lat': 48.861700,
-            'lng': 2.337644,
-            'weight': 0.25
-        }, {
-            'lat': 48.860611,
-            'lng': 2.338500,
-            'weight': 0.25
-        }, {
-            'lat': 48.860200,
-            'lng': 2.335644,
-            'weight': 0.75
-        }, {
-            'lat': 48.862611,
-            'lng': 2.336626,
-            'weight': 0.5
-        }, ]);
+        niclabs.insight.data({
+            handler: 'array-data',
+            id: 'parisData',
+            src: [{
+                'lat': 48.860611,
+                'lng': 2.337644,
+                'landmark': 'Musée du Louvre',
+                'value': [
+                    [2237, 4650, 5221, 8089, 2970, 2847, 9059]
+                ],
+                'note': 'This is not the actual number of visitors.',
+                'weight': 0.5
+            }, {
+                'lat': 48.859961,
+                'lng': 2.326561,
+                'landmark': 'Musée d\'Orsay',
+                'value': [
+                    [8971, 10724, 5257, 2434, 10583, 9038, 5240]
+                ],
+                'note': 'This is not the actual number of visitors.',
+                'weight': 0.8
+            }, {
+                'lat': 48.873792,
+                'lng': 2.295028,
+                'landmark': 'L’Arc de Triomphe',
+                'value': [
+                    [9679, 10777, 9417, 1521, 6218, 1740, 2490]
+                ],
+                'note': 'This is not the actual number of visitors.',
+                'weight': 0.4
+            }, {
+                'lat': 48.852968,
+                'lng': 2.349902,
+                'landmark': 'Cathédrale Notre-Dame',
+                'value': [
+                    [9806, 10989, 8219, 1503, 3847, 2007, 10751]
+                ],
+                'note': 'This is not the actual number of visitors.',
+                'weight': 0.95
+            }, {
+                'lat': 48.85837,
+                'lng': 2.294481,
+                'landmark': 'Tour Eiffel',
+                'value': [
+                    [3576, 10255, 2112, 5716, 9728, 10805, 6082]
+                ],
+                'note': 'This is not the actual number of visitors.',
+                'weight': 0.14
+            }]
+        });
+        niclabs.insight.data({
+            handler: 'array-data',
+            id: 'anotherParisData',
+            src: [{
+                'lat': 48.860611,
+                'lng': 2.337644,
+                'weight': 0.5
+            }, {
+                'lat': 48.861700,
+                'lng': 2.337644,
+                'weight': 0.25
+            }, {
+                'lat': 48.860611,
+                'lng': 2.338500,
+                'weight': 0.25
+            }, {
+                'lat': 48.860200,
+                'lng': 2.335644,
+                'weight': 0.75
+            }, {
+                'lat': 48.862611,
+                'lng': 2.336626,
+                'weight': 0.5
+            }]
+        });
 
         niclabs.insight.layer({
             handler: 'marker-layer',
@@ -257,13 +276,13 @@
             data: 'parisData',
             summary: function(data) {
                 var totals = {
-                    description: 'Weeky visitors for '+data.length+' museums in Paris',
+                    description: 'Weeky visitors for ' + data.length + ' museums in Paris',
                     value: [
-                        [0,0,0,0,0,0,0],
+                        [0, 0, 0, 0, 0, 0, 0],
                     ]
                 };
 
-                var i,j;
+                var i, j;
                 for (i = 0; i < data.length; i++) {
                     for (j = 0; j < data[i].value[0].length; j++) {
                         totals.value[0][j] += data[i].value[0][j];
