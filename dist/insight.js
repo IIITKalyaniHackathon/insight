@@ -2686,27 +2686,20 @@ niclabs.insight.filter.SelectionFilter = (function($) {
 niclabs.insight.filter.SliderFilter = (function($) {
 
     /**
-     * Selection filter option
-     *
-     * @typedef niclabs.insight.filter.SelectionFilter.Option
-     * @type {Object}
-     * @param {string} name - name for the option of the filter
-     * @param {niclabs.insight.Filters~filter} filter - callback to filter the data
-     */
-
-    /**
      * Construct a slider filter for the dashboard
      *
-     * A selection filter will be visualized as a `<select>`
+     * A selection filter will be visualized as a `<input type=range>`
      * HTML element, and calls to apply will pass the call to the appropriate
-     * filtering function according to the selected option
+     * filtering function according to the selected value
      *
      * @class niclabs.insight.filter.SliderFilter
      * @augments niclabs.insight.filter.Filter
      * @param {niclabs.insight.Dashboard} dashboard - dashboard that this filter belongs to
      * @param {Object} options - configuration options for the filter
-     * @param {string} options.description - description for this filter to use as default option of the select
-     * @param {niclabs.insight.filter.SliderFilter.Option[]} options.options - list of options for the filter
+     * @param {string} options.description - description for this filter
+     * @param {function} options.filter - slider filtering function
+     * @param {float} options.min - minimum value for the slider
+     * @param {float} options.max - maximum value for the slider
      */
     var SliderFilter = function(dashboard, options) {
         var view = niclabs.insight.filter.Filter(dashboard, options);
@@ -2739,7 +2732,7 @@ niclabs.insight.filter.SliderFilter = (function($) {
     /**
      * Apply the filter to a data element
      *
-     * @memberof niclabs.insight.filter.SelectionFilter
+     * @memberof niclabs.insight.filter.SliderFilter
      * @abstract
      * @param {Object} element - data element to evaluate
      * @return {boolean} - true if the data element passes the filter
