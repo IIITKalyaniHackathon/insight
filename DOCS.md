@@ -56,11 +56,10 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
       * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
         * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
         * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
-        * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
-        * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
         * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
       * [class: filter.SliderFilter](#niclabs.insight.filter.SliderFilter)
         * [new filter.SliderFilter(dashboard, options)](#new_niclabs.insight.filter.SliderFilter)
+        * [SliderFilter.view.apply(element)](#niclabs.insight.filter.SliderFilter.view.apply)
     * [insight.info](#niclabs.insight.info)
       * [class: info.Block](#niclabs.insight.info.Block)
         * [new info.Block(dashboard, options)](#new_niclabs.insight.info.Block)
@@ -277,6 +276,7 @@ We are based in Santiago, Chile, in front of the FCFM, Universidad de Chile.
     * [class: insight.InfoView](#niclabs.insight.InfoView)
       * [new insight.InfoView(dashboard, options)](#new_niclabs.insight.InfoView)
       * [InfoView.element.block(obj)](#niclabs.insight.InfoView.element.block)
+      * [InfoView.element.refresh()](#niclabs.insight.InfoView.element.refresh)
     * [class: insight.View](#niclabs.insight.View)
       * [new insight.View(options)](#new_niclabs.insight.View)
       * [View.$](#niclabs.insight.View.$)
@@ -349,11 +349,10 @@ understand what is going on in the city
     * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
       * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
       * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
-      * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
-      * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
       * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
     * [class: filter.SliderFilter](#niclabs.insight.filter.SliderFilter)
       * [new filter.SliderFilter(dashboard, options)](#new_niclabs.insight.filter.SliderFilter)
+      * [SliderFilter.view.apply(element)](#niclabs.insight.filter.SliderFilter.view.apply)
   * [insight.info](#niclabs.insight.info)
     * [class: info.Block](#niclabs.insight.info.Block)
       * [new info.Block(dashboard, options)](#new_niclabs.insight.info.Block)
@@ -570,6 +569,7 @@ understand what is going on in the city
   * [class: insight.InfoView](#niclabs.insight.InfoView)
     * [new insight.InfoView(dashboard, options)](#new_niclabs.insight.InfoView)
     * [InfoView.element.block(obj)](#niclabs.insight.InfoView.element.block)
+    * [InfoView.element.refresh()](#niclabs.insight.InfoView.element.refresh)
   * [class: insight.View](#niclabs.insight.View)
     * [new insight.View(options)](#new_niclabs.insight.View)
     * [View.$](#niclabs.insight.View.$)
@@ -1001,11 +1001,10 @@ Define all possible filters for the dashboard
   * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
     * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
     * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
-    * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
-    * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
     * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
   * [class: filter.SliderFilter](#niclabs.insight.filter.SliderFilter)
     * [new filter.SliderFilter(dashboard, options)](#new_niclabs.insight.filter.SliderFilter)
+    * [SliderFilter.view.apply(element)](#niclabs.insight.filter.SliderFilter.view.apply)
 
 <a name="niclabs.insight.filter.Filter"></a>
 ####class: filter.Filter
@@ -1147,8 +1146,6 @@ Radio filter option
 * [class: filter.SelectionFilter](#niclabs.insight.filter.SelectionFilter)
   * [new filter.SelectionFilter(dashboard, options)](#new_niclabs.insight.filter.SelectionFilter)
   * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
-  * [SelectionFilter.view.apply(element)](#niclabs.insight.filter.SelectionFilter.view.apply)
-  * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
   * [type: SelectionFilter.Option](#niclabs.insight.filter.SelectionFilter.Option)
 
 <a name="new_niclabs.insight.filter.SelectionFilter"></a>
@@ -1176,25 +1173,6 @@ Apply the filter to a data element
 - element `Object` - data element to evaluate  
 
 **Returns**: `boolean` - - true if the data element passes the filter  
-<a name="niclabs.insight.filter.SelectionFilter.view.apply"></a>
-#####SelectionFilter.view.apply(element)
-Apply the filter to a data element
-
-**Params**
-
-- element `Object` - data element to evaluate  
-
-**Returns**: `boolean` - - true if the data element passes the filter  
-<a name="niclabs.insight.filter.SelectionFilter.Option"></a>
-#####type: SelectionFilter.Option
-Selection filter option
-
-**Params**
-
-- name `string` - name for the option of the filter  
-- filter <code>[filter](#niclabs.insight.Filters..filter)</code> - callback to filter the data  
-
-**Type**: `Object`  
 <a name="niclabs.insight.filter.SelectionFilter.Option"></a>
 #####type: SelectionFilter.Option
 Selection filter option
@@ -1212,23 +1190,35 @@ Selection filter option
 
 * [class: filter.SliderFilter](#niclabs.insight.filter.SliderFilter)
   * [new filter.SliderFilter(dashboard, options)](#new_niclabs.insight.filter.SliderFilter)
+  * [SliderFilter.view.apply(element)](#niclabs.insight.filter.SliderFilter.view.apply)
 
 <a name="new_niclabs.insight.filter.SliderFilter"></a>
 #####new filter.SliderFilter(dashboard, options)
 Construct a slider filter for the dashboard
 
-A selection filter will be visualized as a `<select>`
+A selection filter will be visualized as a `<input type=range>`
 HTML element, and calls to apply will pass the call to the appropriate
-filtering function according to the selected option
+filtering function according to the selected value
 
 **Params**
 
 - dashboard <code>[Dashboard](#niclabs.insight.Dashboard)</code> - dashboard that this filter belongs to  
 - options `Object` - configuration options for the filter  
-  - description `string` - description for this filter to use as default option of the select  
-  - options `Array.<niclabs.insight.filter.SliderFilter.Option>` - list of options for the filter  
+  - description `string` - description for this filter  
+  - filter `function` - slider filtering function  
+  - min `float` - minimum value for the slider  
+  - max `float` - maximum value for the slider  
 
 **Extends**: `niclabs.insight.filter.Filter`  
+<a name="niclabs.insight.filter.SliderFilter.view.apply"></a>
+#####SliderFilter.view.apply(element)
+Apply the filter to a data element
+
+**Params**
+
+- element `Object` - data element to evaluate  
+
+**Returns**: `boolean` - - true if the data element passes the filter  
 <a name="niclabs.insight.info"></a>
 ###insight.info
 Contains the definitions for the information blocks supported by insight
@@ -3626,6 +3616,7 @@ Identifier for the insight element
 * [class: insight.InfoView](#niclabs.insight.InfoView)
   * [new insight.InfoView(dashboard, options)](#new_niclabs.insight.InfoView)
   * [InfoView.element.block(obj)](#niclabs.insight.InfoView.element.block)
+  * [InfoView.element.refresh()](#niclabs.insight.InfoView.element.refresh)
 
 <a name="new_niclabs.insight.InfoView"></a>
 ####new insight.InfoView(dashboard, options)
@@ -3657,6 +3648,12 @@ block list as is.
 - obj `string` | `number` | `Object` | <code>[Block](#niclabs.insight.info.Block)</code> - block id to get or configuration options for the new block  
 
 **Returns**: [Block](#niclabs.insight.info.Block) - - newly created block  
+<a name="niclabs.insight.InfoView.element.refresh"></a>
+####InfoView.element.refresh()
+Refresh the blocks of the info view
+
+This method refreshes each block of the InfoView, by calling refresh to each block.
+
 <a name="niclabs.insight.View"></a>
 ###class: insight.View
 **Extends**: `niclabs.insight.Element`  

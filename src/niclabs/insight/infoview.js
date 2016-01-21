@@ -50,6 +50,21 @@ niclabs.insight.InfoView = (function($) {
             return blk;
         };
 
+        /**
+         * Refresh the blocks of the info view
+         *
+         * This method refreshes each block of the InfoView, by calling refresh to each block.
+         *
+         * @memberof niclabs.insight.InfoView
+         */
+        element.refresh = function() {
+            blocks.each(
+                function(key, block) {
+                    block.refresh();
+                }
+            );
+        };
+
         // For index
         var i;
 

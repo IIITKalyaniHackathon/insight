@@ -1002,7 +1002,6 @@ niclabs.insight.Dashboard = (function($) {
                 // Add the layer to the selector
                 layerSelector.add(lyr.id, lyr.name);
                 layerCounter = layerCounter+1;
-
                 return lyr;
             },
 
@@ -1118,6 +1117,11 @@ niclabs.insight.Dashboard = (function($) {
             id: 'layer-selector'
         });
         filters.filter(layerSelector);
+
+        // Refrash blocks on tab change
+        $('.mdl-tabs').on('click', function() {
+            dashboard.info().refresh();
+        });
 
         return self;
     };
@@ -1414,6 +1418,21 @@ niclabs.insight.InfoView = (function($) {
             element.$.append(blk.element);
 
             return blk;
+        };
+
+        /**
+         * Refresh the blocks of the info view
+         *
+         * This method refreshes each block of the InfoView, by calling refresh to each block.
+         *
+         * @memberof niclabs.insight.InfoView
+         */
+        element.refresh = function() {
+            blocks.each(
+                function(key, block) {
+                    block.refresh();
+                }
+            );
         };
 
         // For index
