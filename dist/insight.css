@@ -67,6 +67,7 @@
   padding-right: 14px;
   padding-left: 14px; }
   .filters .filter {
+    max-width: 270px;
     position: relative;
     z-index: 1;
     margin-bottom: 10px;
